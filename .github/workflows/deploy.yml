@@ -1,0 +1,132 @@
+name: Production CI and Pages
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Verify exact source snapshot and screen release inputs
+        run: |
+          python3 - <<'PY'
+          import json, subprocess, re
+          manifest = json.load(open('release/source-files.json'))
+          assert len(manifest['source_sha']) == 40
+          for item in manifest['files']:
+              actual = subprocess.check_output(['git', 'hash-object', item['path']], text=True).strip()
+              assert actual == item['sha'], item['path'] + ': source mismatch'
+              text = open(item['path']).read()
+              assert not re.search(r'RESTORED_FULL_CONTENT|UPDATED_CONTENT|FULL_FILE_CONTENT_WILL_BE_INCLUDED|-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----', text), item['path']
+          tracked = subprocess.check_output(['git', 'ls-files'], text=True).splitlines()
+          assert not any(p.startswith(('.env', 'node_modules/')) for p in tracked)
+          print('PASS: exact upstream blobs:', len(manifest['files']))
+          PY
+      - name: Install locked dependencies
+        run: npm ci --no-fund --no-audit
+      - name: Validate question bank
+        run: npm run validate:questions
+      - name: Explanation coverage
+        run: npm run coverage:explanations
+      - name: Quiz logic tests
+        run: npm run test:logic
+      - name: Typecheck
+        run: npm run lint
+      - name: Build for production subpath
+        run: npm run build -- --base=/netops/
+      - name: Verify entry assets and write release version
+        env:
+          PRODUCTION_SHA: ${{ github.sha }}
+          RUN_ID: ${{ github.run_id }}
+        run: |
+          python3 - <<'PY'
+          import json, os, re, pathlib
+          html = pathlib.Path('dist/index.html').read_text()
+          assets = re.findall(r'(?:src|href)="([^"]+)"', html)
+          local = [a for a in assets if not a.startswith(('https://', 'http://', 'data:', '#'))]
+          assert local, 'No entry assets'
+          for asset in local:
+              assert asset.startswith('/netops/'), asset
+              assert pathlib.Path('dist', asset.removeprefix('/netops/')).is_file(), asset
+          source = json.load(open('release/source-files.json'))
+          version = dict(upstream=source['upstream'], source_sha=source['source_sha'],
+                         production_sha=os.environ['PRODUCTION_SHA'], base='/netops/',
+                         run_url='https://github.com/apotet/netops/actions/runs/' + os.environ['RUN_ID'])
+          pathlib.Path('dist/release.json').write_text(json.dumps(version, indent=2) + '\n')
+          pathlib.Path('dist/.nojekyll').touch()
+          print('PASS: production entry assets:', local)
+          PY
+      - name: Upload validation evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: validation-evidence
+          path: scripts/.cache/
+          include-hidden-files: true
+          if-no-files-found: ignore
+      - name: Configure Pages
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: actions/configure-pages@v5
+      - name: Upload Pages artifact
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+  initial-release:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && startsWith(github.event.head_commit.message, 'release(n0): initial production snapshot')
+    needs: [build, deploy]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Tag the authorized initial N0 release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PRODUCTION_SHA: ${{ github.sha }}
+          RUN_URL: https://github.com/apotet/netops/actions/runs/${{ github.run_id }}
+        run: |
+          python3 - <<'PY'
+          import os, pathlib
+          pathlib.Path('/tmp/release-notes.md').write_text(
+              '# Initial NetOps production release (N0)\n\n'
+              'Source: apotet/my-gemini-mirror-site@09c715ed1780d56374498df9a6b393f47bca4202\n\n'
+              'Production SHA: ' + os.environ['PRODUCTION_SHA'] + '\n\n'
+              'Site: https://apotet.github.io/netops/\n\n'
+              'CI and Pages: ' + os.environ['RUN_URL'] + '\n\n'
+              'Node 22; npm ci; Vite --base=/netops/. No product changes.\n\n'
+              'Browser smoke is recorded separately after deployment; this tag alone does not assert browser acceptance.\n'
+              'Promotion and rollback: RELEASING.md at this commit.\n')
+          PY
+          gh release create v1.0.0-n0 --target "$PRODUCTION_SHA" --title "NetOps N0 — initial production" --notes-file /tmp/release-notes.md

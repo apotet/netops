@@ -1,0 +1,286 @@
+{
+  "upstream": "apotet/my-gemini-mirror-site",
+  "source_sha": "09c715ed1780d56374498df9a6b393f47bca4202",
+  "files": [
+    {
+      "path": ".gitignore",
+      "sha": "05b806c7fb54ca1604cdd2373be3d13c01d8dc80"
+    },
+    {
+      "path": ".nojekyll",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "docs/QUESTION_BANK_EXPANSION.md",
+      "sha": "3a8b6ca6340c3e474a65c509a7ff6377fec85e81"
+    },
+    {
+      "path": "index.dev.html",
+      "sha": "69bc736073a0307101a7b1aca041896c11dad74a"
+    },
+    {
+      "path": "index.html",
+      "sha": "75d819d28bc8007331d5f2722e84e7312fed07aa"
+    },
+    {
+      "path": "metadata.json",
+      "sha": "be20037d4082eb0a334a85869eec10ea36e4d312"
+    },
+    {
+      "path": "package-lock.json",
+      "sha": "6cd62d96533a96d7e2b7bc38b70094f92153fb18"
+    },
+    {
+      "path": "package.json",
+      "sha": "9f090483d8726178841baf48d4f23c8502eb12c7"
+    },
+    {
+      "path": "scripts/bank-entry.ts",
+      "sha": "cc4c0932a4175eb8b39399eaf5f315acbfad282e"
+    },
+    {
+      "path": "scripts/coverage-report.mjs",
+      "sha": "cf9e64b8a82a9dad5eb2ff806baeeb4a34ed6c3c"
+    },
+    {
+      "path": "scripts/data-entry.ts",
+      "sha": "918a7223ab287a573185116f1bbe79685568a6a9"
+    },
+    {
+      "path": "scripts/load-bank.mjs",
+      "sha": "4a8531a95ee98e92e32d035f8f7f2b84b3a1b5e5"
+    },
+    {
+      "path": "scripts/quiz-logic.test.mjs",
+      "sha": "082d681e102894757220facc3815f91379c37e40"
+    },
+    {
+      "path": "scripts/validate-questions.mjs",
+      "sha": "25d9bc9bfdc731fc4eabaa9661e7f74ad48a59d4"
+    },
+    {
+      "path": "src/App.tsx",
+      "sha": "a65bb88f9e5edcd88a4a9e91a2dd403634c6b8ae"
+    },
+    {
+      "path": "src/cli-lab/CliLabShell.tsx",
+      "sha": "4b3a57334550ddf91dc844165c153985cbe7680d"
+    },
+    {
+      "path": "src/cli-lab/engine/GoalEvaluator.ts",
+      "sha": "cebc8fdd7b9cea2b96d7dde92fa7945222bc59c4"
+    },
+    {
+      "path": "src/cli-lab/engine/LabEngine.ts",
+      "sha": "2789a7f6eac0bb8d3a207e79604cb806567bb593"
+    },
+    {
+      "path": "src/cli-lab/engine/types.ts",
+      "sha": "91d5e13c039c07cb3d77d6665f08a8e9f7688238"
+    },
+    {
+      "path": "src/cli-lab/scenarios/cisco-l3-gateway.ts",
+      "sha": "cbd7a238c2ac20933c68191558f6dddcfd047084"
+    },
+    {
+      "path": "src/cli-lab/scenarios/cisco-trunk.ts",
+      "sha": "0292b4c3a78ec2901d2a895f112ac2f303a3c961"
+    },
+    {
+      "path": "src/cli-lab/scenarios/cisco-vlan-access.ts",
+      "sha": "6c17ea509652c33894383eeb8f3dc8fbc176d617"
+    },
+    {
+      "path": "src/cli-lab/vendors/cisco-ios/commands.ts",
+      "sha": "de6a91f58bf5e196d569edb2efb66d3299b3f797"
+    },
+    {
+      "path": "src/cli-lab/vendors/cisco-ios/l3Commands.ts",
+      "sha": "0dedc3168eb2c683836cdd065d0196bee1950ec1"
+    },
+    {
+      "path": "src/cli-lab/vendors/cisco-ios/profile.ts",
+      "sha": "dfb5f26e5700588e7b15301039b04ba565d672b1"
+    },
+    {
+      "path": "src/cli-lab/vendors/cisco-ios/trunkCommands.ts",
+      "sha": "8b44fb7c5577315b7e7574b77443d452444e4307"
+    },
+    {
+      "path": "src/components/CliSimulator.tsx",
+      "sha": "5dfa7a814d8d063b5305ccd83bb88394c72610db"
+    },
+    {
+      "path": "src/components/CommandPalette.tsx",
+      "sha": "c24dff7d56eb760eb9da666c9258df4b79427393"
+    },
+    {
+      "path": "src/components/DeployModal.tsx",
+      "sha": "b0082bf61343abf011be59ef2638ae3d4f58a7eb"
+    },
+    {
+      "path": "src/components/ExamView.tsx",
+      "sha": "4a048623933d77b1568e065e3510be1961f9f4a4"
+    },
+    {
+      "path": "src/components/Ipv4Trainer.tsx",
+      "sha": "9afd080cfd44d917d3f0a208f960df0ce555edd5"
+    },
+    {
+      "path": "src/components/KnowledgeBase.tsx",
+      "sha": "4e97a19153b4e5b2e723a1c379dc8d721390182e"
+    },
+    {
+      "path": "src/components/KnowledgeRadar.tsx",
+      "sha": "72981c97b3dcc181aca5bd2c7326b20b62cb9897"
+    },
+    {
+      "path": "src/components/LessonView.tsx",
+      "sha": "3fde1a7e2f8450d36e3beea444cc134ff4c2899b"
+    },
+    {
+      "path": "src/components/LivingOsiStack.tsx",
+      "sha": "eb1e2d6fa42ef44bce94e56c602870ba2e5be9dd"
+    },
+    {
+      "path": "src/components/MobileTabBar.tsx",
+      "sha": "5bdf023ea8c661def2fbd8969f33502d03dc3c53"
+    },
+    {
+      "path": "src/components/Navbar.tsx",
+      "sha": "247900c386a12c7584aeedf281b7494dbe1ce70e"
+    },
+    {
+      "path": "src/components/OsiExplorer.tsx",
+      "sha": "79ddc8977839cc7b20ad7064e4e56f4cb69b1d23"
+    },
+    {
+      "path": "src/components/PacketJourney.tsx",
+      "sha": "8f9225f4f405a888d6a02606e7a484bd6710b6e6"
+    },
+    {
+      "path": "src/components/PhotoCredits.tsx",
+      "sha": "413493327fa61e42fcb7af44a3e6bbac39f1da0b"
+    },
+    {
+      "path": "src/components/PracticeHub.tsx",
+      "sha": "2dedeb5fb58943974d15f8bcf2d662f945c2bad2"
+    },
+    {
+      "path": "src/components/ProtocolSimulators.tsx",
+      "sha": "681ceeb93c24dd263c78a53803114f509d4396ae"
+    },
+    {
+      "path": "src/components/SniDiagram.tsx",
+      "sha": "7ec4b573a16f472ccb59632da8e2b1734c66adcd"
+    },
+    {
+      "path": "src/components/TheoryCheatsheets.tsx",
+      "sha": "d0495af36d1ef891575f410cc2cb48f16bcf0299"
+    },
+    {
+      "path": "src/components/TheoryModels.tsx",
+      "sha": "9c3f12d7969538548dd014e89c559c0bb93215cf"
+    },
+    {
+      "path": "src/components/TheoryPorts.tsx",
+      "sha": "093ae3e6aa9f8a028f7c8b5288e5201c3889dbb6"
+    },
+    {
+      "path": "src/components/TheoryRazbory.tsx",
+      "sha": "4531034146b0549dc6e2c8d9686fbd2d96389c0a"
+    },
+    {
+      "path": "src/components/TheoryView.tsx",
+      "sha": "1bce12a131e7b2c39fd6486427291f5991d663cf"
+    },
+    {
+      "path": "src/components/VlanSimulator.tsx",
+      "sha": "e23b807af371e7c6acaaeb4f4e64c9fca761de09"
+    },
+    {
+      "path": "src/components/ZoomableImage.tsx",
+      "sha": "94d1630674265724e326f68e78c106832565e9e7"
+    },
+    {
+      "path": "src/data/lessons/index.ts",
+      "sha": "cec1532874684b288acc0b19d44f21b82264316b"
+    },
+    {
+      "path": "src/data/lessons/tls-sni.ts",
+      "sha": "4f72647e1fcd1caadeb19493f41a48db800c07d4"
+    },
+    {
+      "path": "src/data/lessons/types.ts",
+      "sha": "7c60c07fb8aae4365bb72bb302ecb74d1b988ca8"
+    },
+    {
+      "path": "src/data/levelNotes.ts",
+      "sha": "d4e7fbf3ee29060b389249a719959401c772cce8"
+    },
+    {
+      "path": "src/data/questionExplanations.ts",
+      "sha": "51079adccb7b0dd419b677fe9cae617d7696d1a6"
+    },
+    {
+      "path": "src/data/questionExplanationsApplied.ts",
+      "sha": "f02090c4d8c0c7a8efa9bd4cd1d805239ab00065"
+    },
+    {
+      "path": "src/data/questions.json",
+      "sha": "53c9167378e8a27b1386ad521f60d7fb5af125c0"
+    },
+    {
+      "path": "src/data/questionsData.ts",
+      "sha": "58c9ef113dbd1e1b849375f20d3cc0c5bdc8ee22"
+    },
+    {
+      "path": "src/data/questionsExtra.ts",
+      "sha": "4bbb63d25f61505bfd35182a4731942d9dd2a743"
+    },
+    {
+      "path": "src/data/questionsExtraDifficulty.ts",
+      "sha": "8e1238a2ab85ddd7ddec12a874f3f2cd8b42a84e"
+    },
+    {
+      "path": "src/data/wellKnownPorts.ts",
+      "sha": "8f3659db327f66f81cf5d86a8f4d2904684d4da1"
+    },
+    {
+      "path": "src/index.css",
+      "sha": "b30f4e7cea24d7225b936c4e1f18262bf6c11a95"
+    },
+    {
+      "path": "src/main.tsx",
+      "sha": "c1d9f920661cb84283eeabccd6ac72fe4233460c"
+    },
+    {
+      "path": "src/projectExporter.ts",
+      "sha": "06dade3051ec192d46ab5a881730327283697416"
+    },
+    {
+      "path": "src/types/quiz.ts",
+      "sha": "5698441efaa033abc7f28b62e56705ea17b53f1d"
+    },
+    {
+      "path": "src/utils/haptics.ts",
+      "sha": "ab1f66277f772757c8793a0bba0317cfbd095271"
+    },
+    {
+      "path": "src/utils/sound.ts",
+      "sha": "d5b04f03fd1070d9ce2f35f2db1045fb15612654"
+    },
+    {
+      "path": "src/utils/userProgress.ts",
+      "sha": "370f2e01b247906b44ee8e2478cc81b5d7b02fcb"
+    },
+    {
+      "path": "tsconfig.json",
+      "sha": "5d9e75d04d8cc61824864b90a9b912c1c0478de3"
+    },
+    {
+      "path": "vite.config.ts",
+      "sha": "7c53710bec4128b979f0748f08cc5ea7e706981c"
+    }
+  ]
+}

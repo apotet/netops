@@ -1,0 +1,6 @@
+{
+  "name": "OSI & TCP/IP Trainer",
+  "description": "Интерактивный учебный тренажёр OSI, TCP/IP, IPv4-масок и сетевых CLI-команд: экзамен, теория, симуляторы и разбор ошибок.",
+  "requestFramePermissions": [],
+  "majorCapabilities": []
+}

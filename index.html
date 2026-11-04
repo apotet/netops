@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="ru" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#07111f" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <title>OSI & TCP/IP — обучение, шпаргалки и экзамен</title>
+    <meta name="description" content="Учебный тренажёр OSI, TCP/IP, IPv4 масок и сетевых CLI-команд: 502 вопроса, теория, симуляторы пакетов, VLAN и подробный разбор ошибок." />
+    <meta property="og:title" content="OSI & TCP/IP — обучение, шпаргалки и экзамен" />
+    <meta property="og:description" content="Учебный тренажёр сетевых моделей OSI и TCP/IP: 502 вопроса, раздел теории с глубокими разборами, визуализаторы пакетов, CLI-лаборатория." />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="OSI & TCP/IP Trainer" />
+    <meta property="og:image" content="https://raw.githubusercontent.com/apotet/osi-tcpip-exam-public/main/assets/cheatsheets/l3.webp" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="OSI & TCP/IP — обучение, шпаргалки и экзамен" />
+    <meta name="twitter:description" content="Тренажёр по сетевым протоколам, уровням OSI, маршрутизации, маскам IPv4 и CLI командам." />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <script>
+      try {
+        var dark = localStorage.getItem('osi_theme_dark');
+        if (dark === '0' || dark === 'false') {
+          document.documentElement.classList.remove('dark');
+        } else {
+          document.documentElement.classList.add('dark');
+        }
+      } catch (e) {}
+    </script>
+  </head>
+  <body class="antialiased selection:bg-cyan-500 selection:text-black">
+    <div id="root" class="w-full max-w-full min-h-screen"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
