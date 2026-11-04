@@ -104,7 +104,8 @@ jobs:
         uses: actions/deploy-pages@v4
 
   initial-release:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && startsWith(github.event.head_commit.message, 'release(n0): initial production snapshot')
+    if: >-
+      github.event_name == 'push' && github.ref == 'refs/heads/main' && startsWith(github.event.head_commit.message, 'release(n0): initial production snapshot')
     needs: [build, deploy]
     runs-on: ubuntu-latest
     permissions:
