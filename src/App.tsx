@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Navbar, NavTab } from './components/Navbar';
-import { ExamView } from './components/ExamView';
+import { ExamView, type ExamViewHandle } from './components/ExamView';
 import { Ipv4Trainer, Ipv4SubTab } from './components/Ipv4Trainer';
+import { Ipv6Trainer } from './components/Ipv6Trainer';
 import { PracticeHub } from './components/PracticeHub';
 import { TheoryView } from './components/TheoryView';
 import { MobileTabBar } from './components/MobileTabBar';
@@ -21,6 +22,7 @@ function readStoredBool(key: string, fallback: boolean): boolean {
 
 export function App() {
   const [activeTab, setActiveTab] = useState<NavTab>('exam');
+  const examViewRef = useRef<ExamViewHandle>(null);
   const [isDark, setIsDark] = useState<boolean>(() => readStoredBool('osi_theme_dark', true));
   const [soundEnabled, setSoundEnabled] = useState<boolean>(() => readStoredBool('osi_sound', false));
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState<boolean>(false);
@@ -73,10 +75,24 @@ export function App() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const handleTabChange = (tab: NavTab) => {
+    if (tab === 'exam' && activeTab === 'exam') examViewRef.current?.returnToParameters();
+    setActiveTab(tab);
+    if (tab !== 'theory') {
+      setTheoryQuestionId(null);
+      setTheoryFromExam(false);
+    }
+  };
+
   const handleReturnToExam = () => {
     setTheoryQuestionId(null);
     setTheoryFromExam(false);
     setActiveTab('exam');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleNavigateToIpv6 = () => {
+    setActiveTab('ipv6');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -89,16 +105,10 @@ export function App() {
   };
 
   return (
-    <div className="min-h-screen w-full max-w-full overflow-x-hidden bg-slate-50 text-slate-900 dark:bg-[#07111f] dark:text-slate-100 flex flex-col font-sans selection:bg-cyan-500 selection:text-black transition-colors duration-150">
+    <div className="min-h-screen w-full max-w-full overflow-x-clip bg-slate-50 text-slate-900 dark:bg-[#07111f] dark:text-slate-100 flex flex-col font-sans selection:bg-cyan-500 selection:text-black transition-colors duration-150">
       <Navbar
         activeTab={activeTab}
-        onTabChange={(tab) => {
-          setActiveTab(tab);
-          if (tab !== 'theory') {
-            setTheoryQuestionId(null);
-            setTheoryFromExam(false);
-          }
-        }}
+        onTabChange={handleTabChange}
         isDark={isDark}
         onToggleTheme={() => setIsDark((v) => !v)}
         soundEnabled={soundEnabled}
@@ -108,7 +118,12 @@ export function App() {
 
       <main className="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-6 sm:py-8 pb-24 lg:pb-8">
         {activeTab === 'exam' && (
-          <ExamView soundEnabled={soundEnabled} onNavigateToTheory={handleNavigateToTheory} />
+          <ExamView ref={examViewRef} soundEnabled={soundEnabled} onNavigateToTheory={handleNavigateToTheory} onNavigateToLearning={() => {
+            setTheoryQuestionId(null);
+            setTheoryFromExam(false);
+            setActiveTab('theory');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }} />
         )}
         {(activeTab === 'theory' || activeTab === 'osi') && (
           <TheoryView
@@ -116,12 +131,14 @@ export function App() {
             fromExam={theoryFromExam}
             onReturnToExam={handleReturnToExam}
             onNavigateToIpv4={handleNavigateToIpv4}
+            onNavigateToIpv6={handleNavigateToIpv6}
             onClearInitialQuestion={() => {
               setTheoryQuestionId(null);
               setTheoryFromExam(false);
             }}
           />
         )}
+        {activeTab === 'ipv6' && <Ipv6Trainer />}
         {activeTab === 'ipv4' && (
           <Ipv4Trainer
             soundEnabled={soundEnabled}
@@ -134,13 +151,7 @@ export function App() {
 
       <MobileTabBar
         activeTab={activeTab}
-        onTabChange={(tab) => {
-          setActiveTab(tab);
-          if (tab !== 'theory') {
-            setTheoryQuestionId(null);
-            setTheoryFromExam(false);
-          }
-        }}
+        onTabChange={handleTabChange}
       />
 
       <CommandPalette
@@ -165,7 +176,7 @@ export function App() {
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="space-y-1 text-center sm:text-left">
             <div className="font-bold text-slate-800 dark:text-slate-200">
-              OSI & TCP/IP Exam Trainer
+              NetOps
             </div>
             <p className="text-[11px] text-slate-500 dark:text-slate-400">
               {TOTAL_QUESTION_COUNT} практических вопросов, симуляции L2/L3 протоколов и CLI-терминал.

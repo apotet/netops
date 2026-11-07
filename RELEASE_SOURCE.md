@@ -1,4 +1,16 @@
-# NetOps production release — N0
+# NetOps production release — N1
+
+- Upstream: https://github.com/apotet/my-gemini-mirror-site
+- Pinned source SHA: f51888882309184e3d3a97204687f54a363d42fb
+- Production URL: https://apotet.github.io/netops/
+- Imported product files: 112 exact Git blobs in release/source-files.json.
+- Build: Node 22; npm ci; Vite --base=/netops/.
+- Production commit and workflow: /netops/release.json after deploy.
+- Excluded upstream assets/, environment files and workflows; retained NetOps release controls.
+
+---
+
+# NetOps production release — N0 (historical)
 
 - Upstream: https://github.com/apotet/my-gemini-mirror-site
 - Source SHA: `09c715ed1780d56374498df9a6b393f47bca4202`

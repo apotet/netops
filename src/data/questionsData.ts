@@ -1,7 +1,8 @@
 import rawQuestions from './questions.json';
 import { EXTRA_QUESTIONS } from './questionsExtra';
 import { EXTRA_DIFFICULTY_QUESTIONS } from './questionsExtraDifficulty';
-import { Question, QuizMode, QuizModeId } from '../types/quiz';
+import { Question, QuizMode, QuizModeId, ExamDifficulty } from '../types/quiz';
+import { selectMixedQuestions } from './mixedExam';
 
 /** Base bank + expansion packs. Existing questions.json is never trimmed. */
 export const ALL_QUESTIONS: Question[] = [
@@ -109,20 +110,30 @@ export const QUIZ_MODES: QuizMode[] = [
   },
 ];
 
+/** Strict level filter: unlabelled/basic questions are not beginner. */
+export function filterExamDifficulty(questions: readonly Question[], difficulty: ExamDifficulty): Question[] {
+  return questions.filter(q => difficulty === 'mixed' || q.difficulty === 'beginner');
+}
+
+export function getExamPool(modeId: QuizModeId, difficulty: ExamDifficulty): Question[] {
+  return filterExamDifficulty(ALL_QUESTIONS, difficulty).filter(q =>
+    modeId === 'mixed' ? difficulty === 'beginner' || q.group !== 'visual-l1' : q.group === modeId);
+}
+
 export function getRandomQuestions(
   modeId: QuizModeId,
-  count: number = 10
+  count: number = 10,
+  random: () => number = Math.random,
+  difficulty: ExamDifficulty = 'mixed'
 ): Question[] {
-  let pool = ALL_QUESTIONS;
-  if (modeId === 'mixed') {
-    pool = ALL_QUESTIONS.filter((q) => q.group !== 'visual-l1');
-  } else {
-    pool = ALL_QUESTIONS.filter((q) => q.group === modeId);
-  }
+  // Preserve the existing all-level mixed quotas. Beginner pools have their own
+  // strict sample: photo/group quotas must never pull in a different difficulty.
+  if (difficulty === 'mixed' && modeId === 'mixed' && count === 10) return selectMixedQuestions(ALL_QUESTIONS, random);
+  const pool = getExamPool(modeId, difficulty);
 
-  const shuffled = [...pool];
+  const shuffled = [...new Map(pool.map(q => [q.id, q])).values()];
   for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
+    const j = Math.floor(random() * (i + 1));
     [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
   }
 

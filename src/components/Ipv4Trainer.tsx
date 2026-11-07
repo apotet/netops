@@ -366,16 +366,16 @@ export const Ipv4Trainer: React.FC<Ipv4TrainerProps> = ({
   const calcResult = subnetCalc(calcIp, calcPrefix);
 
   return (
-    <div className="space-y-6">
+    <div className="font-sans space-y-6">
       {/* Header Banner */}
       <div className="p-6 sm:p-8 rounded-3xl glass-panel border border-cyan-500/20 shadow-2xl relative overflow-hidden">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/20 border border-cyan-400/40 text-cyan-300 text-xs font-mono font-bold uppercase tracking-wider mb-2">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/20 border border-cyan-400/40 text-cyan-300 text-xs font-sans font-bold uppercase tracking-wider mb-2">
               <Calculator className="w-3.5 h-3.5" />
               IPv4 без магии · Считаем подсети в уме
             </div>
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black text-white tracking-tight">
+            <h1 className="text-2xl sm:text-3xl text-white tracking-tight font-sans font-bold">
               Интерактивный тренажёр IPv4 и CIDR
             </h1>
             <p className="text-xs sm:text-sm text-slate-300 mt-1 max-w-2xl leading-relaxed">
@@ -434,13 +434,45 @@ export const Ipv4Trainer: React.FC<Ipv4TrainerProps> = ({
         </div>
       </div>
 
+      <div className="rounded-2xl border border-slate-200 dark:border-cyan-500/20 bg-white dark:bg-slate-900/40 p-5 sm:p-6">
+        <p className="text-xs font-bold tracking-widest text-cyan-400 uppercase">Смысл перед счётом</p>
+        <h2 className="text-xl sm:text-2xl text-slate-900 dark:text-white mt-1 font-sans font-bold">IPv4 — это 32 бита, не четыре случайных числа</h2>
+        <p className="text-sm text-slate-600 dark:text-slate-300 mt-2">Адрес <span className="font-mono">192.168.1.10</span> — четыре октета. Каждый октет — 8 бит, от 0 до 255. Маска говорит, какие биты относятся к сети, а какие к хосту.</p>
+        <div className="mt-4 border-l-4 border-amber-400 bg-slate-50 dark:bg-slate-950/60 px-4 py-3 text-sm text-slate-700 dark:text-slate-200">
+          <strong className="text-amber-500">Главная мысль:</strong> /24 и 255.255.255.0 — одна и та же граница. Единицы в маске всегда идут подряд слева. Поэтому 255.255.255.224 это /27, а не «случайный набор бит».
+        </div>
+      </div>
+
+      <div className="grid md:grid-cols-2 gap-3">
+        <section className="rounded-2xl border border-slate-200 dark:border-slate-700/80 bg-white dark:bg-slate-900/40 p-4 space-y-2">
+          <h2 className="text-slate-900 dark:text-white font-sans font-bold">1. Где сеть, где хост</h2>
+          <p className="text-sm text-slate-600 dark:text-slate-300">/24 значит: первые 24 бита сеть, последние 8 — хосты. В <span className="font-mono">10.1.1.0/24</span> меняется только последний октет: 10.1.1.0 — сеть, 10.1.1.255 — broadcast, хостам отдают 1–254.</p>
+          <p className="text-sm text-slate-600 dark:text-slate-300">Адрес сети и broadcast не выдают устройствам. Поэтому usable = 2<sup>host bits</sup> − 2.</p>
+        </section>
+        <section className="rounded-2xl border border-slate-200 dark:border-slate-700/80 bg-white dark:bg-slate-900/40 p-4 space-y-2">
+          <h2 className="text-slate-900 dark:text-white font-sans font-bold">2. Шаг сети</h2>
+          <p className="text-sm text-slate-600 dark:text-slate-300">Шаг = 256 − последний ненулевой октет маски. /27 → 255.255.255.224 → 256 − 224 = 32. Сети: 0, 32, 64, 96…</p>
+          <p className="text-sm text-slate-600 dark:text-slate-300">Адрес 10.0.0.50/27 лежит в сети 10.0.0.32. Следующая сеть начинается с 64. Broadcast этой сети — 63.</p>
+        </section>
+        <section className="rounded-2xl border border-slate-200 dark:border-slate-700/80 bg-white dark:bg-slate-900/40 p-4 space-y-2">
+          <h2 className="text-slate-900 dark:text-white font-sans font-bold">3. Зачем резать сеть</h2>
+          <p className="text-sm text-slate-600 dark:text-slate-300">Меньший префикс — больше хостов и больше broadcast-домен. /24 на 200 устройств нормально. /16 на офис — нет: лишний шум и сложнее локализовать проблему.</p>
+          <p className="text-sm text-slate-600 dark:text-slate-300">Между VLAN нужен маршрутизатор. Коммутатор сам по себе пакет из одной подсети в другую не переведёт.</p>
+        </section>
+        <section className="rounded-2xl border border-slate-200 dark:border-slate-700/80 bg-white dark:bg-slate-900/40 p-4 space-y-2">
+          <h2 className="text-slate-900 dark:text-white font-sans font-bold">4. Что проверять руками</h2>
+          <p className="text-sm text-slate-600 dark:text-slate-300">Сначала: адрес сети, broadcast, шлюз в той же подсети. Потом: маска на обоих концах совпадает. Если хосты «в одной сети» по IP, но маски разные, они не увидят друг друга напрямую.</p>
+          <p className="text-sm text-slate-600 dark:text-slate-300">Частные диапазоны: 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16. В интернет их выпускают через NAT.</p>
+        </section>
+      </div>
+
       {/* Sub-tab 1: Interactive Practice Trainer */}
       {subTab === 'practice' && (
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           {/* Practice Modes Sidebar */}
           <div className="lg:col-span-4 space-y-3">
             <div className="p-4 rounded-2xl glass-panel border border-cyan-500/20 shadow-xl space-y-3">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400">
+              <h3 className="text-xs uppercase tracking-wider text-slate-400 font-sans font-bold">
                 1. Базовые навыки и границы
               </h3>
               <div className="grid grid-cols-1 gap-1.5">
@@ -466,7 +498,7 @@ export const Ipv4Trainer: React.FC<Ipv4TrainerProps> = ({
                 ))}
               </div>
 
-              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 pt-2 border-t border-slate-800">
+              <h3 className="text-xs uppercase tracking-wider text-slate-400 pt-2 border-t border-slate-800 font-sans font-bold">
                 2. Практика хостов и доставка
               </h3>
               <div className="grid grid-cols-1 gap-1.5">
@@ -493,7 +525,7 @@ export const Ipv4Trainer: React.FC<Ipv4TrainerProps> = ({
             </div>
 
             {/* Score Tracker */}
-            <div className="p-4 rounded-2xl bg-slate-900/70 border border-slate-800 flex items-center justify-between text-xs font-mono">
+            <div className="p-4 rounded-2xl bg-slate-900/70 border border-slate-800 flex items-center justify-between text-xs font-sans font-bold">
               <div>
                 <span className="text-slate-400 block text-[10px] uppercase">Текущий раунд</span>
                 <span className="text-white font-bold text-sm">Задание #{roundNumber}</span>
@@ -510,20 +542,20 @@ export const Ipv4Trainer: React.FC<Ipv4TrainerProps> = ({
             {currentTask ? (
               <>
                 <div className="flex items-center justify-between">
-                  <span className="px-3 py-1 rounded-lg bg-cyan-950/70 border border-cyan-500/30 text-cyan-300 text-xs font-mono font-bold">
+                  <span className="px-3 py-1 rounded-lg bg-cyan-950/70 border border-cyan-500/30 text-cyan-300 text-xs font-sans font-bold">
                     Навык: {practiceMode}
                   </span>
-                  <span className="text-xs text-slate-400 font-mono">
+                  <span className="text-xs text-slate-400 font-sans font-bold">
                     Задание {roundNumber}
                   </span>
                 </div>
 
-                <h2 className="text-lg sm:text-xl font-black text-white leading-relaxed">
+                <h2 className="text-lg sm:text-xl text-white leading-relaxed font-sans font-bold">
                   {currentTask.question}
                 </h2>
 
                 {currentTask.hint && (
-                  <p className="text-xs text-amber-300 font-mono bg-amber-950/20 p-2.5 rounded-xl border border-amber-500/20">
+                  <p className="text-xs text-amber-300 font-sans bg-amber-950/20 p-2.5 rounded-xl border border-amber-500/20">
                     💡 Подсказка: {currentTask.hint}
                   </p>
                 )}
@@ -552,7 +584,7 @@ export const Ipv4Trainer: React.FC<Ipv4TrainerProps> = ({
                         type="button"
                         className={`p-4 rounded-2xl text-left border transition-all cursor-pointer min-h-[58px] flex items-center justify-between ${btnClass}`}
                       >
-                        <span className="font-mono text-xs sm:text-sm">{opt}</span>
+                        <span className={`text-xs sm:text-sm ${practiceMode === 'same-subnet' || practiceMode === 'gateway-or-direct' || practiceMode === 'step' ? 'font-sans' : 'font-mono'}`}>{opt}</span>
                         {isAnswered && isTargetCorrect && (
                           <CheckCircle2 className="w-5 h-5 text-emerald-400 flex-shrink-0" />
                         )}
@@ -590,7 +622,7 @@ export const Ipv4Trainer: React.FC<Ipv4TrainerProps> = ({
                       {currentTask.explanation}
                     </p>
                     {currentTask.stepFormula && (
-                      <div className="mt-2 p-2 rounded-lg bg-black/40 font-mono text-cyan-300 text-xs">
+                      <div className="mt-2 p-2 rounded-lg bg-black/40 font-sans text-cyan-300 text-xs">
                         {currentTask.stepFormula}
                       </div>
                     )}
@@ -629,7 +661,7 @@ export const Ipv4Trainer: React.FC<Ipv4TrainerProps> = ({
       {subTab === 'calculator' && (
         <div className="p-6 sm:p-8 rounded-3xl glass-panel border border-cyan-500/20 shadow-2xl space-y-6">
           <div>
-            <h2 className="text-xl font-bold text-white flex items-center gap-2">
+            <h2 className="text-xl text-white flex items-center gap-2 font-sans font-bold">
               <Calculator className="w-5 h-5 text-cyan-400" />
               Интерактивный калькулятор подсетей IPv4
             </h2>
@@ -664,7 +696,7 @@ export const Ipv4Trainer: React.FC<Ipv4TrainerProps> = ({
                 onChange={(e) => setCalcPrefix(Number(e.target.value))}
                 className="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-cyan-400 mt-3"
               />
-              <div className="flex justify-between text-[10px] text-slate-500 font-mono mt-1">
+              <div className="flex justify-between text-[10px] text-slate-500 font-sans font-bold mt-1">
                 <span>/8 (Class A)</span>
                 <span>/16 (Class B)</span>
                 <span>/24 (Class C)</span>
@@ -674,40 +706,40 @@ export const Ipv4Trainer: React.FC<Ipv4TrainerProps> = ({
           </div>
 
           {/* Detailed Subnet Breakdown Card */}
-          <div className="p-5 rounded-2xl bg-[#060f1b] border border-cyan-500/30 space-y-4 font-mono text-xs">
+          <div className="p-5 rounded-2xl bg-[#060f1b] border border-cyan-500/30 space-y-4 font-sans text-xs">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               <div className="p-3 rounded-xl bg-slate-900/60 border border-slate-800">
-                <span className="text-slate-500 text-[10px] uppercase block">Адрес сети (Network)</span>
-                <span className="text-cyan-300 font-bold text-sm">{calcResult.network}</span>
+                <span className="text-slate-500 text-[10px] uppercase block font-bold">Адрес сети (Network)</span>
+                <span className="text-cyan-300 font-bold text-sm font-mono">{calcResult.network}</span>
               </div>
 
               <div className="p-3 rounded-xl bg-slate-900/60 border border-slate-800">
-                <span className="text-slate-500 text-[10px] uppercase block">Broadcast адрес</span>
-                <span className="text-rose-300 font-bold text-sm">{calcResult.broadcast}</span>
+                <span className="text-slate-500 text-[10px] uppercase block font-bold">Broadcast адрес</span>
+                <span className="text-rose-300 font-bold text-sm font-mono">{calcResult.broadcast}</span>
               </div>
 
               <div className="p-3 rounded-xl bg-slate-900/60 border border-slate-800">
-                <span className="text-slate-500 text-[10px] uppercase block">Маска подсети</span>
-                <span className="text-white font-bold text-sm">{calcResult.mask}</span>
+                <span className="text-slate-500 text-[10px] uppercase block font-bold">Маска подсети</span>
+                <span className="text-white font-bold text-sm font-mono">{calcResult.mask}</span>
               </div>
 
               <div className="p-3 rounded-xl bg-slate-900/60 border border-slate-800">
-                <span className="text-slate-500 text-[10px] uppercase block">Диапазон хостов</span>
-                <span className="text-emerald-300 font-bold text-xs">
+                <span className="text-slate-500 text-[10px] uppercase block font-bold">Диапазон хостов</span>
+                <span className="text-emerald-300 font-bold text-xs font-mono">
                   {calcResult.first} — {calcResult.last}
                 </span>
               </div>
 
               <div className="p-3 rounded-xl bg-slate-900/60 border border-slate-800">
-                <span className="text-slate-500 text-[10px] uppercase block">Всего адресов / Хостов</span>
+                <span className="text-slate-500 text-[10px] uppercase block font-bold">Всего адресов / Хостов</span>
                 <span className="text-purple-300 font-bold text-sm">
                   {calcResult.total} ({calcResult.usable} для хостов)
                 </span>
               </div>
 
               <div className="p-3 rounded-xl bg-slate-900/60 border border-slate-800">
-                <span className="text-slate-500 text-[10px] uppercase block">Инверсная маска (Wildcard)</span>
-                <span className="text-amber-300 font-bold text-sm">{calcResult.wildcard}</span>
+                <span className="text-slate-500 text-[10px] uppercase block font-bold">Инверсная маска (Wildcard)</span>
+                <span className="text-amber-300 font-bold text-sm font-mono">{calcResult.wildcard}</span>
               </div>
             </div>
           </div>
@@ -718,10 +750,10 @@ export const Ipv4Trainer: React.FC<Ipv4TrainerProps> = ({
       {subTab === 'bits' && (
         <div className="p-6 sm:p-8 rounded-3xl glass-panel border border-cyan-500/20 shadow-2xl space-y-6">
           <div>
-            <span className="text-xs font-mono font-bold uppercase tracking-wider text-cyan-400">
+            <span className="text-xs font-sans font-bold uppercase tracking-wider text-cyan-400">
               Пойми один октет маски
             </span>
-            <h2 className="text-xl font-bold text-white mt-1">
+            <h2 className="text-xl text-white mt-1 font-sans font-bold">
               8 Битов и веса позиций: 128, 64, 32, 16, 8, 4, 2, 1
             </h2>
             <p className="text-xs text-slate-400 mt-1">
@@ -746,7 +778,7 @@ export const Ipv4Trainer: React.FC<Ipv4TrainerProps> = ({
                     onClick={() => toggleBit(idx)}
                     type="button"
                     title={`Бит веса ${bitWeights[idx]}: кликните для установки маски до этой позиции`}
-                    className={`w-full aspect-square rounded-xl flex items-center justify-center font-mono font-black text-base sm:text-xl border transition-all cursor-pointer ${
+                    className={`w-full aspect-square rounded-xl flex items-center justify-center font-mono font-bold text-base sm:text-xl border transition-all cursor-pointer ${
                       b === 1
                         ? 'bg-cyan-500 border-cyan-300 text-slate-950 shadow-lg shadow-cyan-500/30 scale-105'
                         : 'bg-slate-900 border-slate-700 text-slate-500 hover:border-slate-500'
@@ -762,7 +794,7 @@ export const Ipv4Trainer: React.FC<Ipv4TrainerProps> = ({
             {/* Decimal sum & Network step */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 max-w-xl mx-auto text-center pt-2">
               <div className="p-3 rounded-xl bg-slate-900/60 border border-slate-800">
-                <span className="text-[10px] text-slate-400 uppercase tracking-wider block">Двоичный октет</span>
+                <span className="text-[10px] text-slate-400 uppercase tracking-wider block font-bold">Двоичный октет</span>
                 <code className="text-cyan-400 font-mono font-bold text-sm tracking-widest">{bits.join('')}</code>
                 <span className="text-[10px] text-slate-500 block mt-0.5">
                   {bits.filter((x) => x === 1).length} из 8 бит
@@ -770,13 +802,13 @@ export const Ipv4Trainer: React.FC<Ipv4TrainerProps> = ({
               </div>
 
               <div className="p-3 rounded-xl bg-slate-900/60 border border-cyan-500/30">
-                <span className="text-[10px] text-slate-400 uppercase tracking-wider block">Десятичный октет</span>
-                <div className="text-2xl font-black text-white font-mono">{decimalValue}</div>
-                <span className="text-[10px] text-cyan-300 block mt-0.5">Значение маски</span>
+                <span className="text-[10px] text-slate-400 uppercase tracking-wider block font-bold">Десятичный октет</span>
+                <div className="text-2xl font-bold text-white font-mono">{decimalValue}</div>
+                <span className="text-[10px] text-cyan-300 block mt-0.5 font-bold">Значение маски</span>
               </div>
 
               <div className="p-3 rounded-xl bg-slate-900/60 border border-slate-800">
-                <span className="text-[10px] text-slate-400 uppercase tracking-wider block">Шаг подсети</span>
+                <span className="text-[10px] text-slate-400 uppercase tracking-wider block font-bold">Шаг подсети</span>
                 <div className="text-xl font-bold text-amber-300 font-mono">
                   {decimalValue === 0 ? 256 : decimalValue === 255 ? 1 : 256 - decimalValue}
                 </div>
@@ -786,7 +818,7 @@ export const Ipv4Trainer: React.FC<Ipv4TrainerProps> = ({
 
             {/* Preset chips */}
             <div className="flex flex-wrap justify-center gap-1.5 pt-2 border-t border-slate-800">
-              <span className="text-xs text-slate-400 self-center mr-1">Быстрые маски:</span>
+              <span className="text-xs text-slate-400 self-center mr-1 font-bold">Быстрые маски:</span>
               {[
                 { count: 0, val: 0 },
                 { count: 1, val: 128 },
@@ -822,19 +854,19 @@ export const Ipv4Trainer: React.FC<Ipv4TrainerProps> = ({
       {/* Sub-tab 4: CIDR Reference Table */}
       {subTab === 'cheatsheet' && (
         <div className="p-4 sm:p-8 rounded-3xl bg-white dark:bg-[#091524] border border-slate-200 dark:border-cyan-500/20 shadow-xl space-y-4">
-          <h2 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
+          <h2 className="text-lg sm:text-xl text-slate-900 dark:text-white flex items-center gap-2 font-sans font-bold">
             <BookOpen className="w-5 h-5 text-cyan-600 dark:text-cyan-400" />
             Справочная таблица префиксов CIDR от /16 до /30
           </h2>
           <div className="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-800">
-            <table className="w-full text-left font-mono text-xs">
+            <table className="w-full text-left font-sans text-xs">
               <thead className="bg-slate-100 dark:bg-slate-900/80 text-cyan-700 dark:text-cyan-400 uppercase text-[10px]">
                 <tr>
-                  <th className="p-2.5 sm:p-3">CIDR</th>
-                  <th className="p-2.5 sm:p-3">Маска</th>
-                  <th className="p-2.5 sm:p-3">Октет & Шаг</th>
-                  <th className="p-2.5 sm:p-3">Всего IP</th>
-                  <th className="p-2.5 sm:p-3">Хостов</th>
+                  <th className="p-2.5 sm:p-3 font-bold">CIDR</th>
+                  <th className="p-2.5 sm:p-3 font-bold">Маска</th>
+                  <th className="p-2.5 sm:p-3 font-bold">Октет & Шаг</th>
+                  <th className="p-2.5 sm:p-3 font-bold">Всего IP</th>
+                  <th className="p-2.5 sm:p-3 font-bold">Хостов</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
@@ -844,8 +876,8 @@ export const Ipv4Trainer: React.FC<Ipv4TrainerProps> = ({
                   const usable = total - 2;
                   return (
                     <tr key={p} className="hover:bg-slate-50 dark:hover:bg-slate-900/40 text-slate-700 dark:text-slate-300">
-                      <td className="p-2.5 sm:p-3 font-bold text-slate-900 dark:text-white">/{p}</td>
-                      <td className="p-2.5 sm:p-3 text-cyan-700 dark:text-cyan-300 font-semibold">{maskText(p)}</td>
+                      <td className="p-2.5 sm:p-3 font-bold text-slate-900 dark:text-white font-mono">/{p}</td>
+                      <td className="p-2.5 sm:p-3 text-cyan-700 dark:text-cyan-300 font-bold font-mono">{maskText(p)}</td>
                       <td className="p-2.5 sm:p-3 text-amber-700 dark:text-amber-300">
                         Шаг {step.step} в {step.octet}-м октете
                       </td>

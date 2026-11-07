@@ -2,6 +2,8 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { ALL_QUESTIONS, TOTAL_QUESTION_COUNT, resolveImageUrl } from '../data/questionsData';
 import { getQuestionDeepDive } from '../data/questionExplanations';
 import { getLessonForQuestion } from '../data/lessons';
+import { StudyTextToggle } from './StudyTextToggle';
+import { useStudyTextMode } from '../utils/studyTextMode';
 import { ZoomableImage } from './ZoomableImage';
 import {
   BookOpen,
@@ -20,6 +22,7 @@ interface Props {
   initialQuestionId?: string | null;
   fromExam?: boolean;
   onReturnToExam?: () => void;
+  onNavigateToIpv6: () => void;
   onNavigateToIpv4: (prefix?: number, mode?: 'calc' | 'trainer') => void;
   onClearInitialQuestion?: () => void;
   onOpenLesson?: (lessonId: string, fromQuestionId?: string) => void;
@@ -30,9 +33,11 @@ export const TheoryRazbory: React.FC<Props> = ({
   fromExam,
   onReturnToExam,
   onNavigateToIpv4,
+  onNavigateToIpv6,
   onClearInitialQuestion,
   onOpenLesson,
 }) => {
+  const [textMode, setTextMode] = useStudyTextMode();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [expandedQuestions, setExpandedQuestions] = useState<Record<string, boolean>>({});
@@ -88,6 +93,11 @@ export const TheoryRazbory: React.FC<Props> = ({
     const q = ALL_QUESTIONS.find((item) => item.id === qId);
     if (!q) return null;
     const deep = getQuestionDeepDive(q);
+    const professional = textMode === 'professional' ? deep.professional : undefined;
+    const brief = professional?.brief ?? deep.briefAnswer;
+    const engineering = professional?.deep ?? deep.engineeringDeep ?? deep.deepAnalysis;
+    const trap = professional ? professional.trap : deep.commonTrap;
+    const nextStudy = professional ? professional.next : deep.nextStudy;
     const correctSet = new Set(q.correct);
     const showEngineering = !!deepOpen[qId];
     const isAdvanced = q.difficulty === 'advanced' || deep.hasIndividualDeep;
@@ -101,7 +111,7 @@ export const TheoryRazbory: React.FC<Props> = ({
         )}
 
         <div className="space-y-2">
-          <div className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 font-mono">Варианты ответов</div>
+          <div className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 font-sans">Варианты ответов</div>
           {q.answers.map((ans, idx) => {
             const ok = correctSet.has(idx);
             return (
@@ -126,17 +136,17 @@ export const TheoryRazbory: React.FC<Props> = ({
 
         <div className="p-4 rounded-xl border border-cyan-500/30 bg-cyan-50/80 dark:bg-cyan-950/30 space-y-1.5">
           <div className="flex flex-wrap items-center gap-2">
-            <div className="text-[11px] font-bold uppercase tracking-wider text-cyan-700 dark:text-cyan-300 font-mono">
+            <div className="text-[11px] font-bold uppercase tracking-wider text-cyan-700 dark:text-cyan-300 font-sans">
               Краткий ответ
             </div>
             {q.difficulty && (
-              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full border border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-300">
+              <span className="text-[10px] font-sans font-bold px-2 py-0.5 rounded-full border border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-300">
                 {q.difficulty === 'beginner' ? 'basic' : q.difficulty}
               </span>
             )}
           </div>
           <p className="text-sm text-slate-800 dark:text-slate-200 leading-relaxed whitespace-pre-line break-words">
-            {deep.briefAnswer}
+            {brief}
           </p>
         </div>
 
@@ -147,7 +157,7 @@ export const TheoryRazbory: React.FC<Props> = ({
               onClick={() => setDeepOpen((prev) => ({ ...prev, [qId]: !prev[qId] }))}
               className="w-full px-4 py-3 flex items-center justify-between gap-2 text-left cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/40"
             >
-              <span className="inline-flex items-center gap-2 text-sm font-semibold text-slate-800 dark:text-slate-100">
+              <span className="inline-flex items-center gap-2 text-sm font-bold text-slate-800 dark:text-slate-100">
                 <BookOpen className="w-4 h-4 text-cyan-500 shrink-0" />
                 {isAdvanced ? 'Инженерный разбор' : 'Подробный разбор'}
               </span>
@@ -159,17 +169,19 @@ export const TheoryRazbory: React.FC<Props> = ({
             </button>
             {showEngineering && (
               <div className="px-4 pb-4 space-y-3 border-t border-slate-200 dark:border-slate-800">
+                {deep.professional && <StudyTextToggle value={textMode} onChange={setTextMode} />}
+                {professional?.notice && <p className="text-xs text-amber-700 dark:text-amber-300">{professional.notice}</p>}
                 <p className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-line break-words pt-3">
-                  {deep.engineeringDeep || deep.deepAnalysis}
+                  {engineering}
                 </p>
-                {deep.nextStudy && (
-                  <p className="text-xs text-slate-500 dark:text-slate-400">Дальше: {deep.nextStudy}</p>
+                {nextStudy && (
+                  <p className="text-xs text-slate-500 dark:text-slate-400">Дальше: {nextStudy}</p>
                 )}
                 {onOpenLesson && getLessonForQuestion(q.id) && (
                   <button
                     type="button"
                     onClick={() => onOpenLesson(getLessonForQuestion(q.id)!.id, q.id)}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-cyan-500 text-slate-950 cursor-pointer"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-cyan-500 text-slate-950 cursor-pointer"
                   >
                     Изучить тему подробно
                   </button>
@@ -179,18 +191,18 @@ export const TheoryRazbory: React.FC<Props> = ({
           </div>
         )}
 
-        {deep.commonTrap && (
+        {trap && (
           <div className="p-4 rounded-xl border border-amber-500/40 bg-amber-50 dark:bg-amber-950/30 space-y-1.5">
-            <div className="text-[11px] font-bold uppercase tracking-wider text-amber-700 dark:text-amber-300 font-mono flex items-center gap-1.5">
+            <div className="text-[11px] font-bold uppercase tracking-wider text-amber-700 dark:text-amber-300 font-sans flex items-center gap-1.5">
               <AlertTriangle className="w-3.5 h-3.5" /> Типичная ошибка
             </div>
-            <p className="text-sm text-amber-900 dark:text-amber-100/90 leading-relaxed break-words">{deep.commonTrap}</p>
+            <p className="text-sm text-amber-900 dark:text-amber-100/90 leading-relaxed break-words">{trap}</p>
           </div>
         )}
 
         {deep.practicalTip && (
           <div className="p-4 rounded-xl border border-emerald-500/30 bg-emerald-50 dark:bg-emerald-950/20 space-y-1.5">
-            <div className="text-[11px] font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-300 font-mono flex items-center gap-1.5">
+            <div className="text-[11px] font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-300 font-sans flex items-center gap-1.5">
               <Lightbulb className="w-3.5 h-3.5" /> Практика
             </div>
             <p className="text-sm text-emerald-900 dark:text-emerald-100/90 leading-relaxed break-words">{deep.practicalTip}</p>
@@ -199,11 +211,11 @@ export const TheoryRazbory: React.FC<Props> = ({
 
         {deep.keyTakeaways?.length > 0 && (
           <div className="p-4 rounded-xl border border-slate-200 dark:border-slate-700 space-y-2">
-            <div className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 font-mono">Запомнить</div>
+            <div className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 font-sans">Запомнить</div>
             <ul className="space-y-1.5">
               {deep.keyTakeaways.map((tip, i) => (
                 <li key={i} className="text-sm text-slate-700 dark:text-slate-300 flex gap-2 min-w-0">
-                  <span className="text-cyan-500 font-mono text-xs mt-0.5 shrink-0">{i + 1}.</span>
+                  <span className="text-cyan-500 font-sans text-xs mt-0.5 shrink-0">{i + 1}.</span>
                   <span className="break-words">{tip}</span>
                 </li>
               ))}
@@ -218,6 +230,15 @@ export const TheoryRazbory: React.FC<Props> = ({
             className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-cyan-500 text-slate-950 text-sm font-bold cursor-pointer"
           >
             Открыть IPv4-тренажёр
+          </button>
+        )}
+        {deep.ipv6Practice?.enabled && (
+          <button
+            type="button"
+            onClick={onNavigateToIpv6}
+            className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-cyan-500 text-slate-950 text-sm font-bold cursor-pointer"
+          >
+            Открыть IPv6-тренажёр
           </button>
         )}
       </div>
@@ -237,7 +258,7 @@ export const TheoryRazbory: React.FC<Props> = ({
   ];
 
   return (
-    <div className="space-y-5 max-w-3xl mx-auto max-w-full overflow-x-hidden">
+    <div className="font-sans space-y-5 max-w-3xl mx-auto max-w-full overflow-x-hidden">
       {focusedQuestion && (
         <div
           ref={targetCardRef}
@@ -245,10 +266,10 @@ export const TheoryRazbory: React.FC<Props> = ({
         >
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div className="space-y-1 min-w-0">
-              <div className="text-[11px] font-mono text-cyan-700 dark:text-cyan-300">
+              <div className="text-[11px] font-sans font-bold text-cyan-700 dark:text-cyan-300">
                 #{focusedQuestion.id} · {focusedQuestion.topic}
               </div>
-              <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white leading-relaxed break-words">
+              <h2 className="text-base sm:text-lg text-slate-900 dark:text-white leading-relaxed break-words font-sans font-bold">
                 {focusedQuestion.text}
               </h2>
             </div>
@@ -270,7 +291,7 @@ export const TheoryRazbory: React.FC<Props> = ({
                     setSelectedCategory('all');
                     setSearchQuery('');
                   }}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 cursor-pointer"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 cursor-pointer"
                 >
                   <ArrowLeft className="w-3.5 h-3.5" /> К каталогу
                 </button>
@@ -308,7 +329,7 @@ export const TheoryRazbory: React.FC<Props> = ({
                 key={c.id}
                 type="button"
                 onClick={() => setSelectedCategory(c.id)}
-                className={`px-2.5 py-1.5 rounded-lg text-xs font-semibold cursor-pointer transition-colors ${
+                className={`px-2.5 py-1.5 rounded-lg text-xs font-bold cursor-pointer transition-colors ${
                   selectedCategory === c.id
                     ? 'bg-cyan-500 text-slate-950'
                     : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
@@ -318,7 +339,7 @@ export const TheoryRazbory: React.FC<Props> = ({
               </button>
             ))}
           </div>
-          <div className="text-xs text-slate-500 dark:text-slate-400 font-mono">
+          <div className="text-xs text-slate-500 dark:text-slate-400 font-sans font-bold">
             Банк: {TOTAL_QUESTION_COUNT} · найдено: {filteredQuestions.length}
           </div>
           <div className="space-y-2">
@@ -335,11 +356,11 @@ export const TheoryRazbory: React.FC<Props> = ({
                     className="w-full text-left px-4 py-3 flex items-start gap-3 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/40"
                   >
                     <div className="min-w-0 flex-1">
-                      <div className="text-[10px] font-mono text-slate-400 mb-0.5">
+                      <div className="text-[10px] font-sans font-bold text-slate-400 mb-0.5">
                         #{q.id} · {q.topic}
                         {q.difficulty ? ` · ${q.difficulty}` : ''}
                       </div>
-                      <div className="text-sm font-medium text-slate-900 dark:text-slate-100 leading-snug break-words">
+                      <div className="text-sm font-bold text-slate-900 dark:text-slate-100 leading-snug break-words">
                         {q.text}
                       </div>
                     </div>

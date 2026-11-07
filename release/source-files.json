@@ -1,6 +1,6 @@
 {
   "upstream": "apotet/my-gemini-mirror-site",
-  "source_sha": "09c715ed1780d56374498df9a6b393f47bca4202",
+  "source_sha": "f51888882309184e3d3a97204687f54a363d42fb",
   "files": [
     {
       "path": ".gitignore",
@@ -35,8 +35,16 @@
       "sha": "9f090483d8726178841baf48d4f23c8502eb12c7"
     },
     {
+      "path": "scripts/answer-shuffle.test.mjs",
+      "sha": "d241db2766b7c85cb6c1b66961199ff25cbbd990"
+    },
+    {
       "path": "scripts/bank-entry.ts",
       "sha": "cc4c0932a4175eb8b39399eaf5f315acbfad282e"
+    },
+    {
+      "path": "scripts/base-exam.test.mjs",
+      "sha": "b6b98877d8d6aae8437e2c5b5e78366a58246848"
     },
     {
       "path": "scripts/coverage-report.mjs",
@@ -47,12 +55,40 @@
       "sha": "918a7223ab287a573185116f1bbe79685568a6a9"
     },
     {
+      "path": "scripts/glossary.test.mjs",
+      "sha": "6dbb8fd452a035304ee48dde51e83d928f87ee35"
+    },
+    {
       "path": "scripts/load-bank.mjs",
       "sha": "4a8531a95ee98e92e32d035f8f7f2b84b3a1b5e5"
     },
     {
+      "path": "scripts/mixed-exam.test.mjs",
+      "sha": "3c0b3a6783b9ba8fc3257e7080dade1f71d94266"
+    },
+    {
+      "path": "scripts/progress-entry.ts",
+      "sha": "e546c5b2d01c45366bc0bfc547097eb40799bd5e"
+    },
+    {
+      "path": "scripts/progress.test.mjs",
+      "sha": "d6dcd9c7deebbab5878a058eb8c51605ebe8030f"
+    },
+    {
       "path": "scripts/quiz-logic.test.mjs",
-      "sha": "082d681e102894757220facc3815f91379c37e40"
+      "sha": "18022b796bd32684ed55b3507dcb65989823a653"
+    },
+    {
+      "path": "scripts/review-entry.ts",
+      "sha": "a04d672cdee2043bad78559fff58118b910b81a6"
+    },
+    {
+      "path": "scripts/review.test.mjs",
+      "sha": "fe4d997d21e5d7e37b919c6f36804b90ab5a3b13"
+    },
+    {
+      "path": "scripts/study-text.test.mjs",
+      "sha": "9f5e3f3a6524a15f505d87b77db35189cb422110"
     },
     {
       "path": "scripts/validate-questions.mjs",
@@ -60,7 +96,7 @@
     },
     {
       "path": "src/App.tsx",
-      "sha": "a65bb88f9e5edcd88a4a9e91a2dd403634c6b8ae"
+      "sha": "0f22d132aa0797f5ffd0f5beafc07e36874ee863"
     },
     {
       "path": "src/cli-lab/CliLabShell.tsx",
@@ -119,36 +155,56 @@
       "sha": "b0082bf61343abf011be59ef2638ae3d4f58a7eb"
     },
     {
+      "path": "src/components/ExamReview.css",
+      "sha": "6aff79adaf671fa748237df93eb7da461f0712ba"
+    },
+    {
+      "path": "src/components/ExamReview.tsx",
+      "sha": "a83071fac0a6b1678890577ee811ce8cb808ae4c"
+    },
+    {
       "path": "src/components/ExamView.tsx",
-      "sha": "4a048623933d77b1568e065e3510be1961f9f4a4"
+      "sha": "8cafaf9c157ac506cd5ca61a4283363d4c832431"
     },
     {
       "path": "src/components/Ipv4Trainer.tsx",
-      "sha": "9afd080cfd44d917d3f0a208f960df0ce555edd5"
+      "sha": "2f946e60d564d7ecb897074364ec6184866c38c6"
+    },
+    {
+      "path": "src/components/Ipv6Trainer.tsx",
+      "sha": "c25a957aa7ac9f004b08c79470b827c74f50978c"
     },
     {
       "path": "src/components/KnowledgeBase.tsx",
-      "sha": "4e97a19153b4e5b2e723a1c379dc8d721390182e"
+      "sha": "88d5ee002fd6a1b65551f8732c7acddfd3046848"
     },
     {
       "path": "src/components/KnowledgeRadar.tsx",
-      "sha": "72981c97b3dcc181aca5bd2c7326b20b62cb9897"
+      "sha": "d707d418293345816aee8b14d69bda6903906452"
+    },
+    {
+      "path": "src/components/LessonTermTags.tsx",
+      "sha": "292e91d0fd446449161c1633458f39d316894019"
     },
     {
       "path": "src/components/LessonView.tsx",
-      "sha": "3fde1a7e2f8450d36e3beea444cc134ff4c2899b"
+      "sha": "9fe4228b85bfd9d990b083985a7fc44e1503a6f5"
     },
     {
       "path": "src/components/LivingOsiStack.tsx",
-      "sha": "eb1e2d6fa42ef44bce94e56c602870ba2e5be9dd"
+      "sha": "70f47f43de54d5700a778e152c646fed5e496ad6"
     },
     {
       "path": "src/components/MobileTabBar.tsx",
-      "sha": "5bdf023ea8c661def2fbd8969f33502d03dc3c53"
+      "sha": "de66dad3521c7c813ce044c2e2142f1a914b5bc4"
     },
     {
       "path": "src/components/Navbar.tsx",
-      "sha": "247900c386a12c7584aeedf281b7494dbe1ce70e"
+      "sha": "5844e20b56a113d930fdfdc65e4b7a9ec85e3a05"
+    },
+    {
+      "path": "src/components/NetOpsLogo.tsx",
+      "sha": "7c86cbdc1dbebdbf68cca64b028346e73c2e8788"
     },
     {
       "path": "src/components/OsiExplorer.tsx",
@@ -175,8 +231,12 @@
       "sha": "7ec4b573a16f472ccb59632da8e2b1734c66adcd"
     },
     {
+      "path": "src/components/StudyTextToggle.tsx",
+      "sha": "84e19d2ca0a6d13cd56394bedb451b5204fc044a"
+    },
+    {
       "path": "src/components/TheoryCheatsheets.tsx",
-      "sha": "d0495af36d1ef891575f410cc2cb48f16bcf0299"
+      "sha": "3af0cfce456b17a7b320db32c23c64d25ee0a80e"
     },
     {
       "path": "src/components/TheoryModels.tsx",
@@ -188,11 +248,15 @@
     },
     {
       "path": "src/components/TheoryRazbory.tsx",
-      "sha": "4531034146b0549dc6e2c8d9686fbd2d96389c0a"
+      "sha": "b5fb75b794ed624777d2bd4c5e2edc041bc2d909"
+    },
+    {
+      "path": "src/components/TheoryScenarios.tsx",
+      "sha": "434e26a0f5883e7d2aed28604b14905e073ae9c2"
     },
     {
       "path": "src/components/TheoryView.tsx",
-      "sha": "1bce12a131e7b2c39fd6486427291f5991d663cf"
+      "sha": "ea8d50eb2574cf3d7c9ab3ca581eee64dcd443a5"
     },
     {
       "path": "src/components/VlanSimulator.tsx",
@@ -203,44 +267,136 @@
       "sha": "94d1630674265724e326f68e78c106832565e9e7"
     },
     {
+      "path": "src/data/glossary.ts",
+      "sha": "9b66f08982ee12edfa6f1d06afef4d99dacfc5e7"
+    },
+    {
       "path": "src/data/lessons/index.ts",
-      "sha": "cec1532874684b288acc0b19d44f21b82264316b"
+      "sha": "534046670ee36c8158a0acbc996b6c6d71fe116c"
+    },
+    {
+      "path": "src/data/lessons/l2-access-auth.ts",
+      "sha": "cc04f5a1585e7fc64d1e464d445b5a836c3cb4f5"
+    },
+    {
+      "path": "src/data/lessons/l2-access-guard.ts",
+      "sha": "6692113c8d5165f901e9ecf07e33a9283429fcc1"
+    },
+    {
+      "path": "src/data/lessons/l2-ethernet.ts",
+      "sha": "27de31e5101d2fc4ca3653cfdb4cc7fbafd99b25"
+    },
+    {
+      "path": "src/data/lessons/l2-stp.ts",
+      "sha": "3dc82d6b3646628265381621784c1760cc4d72d1"
+    },
+    {
+      "path": "src/data/lessons/l2-vlan.ts",
+      "sha": "8bd054835a7977670618b3adcd3d4b358fadd388"
+    },
+    {
+      "path": "src/data/lessons/l3-arp.ts",
+      "sha": "234f33df36a4fa6f3751210d2e1293fe4639429d"
+    },
+    {
+      "path": "src/data/lessons/l3-ipv6.ts",
+      "sha": "f1b37a6e6232eb7e3c5da97b76d44d2fcdd86847"
+    },
+    {
+      "path": "src/data/lessons/l3-nat.ts",
+      "sha": "dc5de031abd2fb63a39d5e6427f9bae7fc373194"
+    },
+    {
+      "path": "src/data/lessons/l3-ospf.ts",
+      "sha": "0e7f59082222afac98603ef38d4d21e1629891c1"
+    },
+    {
+      "path": "src/data/lessons/l3-rpki.ts",
+      "sha": "aae12a183b83cd4588bf7bbfd76f45af902fe337"
+    },
+    {
+      "path": "src/data/lessons/l3-vrrp.ts",
+      "sha": "aa484f5a3b178dfbe8dc1614b1eb75bee1b73e51"
+    },
+    {
+      "path": "src/data/lessons/l4-tcp-loss.ts",
+      "sha": "502110a553da805809c7fc0778a9d88719d0545c"
+    },
+    {
+      "path": "src/data/lessons/l4-tcp.ts",
+      "sha": "b81bf680580841684015799bcb32fa8a21537305"
+    },
+    {
+      "path": "src/data/lessons/l7-dhcp.ts",
+      "sha": "9c29d9c8ddb8fe208a270d47efb5f9a78f848651"
+    },
+    {
+      "path": "src/data/lessons/l7-dns.ts",
+      "sha": "4fa5eef190170f44c9f63827406f9e684295d97d"
+    },
+    {
+      "path": "src/data/lessons/osi-pdu.ts",
+      "sha": "cc8378fc6f78038d608e5bcf678b604ee3d92004"
+    },
+    {
+      "path": "src/data/lessons/qos-basics.ts",
+      "sha": "a807d50e9e338512f2d3563f612ae709c7a17fb9"
+    },
+    {
+      "path": "src/data/lessons/tcpip-model.ts",
+      "sha": "11a84b0c279a95d43f4689cbcd5000114f942eb3"
     },
     {
       "path": "src/data/lessons/tls-sni.ts",
-      "sha": "4f72647e1fcd1caadeb19493f41a48db800c07d4"
+      "sha": "ec998a4d5975e6a8de4d343f65cff48086f33b9a"
+    },
+    {
+      "path": "src/data/lessons/ts-copp-storm.ts",
+      "sha": "433de00f22997ff7f289a2a9a686d0cf4fd479e5"
+    },
+    {
+      "path": "src/data/lessons/ts-method.ts",
+      "sha": "30f62a2fc8dfb003c181d7f8d628182ee390d49e"
     },
     {
       "path": "src/data/lessons/types.ts",
-      "sha": "7c60c07fb8aae4365bb72bb302ecb74d1b988ca8"
+      "sha": "1954919d2eff24f51988c22b7822255fcf3d603d"
     },
     {
       "path": "src/data/levelNotes.ts",
       "sha": "d4e7fbf3ee29060b389249a719959401c772cce8"
     },
     {
+      "path": "src/data/memeTitles.ts",
+      "sha": "f6dad3534a89a32b36d26e4679d14284d363bc8e"
+    },
+    {
+      "path": "src/data/mixedExam.ts",
+      "sha": "5c908d274124700d36d1d1b4e6011fbd9a3f3347"
+    },
+    {
       "path": "src/data/questionExplanations.ts",
-      "sha": "51079adccb7b0dd419b677fe9cae617d7696d1a6"
+      "sha": "3ebe589f9e6e17ec69e12d486f3296e1ffcd210f"
     },
     {
       "path": "src/data/questionExplanationsApplied.ts",
-      "sha": "f02090c4d8c0c7a8efa9bd4cd1d805239ab00065"
+      "sha": "d9d28edeae9c99e12aa2fc78e3a7a43b39c1afb5"
     },
     {
       "path": "src/data/questions.json",
-      "sha": "53c9167378e8a27b1386ad521f60d7fb5af125c0"
+      "sha": "7adaf1cf6f7dca265fb04719299767974265ccd9"
     },
     {
       "path": "src/data/questionsData.ts",
-      "sha": "58c9ef113dbd1e1b849375f20d3cc0c5bdc8ee22"
+      "sha": "1581201dfd33e9a9f352e8075265b07f25b5a721"
     },
     {
       "path": "src/data/questionsExtra.ts",
-      "sha": "4bbb63d25f61505bfd35182a4731942d9dd2a743"
+      "sha": "9ee199e53d0f3e9ec63262069776779dedad2f7f"
     },
     {
       "path": "src/data/questionsExtraDifficulty.ts",
-      "sha": "8e1238a2ab85ddd7ddec12a874f3f2cd8b42a84e"
+      "sha": "f138c5a613341bda00f3378d202f49339bbacdf2"
     },
     {
       "path": "src/data/wellKnownPorts.ts",
@@ -248,7 +404,7 @@
     },
     {
       "path": "src/index.css",
-      "sha": "b30f4e7cea24d7225b936c4e1f18262bf6c11a95"
+      "sha": "32ef16abe2daac0d47aae66b15d79e1d46461639"
     },
     {
       "path": "src/main.tsx",
@@ -260,7 +416,15 @@
     },
     {
       "path": "src/types/quiz.ts",
-      "sha": "5698441efaa033abc7f28b62e56705ea17b53f1d"
+      "sha": "edb65a705ab714be3d58f4d5f46ec3f82c2d463f"
+    },
+    {
+      "path": "src/utils/examProgress.ts",
+      "sha": "9679c2c1345845337e1089d7cf31b36e53840ec6"
+    },
+    {
+      "path": "src/utils/examReview.ts",
+      "sha": "64028469e5fe2121c7a0013c8b5582862df582c6"
     },
     {
       "path": "src/utils/haptics.ts",
@@ -271,8 +435,12 @@
       "sha": "d5b04f03fd1070d9ce2f35f2db1045fb15612654"
     },
     {
+      "path": "src/utils/studyTextMode.ts",
+      "sha": "c779a715869cea5343e10ab36ca854310d5e650d"
+    },
+    {
       "path": "src/utils/userProgress.ts",
-      "sha": "370f2e01b247906b44ee8e2478cc81b5d7b02fcb"
+      "sha": "5c5798daf9b54f8a318a054fbebeff6d12add153"
     },
     {
       "path": "tsconfig.json",

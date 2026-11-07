@@ -1,24 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { triggerHaptic } from '../utils/haptics';
 import {
-  Sparkles,
   ArrowDown,
   ArrowUp,
-  Layers,
-  ChevronRight,
-  Shield,
-  Activity,
-  Cpu,
-  Globe,
-  Radio,
-  FileCode,
-  HardDrive,
-  ExternalLink,
 } from 'lucide-react';
 
 export interface OsiLayerItem {
   id: number;
-  level: string; // 'L7', 'L6', etc.
+  level: string;
   name: string;
   pdu: string;
   color: string;
@@ -28,6 +17,13 @@ export interface OsiLayerItem {
   devices: string;
   cliTool: string;
   headerFields: string[];
+  /** What happens to the PDU when the packet passes this layer going down */
+  actionDown: string;
+  /** What happens going up (decapsulation) */
+  actionUp: string;
+  /** Short label for the header block added at this layer */
+  headerLabel: string;
+  headerClass: string;
 }
 
 export const OSI_STACK_DATA: OsiLayerItem[] = [
@@ -43,6 +39,10 @@ export const OSI_STACK_DATA: OsiLayerItem[] = [
     devices: 'WAF, L7-балансировщики (Nginx/Envoy), веб-серверы',
     cliTool: 'curl -Iv https://site, dig +trace, nslookup',
     headerFields: ['HTTP Request/Response', 'DNS Query Type A/AAAA', 'DHCP Options'],
+    actionDown: 'Приложение отдаёт полезную нагрузку (payload)',
+    actionUp: 'Приложение получает готовые данные',
+    headerLabel: 'Data',
+    headerClass: 'bg-pink-500/80 text-pink-50 border-pink-400/50',
   },
   {
     id: 6,
@@ -56,6 +56,10 @@ export const OSI_STACK_DATA: OsiLayerItem[] = [
     devices: 'Крипто-шлюзы, TLS Termination прокси',
     cliTool: 'openssl s_client -connect host:443',
     headerFields: ['TLS Record Header', 'Cipher Suites', 'X.509 Certificate'],
+    actionDown: 'Шифрование / сжатие / кодировка',
+    actionUp: 'Расшифровка и разбор представления',
+    headerLabel: 'TLS',
+    headerClass: 'bg-purple-500/80 text-purple-50 border-purple-400/50',
   },
   {
     id: 5,
@@ -69,6 +73,10 @@ export const OSI_STACK_DATA: OsiLayerItem[] = [
     devices: 'Сеансовые шлюзы, координаторы микросервисов',
     cliTool: 'rpcinfo -p, nc -zv host 1080',
     headerFields: ['Session ID', 'Sync Points', 'Transaction Token'],
+    actionDown: 'Привязка к сессии / диалогу',
+    actionUp: 'Восстановление контекста сессии',
+    headerLabel: 'Session',
+    headerClass: 'bg-indigo-500/80 text-indigo-50 border-indigo-400/50',
   },
   {
     id: 4,
@@ -82,6 +90,10 @@ export const OSI_STACK_DATA: OsiLayerItem[] = [
     devices: 'L4 балансировщики нагрузки (HAProxy, IPVS), Stateful Firewall',
     cliTool: 'ss -tulpn, netstat -rn, nc -zv',
     headerFields: ['Src Port (16b)', 'Dst Port (16b)', 'Seq/Ack Num', 'Flags: SYN/ACK/FIN/RST'],
+    actionDown: 'Добавляется TCP/UDP: порты, seq/ack',
+    actionUp: 'Снимается L4, данные → сокету',
+    headerLabel: 'TCP/UDP',
+    headerClass: 'bg-cyan-500/90 text-slate-950 border-cyan-300/60',
   },
   {
     id: 3,
@@ -95,6 +107,10 @@ export const OSI_STACK_DATA: OsiLayerItem[] = [
     devices: 'Маршрутизаторы (Routers), L3-коммутаторы',
     cliTool: 'ip route, traceroute, ping, mtr',
     headerFields: ['Src IP (32b)', 'Dst IP (32b)', 'TTL (8b)', 'Protocol (TCP=6, UDP=17, ICMP=1)'],
+    actionDown: 'Добавляется IP: src/dst, TTL',
+    actionUp: 'Снимается IP, TTL уже уменьшен на hop',
+    headerLabel: 'IP',
+    headerClass: 'bg-teal-500/90 text-slate-950 border-teal-300/60',
   },
   {
     id: 2,
@@ -108,6 +124,10 @@ export const OSI_STACK_DATA: OsiLayerItem[] = [
     devices: 'L2 Коммутаторы (Switches), сетевые карты (NIC)',
     cliTool: 'ip link, arp -a, bridge fdb show',
     headerFields: ['Dst MAC (48b)', 'Src MAC (48b)', '802.1Q Tag (VLAN ID)', 'EtherType', 'FCS CRC-32'],
+    actionDown: 'Оборачивается в Ethernet: MAC + FCS',
+    actionUp: 'Снимается кадр, проверяется FCS',
+    headerLabel: 'Eth',
+    headerClass: 'bg-emerald-500/90 text-slate-950 border-emerald-300/60',
   },
   {
     id: 1,
@@ -121,8 +141,17 @@ export const OSI_STACK_DATA: OsiLayerItem[] = [
     devices: 'SFP/SFP+ модули, оптические кроссы, рефлектометры (OTDR), патч-панели',
     cliTool: 'ethtool eth0, ip link show',
     headerFields: ['Преамбула (7B)', 'SFD (1B)', 'Физические уровни напряжения/света'],
+    actionDown: 'Кадр → биты / сигналы в среду',
+    actionUp: 'Сигналы → биты → восстановление кадра',
+    headerLabel: 'Bits',
+    headerClass: 'bg-amber-500/90 text-slate-950 border-amber-300/60',
   },
 ];
+
+/** Headers present when the packet is *at* this layer going down (encapsulation complete through this layer). */
+function headersAtLayer(layerId: number): OsiLayerItem[] {
+  return OSI_STACK_DATA.filter((l) => l.id >= layerId).reverse();
+}
 
 interface LivingOsiStackProps {
   activeLevel?: string | null;
@@ -137,14 +166,11 @@ export const LivingOsiStack: React.FC<LivingOsiStackProps> = ({
   onSelectLevel,
   onExploreTheory,
   onStartExamForLevel,
-  compact = false,
 }) => {
-  const [selectedLayerId, setSelectedLayerId] = useState<number>(4); // default L4 as in mockup
+  const [selectedLayerId, setSelectedLayerId] = useState<number>(4);
   const [direction, setDirection] = useState<'down' | 'up'>('down');
   const [isAutoAnimating, setIsAutoAnimating] = useState<boolean>(true);
-  const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
 
-  // Sync external activeLevel prop
   useEffect(() => {
     if (activeLevel) {
       const num = parseInt(activeLevel.replace(/\D/g, ''), 10);
@@ -154,10 +180,8 @@ export const LivingOsiStack: React.FC<LivingOsiStackProps> = ({
     }
   }, [activeLevel]);
 
-  // Optical packet pulse animation down the fiber
   useEffect(() => {
     if (!isAutoAnimating) return;
-
     const interval = setInterval(() => {
       setSelectedLayerId((prev) => {
         if (direction === 'down') {
@@ -166,16 +190,14 @@ export const LivingOsiStack: React.FC<LivingOsiStackProps> = ({
             return 2;
           }
           return prev - 1;
-        } else {
-          if (prev >= 7) {
-            setDirection('down');
-            return 6;
-          }
-          return prev + 1;
         }
+        if (prev >= 7) {
+          setDirection('down');
+          return 6;
+        }
+        return prev + 1;
       });
-    }, 2400);
-
+    }, 2600);
     return () => clearInterval(interval);
   }, [direction, isAutoAnimating]);
 
@@ -183,16 +205,15 @@ export const LivingOsiStack: React.FC<LivingOsiStackProps> = ({
     triggerHaptic('selection');
     setIsAutoAnimating(false);
     setSelectedLayerId(layer.id);
-    if (onSelectLevel) {
-      onSelectLevel(layer.level);
-    }
+    onSelectLevel?.(layer.level);
   };
 
   const selectedLayer = OSI_STACK_DATA.find((l) => l.id === selectedLayerId) || OSI_STACK_DATA[3];
+  const presentHeaders = headersAtLayer(selectedLayerId);
+  const actionText = direction === 'down' ? selectedLayer.actionDown : selectedLayer.actionUp;
 
   return (
     <div className="w-full select-none space-y-3">
-      {/* Stack Section Header */}
       <div className="flex items-center justify-between px-1 text-xs">
         <div className="flex items-center gap-2">
           <span className="font-bold text-slate-900 dark:text-white text-sm tracking-tight flex items-center gap-1.5">
@@ -200,7 +221,7 @@ export const LivingOsiStack: React.FC<LivingOsiStackProps> = ({
             <span className="w-1.5 h-1.5 rounded-full bg-cyan-500 dark:bg-cyan-400 animate-pulse" />
           </span>
           <span className="text-[11px] text-slate-500 dark:text-slate-400 font-mono hidden sm:inline">
-            (живая инкапсуляция)
+            {direction === 'down' ? 'инкапсуляция ↓' : 'декапсуляция ↑'}
           </span>
         </div>
 
@@ -227,21 +248,54 @@ export const LivingOsiStack: React.FC<LivingOsiStackProps> = ({
         </button>
       </div>
 
-      {/* Vertical Stack with Optical Fiber Channel */}
-      <div className="relative rounded-2xl bg-white dark:bg-[#091524] border border-slate-200 dark:border-cyan-500/20 p-2.5 sm:p-3 overflow-hidden shadow-lg dark:shadow-2xl transition-colors">
-        {/* Optical Fiber Background Glow in dark mode */}
-        <div className="absolute top-0 right-1/4 w-32 h-full bg-cyan-500/5 blur-2xl pointer-events-none" />
+      {/* Live packet anatomy — headers present at current layer */}
+      <div className="rounded-2xl border border-slate-200 dark:border-cyan-500/25 bg-slate-50 dark:bg-[#07111f] p-3 space-y-2">
+        <div className="flex items-center justify-between gap-2">
+          <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+            Состав PDU сейчас
+          </span>
+          <span className="text-[11px] font-mono text-cyan-700 dark:text-cyan-300">
+            {selectedLayer.pdu}
+          </span>
+        </div>
+        <div className="flex flex-wrap items-stretch gap-1 min-h-[36px]">
+          {presentHeaders.map((h, idx) => (
+            <div
+              key={h.level}
+              className={`flex items-center px-2 py-1.5 rounded-md border text-[10px] sm:text-[11px] font-mono font-bold transition-all duration-500 ${
+                h.id === selectedLayerId
+                  ? `${h.headerClass} ring-2 ring-white/30 dark:ring-cyan-300/40 scale-[1.03]`
+                  : `${h.headerClass} opacity-80`
+              }`}
+              style={{ flex: h.id === 7 || h.id === 1 ? '1 1 auto' : '0 0 auto' }}
+              title={h.name}
+            >
+              {h.headerLabel}
+              {idx < presentHeaders.length - 1 && h.id !== 7 ? (
+                <span className="ml-1 opacity-60">|</span>
+              ) : null}
+            </div>
+          ))}
+        </div>
+        <p className="text-[11px] sm:text-xs text-slate-600 dark:text-slate-300 leading-snug">
+          <span className="font-semibold text-cyan-700 dark:text-cyan-300">{selectedLayer.level}</span>
+          {' · '}
+          {actionText}
+        </p>
+      </div>
 
-        {/* Central Vertical Dotted Fiber Track */}
+      {/* Vertical stack */}
+      <div className="relative rounded-2xl bg-white dark:bg-[#091524] border border-slate-200 dark:border-cyan-500/20 p-2.5 sm:p-3 overflow-hidden shadow-lg dark:shadow-2xl transition-colors">
+        <div className="absolute top-0 right-1/4 w-32 h-full bg-cyan-500/5 blur-2xl pointer-events-none" />
         <div
           className="absolute top-5 bottom-5 right-[102px] sm:right-[130px] w-px border-l-2 border-dashed border-slate-300 dark:border-cyan-500/30 pointer-events-none z-0"
           aria-hidden="true"
         />
 
-        {/* Stack Layer Cards (L7 down to L1) */}
         <div className="space-y-1.5 relative z-10">
           {OSI_STACK_DATA.map((layer) => {
             const isSelected = selectedLayerId === layer.id;
+            const isEncapsulated = layer.id >= selectedLayerId;
 
             return (
               <div
@@ -250,10 +304,11 @@ export const LivingOsiStack: React.FC<LivingOsiStackProps> = ({
                 className={`relative group rounded-xl p-3 sm:px-4 sm:py-3 transition-all duration-200 cursor-pointer flex items-center justify-between border ${
                   isSelected
                     ? 'bg-cyan-50 dark:bg-gradient-to-r dark:from-cyan-950/90 dark:via-slate-900 dark:to-cyan-950/70 border-cyan-500 dark:border-cyan-400 shadow-md shadow-cyan-500/20 ring-1 ring-cyan-400/50'
-                    : 'bg-slate-50 dark:bg-slate-900/60 border-slate-200 dark:border-slate-800/80 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-900/90 text-slate-700 dark:text-slate-300'
+                    : isEncapsulated
+                      ? 'bg-slate-50 dark:bg-slate-900/70 border-slate-200 dark:border-slate-700/80 text-slate-700 dark:text-slate-300'
+                      : 'bg-slate-50/60 dark:bg-slate-900/40 border-slate-200/80 dark:border-slate-800/60 text-slate-500 dark:text-slate-500'
                 }`}
               >
-                {/* Left: Level Badge & Layer Title */}
                 <div className="flex items-center gap-3 min-w-0">
                   <span
                     className={`font-mono font-black text-xs sm:text-sm tracking-tight w-6 shrink-0 ${
@@ -262,33 +317,28 @@ export const LivingOsiStack: React.FC<LivingOsiStackProps> = ({
                   >
                     {layer.level}
                   </span>
-
                   <span
                     className={`text-xs sm:text-sm font-semibold truncate ${
-                      isSelected ? 'text-slate-900 dark:text-white font-bold' : 'text-slate-700 dark:text-slate-300'
+                      isSelected ? 'text-slate-900 dark:text-white font-bold' : ''
                     }`}
                   >
                     {layer.name}
                   </span>
                 </div>
 
-                {/* Right: Optical Fiber Node & PDU Name */}
                 <div className="flex items-center gap-3 shrink-0">
-                  {/* Glowing Node on the Fiber Path */}
                   <div className="relative w-6 h-6 flex items-center justify-center">
                     {isSelected ? (
                       <div className="relative flex items-center justify-center">
-                        {/* Outer optical beacon wave */}
                         <span className="absolute w-6 h-6 rounded-full bg-cyan-400/30 animate-ping" />
-                        {/* Inner radiant diode */}
                         <div className="w-3.5 h-3.5 rounded-full bg-cyan-500 dark:bg-cyan-400 border-2 border-white dark:border-[#091524] shadow-[0_0_12px_#22d3ee]" />
                       </div>
+                    ) : isEncapsulated ? (
+                      <div className="w-1.5 h-1.5 rounded-full bg-cyan-500/50" />
                     ) : (
-                      <div className="w-1.5 h-1.5 rounded-full bg-slate-300 dark:bg-slate-700 group-hover:bg-cyan-500/40 transition-colors" />
+                      <div className="w-1.5 h-1.5 rounded-full bg-slate-300 dark:bg-slate-700" />
                     )}
                   </div>
-
-                  {/* PDU Name */}
                   <span
                     className={`text-xs sm:text-sm font-mono w-16 sm:w-20 text-right ${
                       isSelected ? 'text-cyan-700 dark:text-cyan-300 font-bold' : 'text-slate-500 dark:text-slate-400'
@@ -303,17 +353,15 @@ export const LivingOsiStack: React.FC<LivingOsiStackProps> = ({
         </div>
       </div>
 
-      {/* Selected Layer Micro-Inspection Card */}
       {selectedLayer && (
-        <div className="p-3.5 sm:p-4 rounded-2xl bg-slate-50 dark:bg-gradient-to-r dark:from-slate-900/95 dark:to-[#0b1b2d] border border-slate-200 dark:border-cyan-500/30 space-y-2.5 animate-fade-in text-xs transition-colors">
-          <div className="flex items-center justify-between">
+        <div className="p-3.5 sm:p-4 rounded-2xl bg-slate-50 dark:bg-gradient-to-r dark:from-slate-900/95 dark:to-[#0b1b2d] border border-slate-200 dark:border-cyan-500/30 space-y-2.5 text-xs transition-colors">
+          <div className="flex items-center justify-between gap-2 flex-wrap">
             <div className="flex items-center gap-2">
               <span className="font-mono font-bold text-xs px-2 py-0.5 rounded bg-cyan-500/10 dark:bg-cyan-500/20 text-cyan-800 dark:text-cyan-300 border border-cyan-400/30">
                 {selectedLayer.level}
               </span>
               <span className="font-bold text-slate-900 dark:text-white text-sm">{selectedLayer.name} уровень</span>
             </div>
-
             <div className="flex items-center gap-1.5">
               {onExploreTheory && (
                 <button
@@ -352,9 +400,13 @@ export const LivingOsiStack: React.FC<LivingOsiStackProps> = ({
             ))}
           </div>
 
-          <div className="pt-1 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 font-mono">
-            <span>PDU: <strong className="text-slate-800 dark:text-white">{selectedLayer.pdu}</strong></span>
-            <span className="truncate max-w-[200px] text-right">CLI: <code className="text-cyan-700 dark:text-cyan-400">{selectedLayer.cliTool.split(',')[0]}</code></span>
+          <div className="pt-1 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 font-mono gap-2">
+            <span>
+              PDU: <strong className="text-slate-800 dark:text-white">{selectedLayer.pdu}</strong>
+            </span>
+            <span className="truncate max-w-[200px] text-right">
+              CLI: <code className="text-cyan-700 dark:text-cyan-400">{selectedLayer.cliTool.split(',')[0]}</code>
+            </span>
           </div>
         </div>
       )}
