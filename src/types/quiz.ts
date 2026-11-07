@@ -35,7 +35,12 @@ export interface QuizMode {
   count: number;
 }
 
+export type ExamDifficulty = 'beginner' | 'mixed';
+
 export interface QuizSession {
+  /** Missing in legacy attempts, which retain their original all-level question set. */
+  difficulty?: ExamDifficulty;
+  requestedCount?: number;
   questions: Question[];
   currentIndex: number;
   userAnswers: Record<string, number[]>;

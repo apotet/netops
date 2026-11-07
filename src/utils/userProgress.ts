@@ -1,197 +1,199 @@
-// Persistent User Progress and Dynamic Exam Readiness Engine
+import { ALL_QUESTIONS } from '../data/questionsData';
+import type { Question } from '../types/quiz';
 
-export interface LevelMastery {
-  level: string; // 'L1', 'L2', 'L3', 'L4', 'L5', 'L6', 'L7'
-  name: string;
-  total: number;
-  correct: number;
-  masteryPercent: number;
-}
-
-export interface ProgressState {
-  answeredCount: number;
-  correctCount: number;
-  readinessPercent: number;
-  streakDays: number;
-  weakSpot: {
-    level: string;
-    topic: string;
-    description: string;
-  };
-  strongSpot: {
-    level: string;
-    topic: string;
-    description: string;
-  };
-  levels: Record<string, LevelMastery>;
-  lastExamDate?: string;
-  answeredQuestions: Record<string, { correct: boolean; timestamp: number; level: string }>;
-}
-
-const STORAGE_KEY = 'osi_user_progress_v3';
-
-const DEFAULT_LEVEL_NAMES: Record<string, string> = {
-  L7: 'Прикладной (HTTP/3, DNS)',
-  L6: 'Представления (TLS, JSON)',
-  L5: 'Сеансовый (RPC, сессии)',
-  L4: 'Транспортный (TCP, UDP, порты)',
-  L3: 'Сетевой (IPv4, подсети, TTL)',
-  L2: 'Канальный (Ethernet, VLAN, MAC)',
-  L1: 'Физический (Оптика, SFP, витая пара)',
+export const PROGRESS_KEY = 'osi_user_progress_v4';
+const LEGACY_KEYS = ['osi_user_progress_v3', 'osi_last_mistakes', 'osi_exam_history', 'osi_active_session'];
+const GROUP_NAMES: Record<string, string> = {
+  'visual-l1': 'Фото L1', 'l1-l2': 'L1–L2', l3: 'L3', l4: 'L4', 'l5-l7': 'L5–L7',
+  tcpip: 'TCP/IP', troubleshooting: 'Диагностика',
 };
+export interface QuestionProgress {
+  seen: number; correct: number; wrong: number; streak: number; lastSeen: number; lastWrong: number;
+}
+export interface ProgressModel {
+  version: 4;
+  epoch: string;
+  questions: Record<string, QuestionProgress>;
+  receipts: Record<string, true>;
+  dates: string[];
+  backup: Record<string, string>;
+  migrationNotice: boolean;
+}
+export interface LevelMastery { level: string; name: string; total: number; correct: number; masteryPercent: number }
+export interface ProgressState {
+  answeredCount: number; correctCount: number; readinessPercent: number | null; streakDays: number;
+  weakSpot: { level: string; topic: string } | null;
+  strongSpot: { level: string; topic: string } | null;
+  levels: Record<string, LevelMastery>;
+  mistakesCount: number; visualAnswered: number; visualTotal: number;
+  migrationNotice: boolean; storageWarning: boolean;
+}
+const emptyQuestion = (): QuestionProgress => ({ seen: 0, correct: 0, wrong: 0, streak: 0, lastSeen: 0, lastWrong: 0 });
+const epoch = () => globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random()}`;
+export const emptyProgress = (): ProgressModel => ({ version: 4, epoch: epoch(), questions: {}, receipts: {}, dates: [], backup: {}, migrationNotice: false });
+export function localDate(timestamp: number): string {
+  const date = new Date(timestamp);
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+}
+export function calendarStreak(dates: string[], now = Date.now()): number {
+  const days = new Set(dates);
+  const cursor = new Date(now);
+  // Local calendar arithmetic (not 24-hour milliseconds) also works across DST.
+  if (!days.has(localDate(+cursor))) cursor.setDate(cursor.getDate() - 1);
+  let count = 0;
+  while (days.has(localDate(+cursor))) { count++; cursor.setDate(cursor.getDate() - 1); }
+  return count;
+}
+const object = (value: unknown): value is Record<string, any> => Boolean(value && typeof value === 'object' && !Array.isArray(value));
+const count = (value: unknown): value is number => Number.isSafeInteger(value) && Number(value) >= 0;
+function parse(raw?: string | null): any { try { return raw ? JSON.parse(raw) : null; } catch { return null; } }
+function validModel(value: unknown): value is ProgressModel {
+  if (!object(value) || value.version !== 4 || typeof value.epoch !== 'string' || !object(value.questions) ||
+      !object(value.receipts) || !object(value.backup) || typeof value.migrationNotice !== 'boolean' || !Array.isArray(value.dates)) return false;
+  return Object.values(value.questions).every(q => object(q) &&
+    ['seen', 'correct', 'wrong', 'streak', 'lastSeen', 'lastWrong'].every(key => count(q[key])) &&
+    q.seen === q.correct + q.wrong && q.streak <= q.correct) &&
+    Object.values(value.receipts).every(v => v === true) && Object.values(value.backup).every(v => typeof v === 'string') &&
+    value.dates.every(date => typeof date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(date) && localDate(+new Date(date + 'T12:00:00')) === date);
+}
 
-export function getInitialProgress(): ProgressState {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) {
-      const parsed = JSON.parse(raw);
-      if (parsed && typeof parsed.readinessPercent === 'number') {
-        return parsed;
+/** One isolated store per browser runtime; storage is injected in targeted tests. */
+export function createProgressStore(bank: readonly Question[], storage: () => Storage | null, now = Date.now) {
+  const byId = new Map(bank.map(q => [q.id, q]));
+  let memory: ProgressModel | null = null;
+  let dirty = false;
+  let readBlocked = false;
+  let storageWarning = false;
+  const listeners = new Set<() => void>();
+  const notify = () => listeners.forEach(listener => listener());
+  function persist(model: ProgressModel) {
+    memory = model;
+    try {
+      if (readBlocked) throw Error('Cannot overwrite storage that could not be read');
+      const target = storage();
+      if (!target) throw Error('Storage unavailable');
+      target.setItem(PROGRESS_KEY, JSON.stringify(model));
+      storageWarning = false; dirty = false;
+    } catch { storageWarning = true; dirty = true; }
+  }
+  function load(): ProgressModel {
+    let target: Storage | null;
+    try { target = storage(); if (!target) throw Error('Storage unavailable'); }
+    catch { readBlocked = true; storageWarning = true; return memory ||= emptyProgress(); }
+    try {
+      // Never replace newer in-memory answers with an older persisted copy after a quota failure.
+      if (dirty && memory) { persist(memory); return memory; }
+      const raw = target.getItem(PROGRESS_KEY);
+      const parsed = parse(raw);
+      if (validModel(parsed)) { memory = parsed; return parsed; }
+      const model = emptyProgress();
+      if (raw) model.backup[PROGRESS_KEY] = raw;
+      for (const key of LEGACY_KEYS) {
+        const old = target.getItem(key);
+        if (old !== null) model.backup[key] = old;
       }
+      model.migrationNotice = Object.keys(model.backup).length > 0;
+      const legacy = parse(model.backup.osi_user_progress_v3);
+      if (object(legacy?.answeredQuestions)) {
+        for (const [id, answer] of Object.entries(legacy.answeredQuestions)) {
+          if (!byId.has(id) || !object(answer) || typeof answer.correct !== 'boolean' ||
+              !count(answer.timestamp) || answer.timestamp === 0 || answer.timestamp > now()) continue;
+          model.questions[id] = { seen: 1, correct: Number(answer.correct), wrong: Number(!answer.correct),
+            streak: Number(answer.correct), lastSeen: answer.timestamp, lastWrong: answer.correct ? 0 : answer.timestamp };
+          model.dates.push(localDate(answer.timestamp));
+        }
+      }
+      const active = parse(model.backup.osi_active_session);
+      if (Array.isArray(active?.questions) && object(active.submittedQuestions) && object(active.userAnswers)) {
+        for (const item of active.questions) {
+          const question = byId.get(item?.id);
+          const chosen = active.userAnswers[item?.id];
+          if (!question || model.questions[question.id] || active.submittedQuestions[question.id] !== true ||
+              !Array.isArray(chosen) || !chosen.length || new Set(chosen).size !== chosen.length ||
+              chosen.some(i => !Number.isInteger(i) || i < 0 || i >= question.answers.length)) continue;
+          const correct = chosen.length === question.correct.length && chosen.every(i => question.correct.includes(i));
+          // A saved confirmation is real, but its submission date is unknown in old sessions.
+          model.questions[question.id] = { ...emptyQuestion(), seen: 1, correct: Number(correct), wrong: Number(!correct), streak: Number(correct) };
+        }
+      }
+      const mistakes = parse(model.backup.osi_last_mistakes);
+      if (Array.isArray(mistakes)) for (const id of new Set(mistakes)) {
+        if (typeof id !== 'string' || !byId.has(id)) continue;
+        const q = model.questions[id] ||= emptyQuestion();
+        if (q.wrong === 0) { q.wrong = 1; q.seen++; }
+        q.streak = 0; // Unknown chronology cannot establish two consecutive successes.
+      }
+      model.dates = [...new Set(model.dates)].sort();
+      // Aggregate exam history has no trustworthy per-ID answer order. Keep it in raw backup.
+      persist(model);
+      return model;
+    } catch { readBlocked = true; storageWarning = true; return memory ||= emptyProgress(); }
+  }
+  function record(id: string, correct: boolean, receipt: string, expectedEpoch: string, timestamp = now()): boolean {
+    const model = load();
+    if (!byId.has(id) || !receipt || model.epoch !== expectedEpoch || Object.hasOwn(model.receipts, receipt) ||
+        !count(timestamp) || timestamp > now()) return false;
+    const q = model.questions[id] ||= emptyQuestion();
+    q.seen++; q.lastSeen = timestamp;
+    if (correct) { q.correct++; q.streak++; } else { q.wrong++; q.streak = 0; q.lastWrong = timestamp; }
+    model.receipts[receipt] = true;
+    model.dates = [...new Set([...model.dates, localDate(timestamp)])].sort();
+    persist(model); notify(); return true;
+  }
+  function mistakes(limit = bank.length): Question[] {
+    const model = load();
+    return bank.filter(q => model.questions[q.id]?.wrong > 0 && model.questions[q.id].streak < 2).slice(0, limit);
+  }
+  function summary(): ProgressState {
+    const model = load();
+    const levels: Record<string, LevelMastery> = Object.fromEntries(Object.entries(GROUP_NAMES)
+      .map(([level, name]) => [level, { level, name, total: 0, correct: 0, masteryPercent: 0 }]));
+    let answeredCount = 0, correctCount = 0;
+    for (const [id, value] of Object.entries(model.questions)) {
+      const question = byId.get(id);
+      if (!question) continue;
+      answeredCount += value.seen; correctCount += value.correct;
+      const level = levels[question.group];
+      if (level) { level.total += value.seen; level.correct += value.correct; }
     }
-  } catch {
-    // fallback
+    for (const level of Object.values(levels)) level.masteryPercent = level.total ? Math.round(level.correct / level.total * 100) : 0;
+    const sufficient = Object.values(levels).filter(level => level.total >= 10)
+      .sort((a, b) => a.masteryPercent - b.masteryPercent);
+    const spot = (level?: LevelMastery) => level ? { level: level.level, topic: level.name } : null;
+    const distinct = sufficient.length >= 2 && sufficient[0].masteryPercent !== sufficient.at(-1)!.masteryPercent;
+    return { answeredCount, correctCount, readinessPercent: answeredCount >= 10 ? Math.round(correctCount / answeredCount * 100) : null,
+      streakDays: calendarStreak(model.dates, now()), levels, weakSpot: distinct ? spot(sufficient[0]) : null,
+      strongSpot: distinct ? spot(sufficient.at(-1)) : null, mistakesCount: mistakes().length,
+      visualAnswered: bank.filter(q => q.group === 'visual-l1' && model.questions[q.id]?.seen > 0).length,
+      visualTotal: bank.filter(q => q.group === 'visual-l1').length, migrationNotice: model.migrationNotice, storageWarning };
   }
-
-  // Sensible default state that reflects current practice state
-  const defaultLevels: Record<string, LevelMastery> = {
-    L7: { level: 'L7', name: DEFAULT_LEVEL_NAMES.L7, total: 10, correct: 8, masteryPercent: 80 },
-    L6: { level: 'L6', name: DEFAULT_LEVEL_NAMES.L6, total: 8, correct: 6, masteryPercent: 75 },
-    L5: { level: 'L5', name: DEFAULT_LEVEL_NAMES.L5, total: 6, correct: 4, masteryPercent: 67 },
-    L4: { level: 'L4', name: DEFAULT_LEVEL_NAMES.L4, total: 14, correct: 11, masteryPercent: 78 },
-    L3: { level: 'L3', name: DEFAULT_LEVEL_NAMES.L3, total: 18, correct: 9, masteryPercent: 50 },
-    L2: { level: 'L2', name: DEFAULT_LEVEL_NAMES.L2, total: 12, correct: 9, masteryPercent: 75 },
-    L1: { level: 'L1', name: DEFAULT_LEVEL_NAMES.L1, total: 16, correct: 14, masteryPercent: 88 },
-  };
-
-  return {
-    answeredCount: 84,
-    correctCount: 61,
-    readinessPercent: 72,
-    streakDays: 7,
-    weakSpot: {
-      level: 'L3',
-      topic: 'L3 подсети и маски',
-      description: '50% точности — требуется повторить расчёт шага сети',
-    },
-    strongSpot: {
-      level: 'L1',
-      topic: 'L1 фото оборудования',
-      description: '88% точности — уверенное распознавание кабелей и трансиверов',
-    },
-    levels: defaultLevels,
-    answeredQuestions: {},
-  };
-}
-
-export function recordQuestionResult(
-  questionId: string,
-  topic: string,
-  group: string,
-  isCorrect: boolean
-): ProgressState {
-  const current = getInitialProgress();
-
-  // Detect OSI level from topic/group/id
-  let level = 'L3';
-  const str = `${questionId} ${topic} ${group}`.toLowerCase();
-  if (str.includes('l1') || str.includes('физическ') || str.includes('кабел') || str.includes('sfp')) level = 'L1';
-  else if (str.includes('l2') || str.includes('канал') || str.includes('vlan') || str.includes('mac') || str.includes('ethernet')) level = 'L2';
-  else if (str.includes('l3') || str.includes('сетев') || str.includes('ip') || str.includes('подсет') || str.includes('маршрут')) level = 'L3';
-  else if (str.includes('l4') || str.includes('транспорт') || str.includes('tcp') || str.includes('udp') || str.includes('порт')) level = 'L4';
-  else if (str.includes('l5') || str.includes('сеанс') || str.includes('rpc')) level = 'L5';
-  else if (str.includes('l6') || str.includes('представл') || str.includes('tls') || str.includes('кодировк')) level = 'L6';
-  else if (str.includes('l7') || str.includes('прикладн') || str.includes('http') || str.includes('dns') || str.includes('dhcp')) level = 'L7';
-
-  // Update levels
-  if (!current.levels[level]) {
-    current.levels[level] = {
-      level,
-      name: DEFAULT_LEVEL_NAMES[level] || level,
-      total: 0,
-      correct: 0,
-      masteryPercent: 0,
-    };
-  }
-
-  current.levels[level].total += 1;
-  if (isCorrect) current.levels[level].correct += 1;
-  current.levels[level].masteryPercent = Math.round(
-    (current.levels[level].correct / current.levels[level].total) * 100
-  );
-
-  current.answeredCount += 1;
-  if (isCorrect) current.correctCount += 1;
-
-  // Track question
-  current.answeredQuestions[questionId] = {
-    correct: isCorrect,
-    timestamp: Date.now(),
-    level,
-  };
-
-  // Recalculate weak & strong spots
-  let lowestPercent = 101;
-  let highestPercent = -1;
-  let weakLevel = 'L3';
-  let strongLevel = 'L1';
-
-  Object.values(current.levels).forEach((lvl) => {
-    if (lvl.total >= 2) {
-      if (lvl.masteryPercent < lowestPercent) {
-        lowestPercent = lvl.masteryPercent;
-        weakLevel = lvl.level;
-      }
-      if (lvl.masteryPercent > highestPercent) {
-        highestPercent = lvl.masteryPercent;
-        strongLevel = lvl.level;
-      }
+  function reset() {
+    // The caller confirms irreversible deletion or exports first. Write the new epoch before cleanup.
+    persist(emptyProgress());
+    if (!dirty) for (const key of LEGACY_KEYS) {
+      try { storage()?.removeItem(key); } catch { storageWarning = true; }
     }
-  });
-
-  current.weakSpot = {
-    level: weakLevel,
-    topic: `${weakLevel} ${DEFAULT_LEVEL_NAMES[weakLevel] || 'темы'}`,
-    description: `${current.levels[weakLevel]?.masteryPercent || lowestPercent}% точности — слабый участок`,
-  };
-
-  current.strongSpot = {
-    level: strongLevel,
-    topic: `${strongLevel} ${DEFAULT_LEVEL_NAMES[strongLevel] || 'темы'}`,
-    description: `${current.levels[strongLevel]?.masteryPercent || highestPercent}% точности — стабильный навык`,
-  };
-
-  // Recalculate overall readiness
-  const totalLevelsMastery = Object.values(current.levels).reduce((sum, l) => sum + l.masteryPercent, 0);
-  const avgLevelMastery = Math.round(totalLevelsMastery / Object.keys(current.levels).length);
-  const accuracy = Math.round((current.correctCount / Math.max(1, current.answeredCount)) * 100);
-
-  current.readinessPercent = Math.min(100, Math.max(10, Math.round(avgLevelMastery * 0.6 + accuracy * 0.4)));
-
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(current));
-  } catch {
-    // fallback
+    notify(); return summary();
   }
-
-  return current;
-}
-
-export function resetProgress(): ProgressState {
-  try {
-    localStorage.removeItem(STORAGE_KEY);
-    localStorage.removeItem('osi_last_mistakes');
-    localStorage.removeItem('osi_exam_history');
-    localStorage.removeItem('osi_active_session');
-  } catch {
-    // fallback
+  function retainBackup(key: string, raw: string) {
+    const model = load();
+    const name = model.backup[key] && model.backup[key] !== raw ? `${key}:${epoch()}` : key;
+    model.backup[name] = raw; model.migrationNotice = true;
+    persist(model); notify();
   }
-  const fresh = getInitialProgress();
-  fresh.readinessPercent = 45;
-  fresh.answeredCount = 10;
-  fresh.correctCount = 5;
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(fresh));
-  } catch {}
-  return fresh;
+  return { load, record, mistakes, summary, reset, retainBackup, subscribe(listener: () => void) {
+    listeners.add(listener); return () => { listeners.delete(listener); };
+  }, refresh: notify, export: () => JSON.stringify(load(), null, 2) };
 }
+const store = createProgressStore(ALL_QUESTIONS, () => { try { return localStorage; } catch { return null; } });
+if (typeof window !== 'undefined') window.addEventListener('storage', event => {
+  if (event.key === PROGRESS_KEY || event.key === null) store.refresh();
+});
+export const getInitialProgress = store.summary;
+export const getProgressEpoch = () => store.load().epoch;
+export const getMistakeQuestions = store.mistakes;
+export const recordQuestionResult = store.record;
+export const subscribeProgress = store.subscribe;
+export const resetProgress = store.reset;
+export const exportProgress = store.export;
+export const retainProgressBackup = store.retainBackup;

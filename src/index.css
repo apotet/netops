@@ -3,6 +3,11 @@
 /* Tailwind v4: class-based dark mode (toggle via .dark on <html>) */
 @custom-variant dark (&:where(.dark, .dark *));
 
+@theme {
+  --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
 @layer base {
   *, ::before, ::after {
     box-sizing: border-box;
@@ -45,6 +50,7 @@
   }
 
   body {
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     overflow-x: hidden;
     overflow-y: auto;
     max-width: 100vw;
@@ -60,6 +66,7 @@
   }
 
   #root {
+    font-family: inherit;
     overflow-x: hidden;
     overflow-y: visible;
     max-width: 100%;

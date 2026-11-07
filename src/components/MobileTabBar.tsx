@@ -12,6 +12,7 @@ export const MobileTabBar: React.FC<MobileTabBarProps> = ({ activeTab, onTabChan
     { id: 'exam', label: 'Экзамен' },
     { id: 'theory', label: 'Теория' },
     { id: 'ipv4', label: 'IPv4' },
+    { id: 'ipv6', label: 'IPv6' },
     { id: 'practice', label: 'Практика' },
   ];
 

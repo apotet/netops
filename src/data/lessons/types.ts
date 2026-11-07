@@ -20,6 +20,14 @@ export interface Lesson {
   category: string;
   osiLayers: string[];
   difficulty: 'beginner' | 'applied' | 'advanced';
+  professional?: {
+    summary: string;
+    terms: string[];
+    blocks: LessonBlock[];
+    commands?: LessonCommand[];
+    sources: string[];
+    sourceCommit: string;
+  };
   summary: string;
   terms: string[];
   blocks: LessonBlock[];

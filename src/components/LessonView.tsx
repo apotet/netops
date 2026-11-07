@@ -1,16 +1,22 @@
 import React, { useMemo, useState } from 'react';
 import { Lesson } from '../data/lessons/types';
+import { StudyTextToggle } from './StudyTextToggle';
+import { useStudyTextMode } from '../utils/studyTextMode';
+import { LessonTermTags } from './LessonTermTags';
 import { SniDiagram } from './SniDiagram';
 import { ArrowLeft, Copy, Check, BookOpen } from 'lucide-react';
 
 interface LessonViewProps {
   lesson: Lesson;
   onBack: () => void;
+  onOpenLesson?: (lessonId: string) => void;
   onOpenQuestion?: (questionId: string) => void;
   returnQuestionId?: string | null;
 }
 
-export const LessonView: React.FC<LessonViewProps> = ({ lesson, onBack, onOpenQuestion, returnQuestionId }) => {
+export const LessonView: React.FC<LessonViewProps> = ({ lesson, onBack, onOpenLesson, onOpenQuestion, returnQuestionId }) => {
+  const [textMode, setTextMode] = useStudyTextMode();
+  const content = textMode === 'professional' && lesson.professional ? lesson.professional : lesson;
   const [copied, setCopied] = useState<string | null>(null);
 
   const copy = async (cmd: string) => {
@@ -56,20 +62,15 @@ export const LessonView: React.FC<LessonViewProps> = ({ lesson, onBack, onOpenQu
           <span>{lesson.difficulty}</span>
         </div>
         <h2 className="text-xl font-bold text-slate-900 dark:text-white">{lesson.title}</h2>
-        <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">{lesson.summary}</p>
-        <div className="flex flex-wrap gap-1.5 pt-1">
-          {lesson.terms.map((t) => (
-            <span key={t} className="px-2 py-0.5 rounded-lg text-[11px] bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
-              {t}
-            </span>
-          ))}
-        </div>
+        {lesson.professional && <StudyTextToggle value={textMode} onChange={setTextMode} />}
+        <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">{content.summary}</p>
+        <LessonTermTags key={`${lesson.id}-${textMode}`} terms={content.terms} onOpenLesson={onOpenLesson} />
       </header>
 
       {lesson.diagram === 'sni' && <SniDiagram />}
 
       <div className="space-y-4">
-        {lesson.blocks.map((b) => (
+        {content.blocks.map((b) => (
           <section key={b.heading} className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#091524] p-4 space-y-2">
             <h3 className="text-sm font-semibold text-slate-900 dark:text-white flex items-center gap-2">
               <BookOpen className="w-4 h-4 text-cyan-500" />
@@ -80,10 +81,10 @@ export const LessonView: React.FC<LessonViewProps> = ({ lesson, onBack, onOpenQu
         ))}
       </div>
 
-      {lesson.commands && lesson.commands.length > 0 && (
+      {content.commands && content.commands.length > 0 && (
         <section className="space-y-2">
           <h3 className="text-sm font-semibold text-slate-900 dark:text-white">Команды диагностики</h3>
-          {lesson.commands.map((c) => (
+          {content.commands.map((c) => (
             <div key={c.cmd} className="rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 p-3 space-y-2">
               <div className="text-xs font-medium text-slate-700 dark:text-slate-200">{c.title}</div>
               <pre className="text-[11px] font-mono whitespace-pre-wrap break-all text-cyan-800 dark:text-cyan-200">{c.cmd}</pre>
@@ -122,7 +123,7 @@ export const LessonView: React.FC<LessonViewProps> = ({ lesson, onBack, onOpenQu
       <section className="text-[11px] text-slate-500 dark:text-slate-400 space-y-1">
         <div className="font-semibold uppercase tracking-wider">Источники</div>
         <ul className="list-disc pl-4 space-y-0.5">
-          {lesson.sources.map((s) => (
+          {content.sources.map((s) => (
             <li key={s}>{s}</li>
           ))}
         </ul>
