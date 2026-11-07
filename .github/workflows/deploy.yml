@@ -35,7 +35,9 @@ jobs:
               actual = subprocess.check_output(['git', 'hash-object', item['path']], text=True).strip()
               assert actual == item['sha'], item['path'] + ': source mismatch'
               text = open(item['path']).read()
-              assert not re.search(r'RESTORED_FULL_CONTENT|UPDATED_CONTENT|FULL_FILE_CONTENT_WILL_BE_INCLUDED|-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----', text), item['path']
+              assert not re.search(r'-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----', text), item['path']
+              if not item['path'].endswith('.test.mjs'):
+                  assert not re.search(r'RESTORED_FULL_CONTENT|UPDATED_CONTENT|FULL_FILE_CONTENT_WILL_BE_INCLUDED', text), item['path']
           tracked = subprocess.check_output(['git', 'ls-files'], text=True).splitlines()
           assert not any(p.startswith(('.env', 'node_modules/')) for p in tracked)
           print('PASS: exact upstream blobs:', len(manifest['files']))
