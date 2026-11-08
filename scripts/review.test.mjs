@@ -80,7 +80,7 @@ await build({ stdin: { contents: `
   export const render = session => renderToStaticMarkup(React.createElement(ExamReview,
     { session, onExit() {}, onRetry() {}, onNavigateToTheory() {} }));
 `, resolveDir: process.cwd(), sourcefile: 'review-ui.ts' }, bundle: true, platform: 'node', format: 'esm',
-  external: ['react', 'react-dom/server', 'lucide-react'], outfile, logLevel: 'silent' });
+  external: ['react-dom', 'react', 'react-dom/server', 'lucide-react'], outfile, logLevel: 'silent' });
 const { render } = await import(pathToFileURL(outfile).href);
 // The current UI starts on mistakes when the attempt has any. This fixture has
 // one wrong answer, seven correct answers and two unconfirmed answers.

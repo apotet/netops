@@ -1,3 +1,4 @@
+import { GlossaryText } from './GlossaryText';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { ALL_QUESTIONS, TOTAL_QUESTION_COUNT, resolveImageUrl } from '../data/questionsData';
 import { getQuestionDeepDive } from '../data/questionExplanations';
@@ -146,7 +147,7 @@ export const TheoryRazbory: React.FC<Props> = ({
             )}
           </div>
           <p className="text-sm text-slate-800 dark:text-slate-200 leading-relaxed whitespace-pre-line break-words">
-            {brief}
+            <GlossaryText key={textMode} enabled={!professional}>{brief}</GlossaryText>
           </p>
         </div>
 
@@ -172,7 +173,7 @@ export const TheoryRazbory: React.FC<Props> = ({
                 {deep.professional && <StudyTextToggle value={textMode} onChange={setTextMode} />}
                 {professional?.notice && <p className="text-xs text-amber-700 dark:text-amber-300">{professional.notice}</p>}
                 <p className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-line break-words pt-3">
-                  {engineering}
+                  <GlossaryText key={textMode} enabled={!professional}>{engineering}</GlossaryText>
                 </p>
                 {nextStudy && (
                   <p className="text-xs text-slate-500 dark:text-slate-400">Дальше: {nextStudy}</p>
@@ -196,7 +197,7 @@ export const TheoryRazbory: React.FC<Props> = ({
             <div className="text-[11px] font-bold uppercase tracking-wider text-amber-700 dark:text-amber-300 font-sans flex items-center gap-1.5">
               <AlertTriangle className="w-3.5 h-3.5" /> Типичная ошибка
             </div>
-            <p className="text-sm text-amber-900 dark:text-amber-100/90 leading-relaxed break-words">{trap}</p>
+            <p className="text-sm text-amber-900 dark:text-amber-100/90 leading-relaxed break-words"><GlossaryText key={textMode} enabled={!professional}>{trap}</GlossaryText></p>
           </div>
         )}
 
@@ -205,7 +206,7 @@ export const TheoryRazbory: React.FC<Props> = ({
             <div className="text-[11px] font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-300 font-sans flex items-center gap-1.5">
               <Lightbulb className="w-3.5 h-3.5" /> Практика
             </div>
-            <p className="text-sm text-emerald-900 dark:text-emerald-100/90 leading-relaxed break-words">{deep.practicalTip}</p>
+            <p className="text-sm text-emerald-900 dark:text-emerald-100/90 leading-relaxed break-words"><GlossaryText key={textMode} enabled={!professional}>{deep.practicalTip}</GlossaryText></p>
           </div>
         )}
 
@@ -216,7 +217,7 @@ export const TheoryRazbory: React.FC<Props> = ({
               {deep.keyTakeaways.map((tip, i) => (
                 <li key={i} className="text-sm text-slate-700 dark:text-slate-300 flex gap-2 min-w-0">
                   <span className="text-cyan-500 font-sans text-xs mt-0.5 shrink-0">{i + 1}.</span>
-                  <span className="break-words">{tip}</span>
+                  <span className="break-words"><GlossaryText key={textMode} enabled={!professional}>{tip}</GlossaryText></span>
                 </li>
               ))}
             </ul>

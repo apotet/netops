@@ -1,6 +1,6 @@
 {
   "upstream": "apotet/my-gemini-mirror-site",
-  "source_sha": "f51888882309184e3d3a97204687f54a363d42fb",
+  "source_sha": "c4965d7673f1b470f2e9c00e6fd2240530b17b88",
   "files": [
     {
       "path": ".gitignore",
@@ -55,6 +55,10 @@
       "sha": "918a7223ab287a573185116f1bbe79685568a6a9"
     },
     {
+      "path": "scripts/glossary-hover.test.mjs",
+      "sha": "a7091a2428236cb8abe7f6bbc283ea768a602b4b"
+    },
+    {
       "path": "scripts/glossary.test.mjs",
       "sha": "6dbb8fd452a035304ee48dde51e83d928f87ee35"
     },
@@ -84,11 +88,11 @@
     },
     {
       "path": "scripts/review.test.mjs",
-      "sha": "fe4d997d21e5d7e37b919c6f36804b90ab5a3b13"
+      "sha": "22b1aa5b12b6e7e6830789c096cd86683fcf60f0"
     },
     {
       "path": "scripts/study-text.test.mjs",
-      "sha": "9f5e3f3a6524a15f505d87b77db35189cb422110"
+      "sha": "7f1a73fd93211f799d2742d3785c76a97ec61455"
     },
     {
       "path": "scripts/validate-questions.mjs",
@@ -160,11 +164,19 @@
     },
     {
       "path": "src/components/ExamReview.tsx",
-      "sha": "a83071fac0a6b1678890577ee811ce8cb808ae4c"
+      "sha": "57bdc514c079077a11b509b5f21fdac939c4b6d7"
     },
     {
       "path": "src/components/ExamView.tsx",
       "sha": "8cafaf9c157ac506cd5ca61a4283363d4c832431"
+    },
+    {
+      "path": "src/components/GlossaryText.css",
+      "sha": "e38f6709d13a14d901a322ca4a8c6e7c3426f85a"
+    },
+    {
+      "path": "src/components/GlossaryText.tsx",
+      "sha": "1c1ba53c361daaeb5c31aaf22b56e24c2f6e8939"
     },
     {
       "path": "src/components/Ipv4Trainer.tsx",
@@ -188,7 +200,7 @@
     },
     {
       "path": "src/components/LessonView.tsx",
-      "sha": "9fe4228b85bfd9d990b083985a7fc44e1503a6f5"
+      "sha": "ad19623d046d1abf000737d8a24843867963b07c"
     },
     {
       "path": "src/components/LivingOsiStack.tsx",
@@ -248,7 +260,7 @@
     },
     {
       "path": "src/components/TheoryRazbory.tsx",
-      "sha": "b5fb75b794ed624777d2bd4c5e2edc041bc2d909"
+      "sha": "793ac4f8fd8b0ffd25bb363ec86b2ec8375e8d43"
     },
     {
       "path": "src/components/TheoryScenarios.tsx",
@@ -268,7 +280,7 @@
     },
     {
       "path": "src/data/glossary.ts",
-      "sha": "9b66f08982ee12edfa6f1d06afef4d99dacfc5e7"
+      "sha": "85cde9ce96f1a64b5e4834da6d882d87e2ce51e9"
     },
     {
       "path": "src/data/lessons/index.ts",
@@ -376,15 +388,15 @@
     },
     {
       "path": "src/data/questionExplanations.ts",
-      "sha": "3ebe589f9e6e17ec69e12d486f3296e1ffcd210f"
+      "sha": "e2d7fba9ff1ccadc15f6f8503847a4e223bc9963"
     },
     {
       "path": "src/data/questionExplanationsApplied.ts",
-      "sha": "d9d28edeae9c99e12aa2fc78e3a7a43b39c1afb5"
+      "sha": "d7f9e8a032e62e0e4f42b1495f3adae4a943b726"
     },
     {
       "path": "src/data/questions.json",
-      "sha": "7adaf1cf6f7dca265fb04719299767974265ccd9"
+      "sha": "e45df25da472a86ed1fca991a7456c572079944c"
     },
     {
       "path": "src/data/questionsData.ts",
@@ -392,11 +404,11 @@
     },
     {
       "path": "src/data/questionsExtra.ts",
-      "sha": "9ee199e53d0f3e9ec63262069776779dedad2f7f"
+      "sha": "9d8a6ea40a7056fa5ba2d934a2b9379a4ffa0ffd"
     },
     {
       "path": "src/data/questionsExtraDifficulty.ts",
-      "sha": "f138c5a613341bda00f3378d202f49339bbacdf2"
+      "sha": "d174cf0bbd5f42628da0a57e4f0f4235757fd275"
     },
     {
       "path": "src/data/wellKnownPorts.ts",
@@ -425,6 +437,10 @@
     {
       "path": "src/utils/examReview.ts",
       "sha": "64028469e5fe2121c7a0013c8b5582862df582c6"
+    },
+    {
+      "path": "src/utils/glossaryText.ts",
+      "sha": "f42d64f8aef3844edb88f57bf57f75ba905018d0"
     },
     {
       "path": "src/utils/haptics.ts",
