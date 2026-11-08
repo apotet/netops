@@ -17,7 +17,7 @@ await build({ stdin: { contents: `
   export { ExamReview } from './src/components/ExamReview';
 `, resolveDir: root, sourcefile: 'study-text-tests.ts' },
   bundle: true, platform: 'node', format: 'esm', outfile,
-  external: ['react', 'react-dom/server', 'lucide-react'], logLevel: 'silent' });
+  external: ['react-dom', 'react', 'react-dom/server', 'lucide-react'], logLevel: 'silent' });
 const api = await import(pathToFileURL(outfile).href);
 const { ALL_QUESTIONS, LESSONS, getQuestionDeepDive, getStudyTextMode, setStudyTextMode, STUDY_TEXT_MODE_KEY,
   LessonView, TheoryRazbory, ExamReview } = api;
@@ -37,7 +37,13 @@ const tcpLossDualIds = ["l4-09", "new-l4-retransmit", "gen-osi-a-13"];
 ids.push(...tcpLossDualIds);
 const tlsDualIds = ["l57-x12", "l57-x18"];
 ids.push(...tlsDualIds);
-const tlsMeaningOnlyIds = ["new-l7-tls", "l57-x05", "l57-x06"];
+const tlsMeaningOnlyIds = ["new-l7-tls"];
+const rewrittenL4DualIds = ["gen-transport-6", "gen-transport-7", "gen-transport-8", "l4-03", "l4-05", "l4-07"];
+ids.push(...rewrittenL4DualIds);
+const rewrittenL4MeaningOnlyIds = ["k-01", "k-02", "k-03", "k-04", "k-05", "k-07", "gen-transport-0", "gen-transport-1", "gen-transport-2", "gen-transport-3", "gen-transport-4", "gen-transport-5", "gen-transport-9", "gen-transport-10", "gen-transport-11", "gen-transport-12", "gen-transport-13", "gen-transport-14", "gen-transport-15", "gen-transport-16", "gen-transport-17", "new-l4-udp-pdu"];
+const rewrittenL57DualIds = ["l7-02", "l7-03", "l7-04", "gen-osi-a-19", "new-l7-dns", "new-l7-dhcp", "review-ptp-16", "review-syslog-23", "review-osi-34", "review-osi-35", "gen-port-6", "gen-port-7", "gen-port-8", "l57-x02", "l57-x04", "l57-x05", "l57-x06", "l57-x07", "l57-x08", "l57-x12", "l57-x14", "l57-x18", "l57-x19", "l57-x20", "l57-d01", "l57-d03", "l57-d04", "l57-d05", "l57-d06"];
+const rewrittenL57MeaningOnlyIds = ["l6-01", "l7-01", "l7-05", "gen-osi-a-18", "review-ptp-17", "review-ptp-18", "gen-port-9", "gen-port-11", "gen-port-13", "gen-port-14", "l57-x09", "l57-x10", "l57-x15", "l57-x16"];
+ids.push(...["l7-02", "l7-03", "l7-04", "gen-osi-a-19", "new-l7-dns", "new-l7-dhcp", "review-ptp-16", "review-syslog-23", "gen-port-6", "gen-port-7", "gen-port-8", "l57-x04", "l57-x05", "l57-x06", "l57-x14", "l57-x19", "l57-x20", "l57-d04", "l57-d06"]);
 const diagnosticSkippedIds = ["ts-pack1-01","ts-pack1-02","ts-pack1-03","ts-pack1-07","ts-pack1-08","ts-pack1-09","ts-pack1-10","ts-pack1-11","ts-pack1-12","ts-pack1-13","ts-pack1-14","ts-pack1-15","ts-pack1-16","ts-pack1-17","ts-pack1-18","ts-pack1-19"];
 for (const id of diagnosticSkippedIds) {
   const q = ALL_QUESTIONS.find(q => q.id === id);
@@ -61,7 +67,7 @@ assert.ok(ospfMeaningOnly.hasIndividualDeep);
 assert.equal(ospfMeaningOnly.deepAnalysis.split(/\n\s*\n/).length, 3);
 assert.equal(ospfMeaningOnly.professional, undefined, 'no invented professional OSPF text');
 
-const dnsMeaningOnlyIds = ["l4-07","l7-04","gen-port-6","gen-transport-6","gen-osi-a-19","new-l7-dns","tcpip-x25","l57-x01","l57-x11","l57-x13","l57-x20","ts-pack1-05","ts-pack1-06","ts-pack1-20","gen-diag-12","tcpip-x12"];
+const dnsMeaningOnlyIds = ["tcpip-x25", "l57-x01", "l57-x11", "l57-x13", "ts-pack1-05", "ts-pack1-06", "ts-pack1-20", "gen-diag-12", "tcpip-x12"];
 for (const id of dnsMeaningOnlyIds) {
   const deep = getQuestionDeepDive(ALL_QUESTIONS.find(q => q.id === id));
   assert.ok(deep.hasIndividualDeep, id);
@@ -69,7 +75,7 @@ for (const id of dnsMeaningOnlyIds) {
   assert.equal(deep.professional, undefined, 'no invented professional DNS text: ' + id);
 }
 
-const dhcpMeaningOnlyIds = ["l7-02","l7-03","gen-port-7","gen-transport-7","gen-port-8","gen-transport-8","new-l7-dhcp","gen-diag-7"];
+const dhcpMeaningOnlyIds = ["gen-diag-7"];
 for (const id of dhcpMeaningOnlyIds) {
   const deep = getQuestionDeepDive(ALL_QUESTIONS.find(q => q.id === id));
   assert.ok(deep.hasIndividualDeep, id);
@@ -77,7 +83,7 @@ for (const id of dhcpMeaningOnlyIds) {
   assert.equal(deep.professional, undefined, 'no invented professional DHCP text: ' + id);
 }
 
-const tcpMeaningOnlyIds = ["l4-02", "l4-03", "l4-08", "l4-x01", "l4-x02", "l4-x06", "tcpip-x22"];
+const tcpMeaningOnlyIds = ["l4-02", "l4-08", "l4-x01", "l4-x02", "l4-x06", "tcpip-x22"];
 for (const id of tcpMeaningOnlyIds) {
   const deep = getQuestionDeepDive(ALL_QUESTIONS.find(q => q.id === id));
   assert.ok(deep.hasIndividualDeep, id);
@@ -118,13 +124,13 @@ for (const id of ethernetMeaningOnlyIds) {
 }
 
 // Model questions without an individual explanation remain absent.
-for (const id of ['tcp-01', 'tcp-02', 'tcp-04', 'tcp-08', 'tcpip-x01', 'tcpip-x02', 'tcpip-x03', 'tcpip-x04', 'tcpip-x05', 'tcpip-x13', 'tcpip-x15', 'k-05', 'k-06', 'k-07', 'new-tcpip-payload']) {
+for (const id of ['tcp-01', 'tcp-02', 'tcp-04', 'tcp-08', 'tcpip-x01', 'tcpip-x02', 'tcpip-x03', 'tcpip-x04', 'tcpip-x05', 'tcpip-x13', 'tcpip-x15', 'k-06', 'new-tcpip-payload']) {
   const deep = getQuestionDeepDive(ALL_QUESTIONS.find(q => q.id === id));
   assert.equal(deep.hasIndividualDeep, false, id);
   assert.equal(deep.professional, undefined, id);
 }
 
-for (const id of ['gen-osi-a-12', 'k-06', 'k-07', 'k-08', 'tcpip-x04', 'tcpip-x15', 'new-tcpip-payload', 'new-l4-udp-pdu']) {
+for (const id of ['gen-osi-a-12', 'k-06', 'k-08', 'tcpip-x04', 'tcpip-x15', 'new-tcpip-payload']) {
   const deep = getQuestionDeepDive(ALL_QUESTIONS.find(q => q.id === id));
   assert.equal(deep.hasIndividualDeep, false, id);
   assert.equal(deep.professional, undefined, id);
@@ -146,6 +152,30 @@ const coppLesson = LESSONS.find(l => l.id === 'ts-copp-storm');
 for (const block of coppLesson.blocks) {
   assert.equal(block.body.split(/\n\s*\n/).length, 3, block.heading);
   assert.doesNotMatch(block.body.split(/\n\s*\n/)[0], /CoPP|CPP|storm[ -]?control/i);
+}
+
+for (const id of [...rewrittenL4DualIds, ...rewrittenL4MeaningOnlyIds, 'l4-09', 'l4-10', 'k-09', 'new-l4-retransmit']) {
+  const q = ALL_QUESTIONS.find(q => q.id === id), deep = getQuestionDeepDive(q);
+  assert.ok(deep.hasIndividualDeep, id);
+  assert.equal(deep.deepAnalysis.split(/\n\s*\n/).length, 3, id);
+  assert.doesNotMatch(deep.deepAnalysis.split(/\n\s*\n/)[0], /^(SYN|ACK|SCTP|L[1-7]|(?:Прикладной|Транспортный|Сетевой|Канальный|Физический) уровень)\b/i, id);
+  const onlyMeaning = rewrittenL4MeaningOnlyIds.includes(id);
+  assert.equal(Boolean(deep.professional), !onlyMeaning, id);
+  const session = { questions: [q], currentIndex: 0, userAnswers: { [id]: q.correct }, submittedQuestions: { [id]: true },
+    startTime: Date.now(), isCompleted: true, mode: 'mixed', feedbackMode: 'exam', difficulty: 'beginner' };
+  assert.equal(render(ExamReview, { session, onExit() {} }).includes('Стиль объяснения'), !onlyMeaning, id + ': toggle visibility');
+}
+
+for (const id of [...rewrittenL57DualIds, ...rewrittenL57MeaningOnlyIds]) {
+  const q = ALL_QUESTIONS.find(q => q.id === id), deep = getQuestionDeepDive(q);
+  assert.ok(deep.hasIndividualDeep, id);
+  assert.equal(deep.deepAnalysis.split(/\n\s*\n/).length, 3, id);
+  assert.doesNotMatch(deep.deepAnalysis.split(/\n\s*\n/)[0], /^(SAN|HSTS|xid|A|AAAA|CNAME|MX|NS|PTR|TXT)\b/i, id);
+  const both = rewrittenL57DualIds.includes(id);
+  assert.equal(Boolean(deep.professional), both, id);
+  const session = { questions: [q], currentIndex: 0, userAnswers: { [id]: q.correct }, submittedQuestions: { [id]: true },
+    startTime: Date.now(), isCompleted: true, mode: 'mixed', feedbackMode: 'exam', difficulty: 'beginner' };
+  assert.equal(render(ExamReview, { session, onExit() {} }).includes('Стиль объяснения'), both, id + ': toggle visibility');
 }
 
 const theoryProps = { onNavigateToIpv4() {}, onNavigateToIpv6() {} };

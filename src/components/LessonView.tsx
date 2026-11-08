@@ -1,3 +1,4 @@
+import { GlossaryText } from './GlossaryText';
 import React, { useMemo, useState } from 'react';
 import { Lesson } from '../data/lessons/types';
 import { StudyTextToggle } from './StudyTextToggle';
@@ -63,7 +64,7 @@ export const LessonView: React.FC<LessonViewProps> = ({ lesson, onBack, onOpenLe
         </div>
         <h2 className="text-xl font-bold text-slate-900 dark:text-white">{lesson.title}</h2>
         {lesson.professional && <StudyTextToggle value={textMode} onChange={setTextMode} />}
-        <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">{content.summary}</p>
+        <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed"><GlossaryText key={textMode}>{content.summary}</GlossaryText></p>
         <LessonTermTags key={`${lesson.id}-${textMode}`} terms={content.terms} onOpenLesson={onOpenLesson} />
       </header>
 
@@ -76,7 +77,7 @@ export const LessonView: React.FC<LessonViewProps> = ({ lesson, onBack, onOpenLe
               <BookOpen className="w-4 h-4 text-cyan-500" />
               {b.heading}
             </h3>
-            <p className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-line">{b.body}</p>
+            <p className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-line"><GlossaryText key={textMode}>{b.body}</GlossaryText></p>
           </section>
         ))}
       </div>
@@ -88,7 +89,7 @@ export const LessonView: React.FC<LessonViewProps> = ({ lesson, onBack, onOpenLe
             <div key={c.cmd} className="rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 p-3 space-y-2">
               <div className="text-xs font-medium text-slate-700 dark:text-slate-200">{c.title}</div>
               <pre className="text-[11px] font-mono whitespace-pre-wrap break-all text-cyan-800 dark:text-cyan-200">{c.cmd}</pre>
-              {c.note && <p className="text-[11px] text-slate-500 dark:text-slate-400">{c.note}</p>}
+              {c.note && <p className="text-[11px] text-slate-500 dark:text-slate-400"><GlossaryText key={textMode}>{c.note}</GlossaryText></p>}
               <button
                 type="button"
                 onClick={() => copy(c.cmd)}

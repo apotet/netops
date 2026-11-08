@@ -1,0 +1,34 @@
+.glossary-trigger {
+  display: inline;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  line-height: inherit;
+  text-align: inherit;
+  text-decoration: underline dotted;
+  text-underline-offset: 3px;
+  cursor: help;
+}
+.glossary-trigger:focus-visible { outline: 2px solid #0891b2; outline-offset: 2px; border-radius: 2px; }
+.glossary-tooltip {
+  position: fixed;
+  z-index: 1000;
+  visibility: hidden;
+  max-height: calc(100dvh - 24px);
+  overflow-y: auto;
+  overflow-wrap: anywhere;
+  padding: 12px 14px;
+  border: 1px solid #94a3b8;
+  border-radius: 12px;
+  background: #fff;
+  color: #0f172a;
+  box-shadow: 0 8px 28px #0f172a30;
+  font: 13px/1.5 system-ui, sans-serif;
+}
+.glossary-tooltip strong, .glossary-tooltip span { display: block; }
+.glossary-tooltip span { color: #0e7490; margin-top: 2px; }
+.glossary-tooltip p { margin: 6px 0 0; }
+.dark .glossary-tooltip { background: #0f1f32; color: #e2e8f0; border-color: #475569; }
+.dark .glossary-tooltip span { color: #67e8f9; }

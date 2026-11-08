@@ -1,5 +1,6 @@
 import React, { useEffect, useId, useRef, useState } from 'react';
 import { BookOpen, CalendarDays, Check, CheckCircle2, ChevronDown, Circle, Diamond, Info, RotateCcw, XCircle } from 'lucide-react';
+import { GlossaryText } from './GlossaryText';
 import { StudyTextToggle } from './StudyTextToggle';
 import { useStudyTextMode } from '../utils/studyTextMode';
 import type { Question } from '../types/quiz';
@@ -57,9 +58,9 @@ function EngineeringReview({ question }: { question: Question }) {
         <h4>Инженерный разбор</h4>
         {deepDive.professional && <StudyTextToggle value={textMode} onChange={setTextMode} />}
         {professional?.notice && <p className="text-xs text-amber-700 dark:text-amber-300">{professional.notice}</p>}
-        <p>{brief}</p>
+        <p><GlossaryText key={textMode} enabled={!professional}>{brief}</GlossaryText></p>
         <div id={contentId} className="review-engineering-body" data-collapsed={isLong && !expanded}>
-          {analysis.split(/\n\s*\n/).map((paragraph, index) => <p key={index}>{paragraph}</p>)}
+          {analysis.split(/\n\s*\n/).map((paragraph, index) => <p key={index}><GlossaryText key={textMode} enabled={!professional}>{paragraph}</GlossaryText></p>)}
         </div>
         {isLong && <button type="button" className="review-button review-engineering-toggle"
           aria-expanded={expanded} aria-controls={contentId} onClick={() => setExpanded(current => !current)}>
