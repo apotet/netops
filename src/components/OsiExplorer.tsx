@@ -116,14 +116,14 @@ export const OsiExplorer: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="p-6 rounded-2xl glass-panel border border-cyan-500/20 shadow-xl">
-        <span className="text-xs font-mono font-bold uppercase tracking-wider text-cyan-400">
+      <div className="p-6 rounded-2xl bg-white dark:bg-[#091524] border border-slate-200 dark:border-cyan-500/20 shadow-xl">
+        <span className="text-xs font-mono font-bold uppercase tracking-wider text-cyan-700 dark:text-cyan-400">
           Интерактивный справочник
         </span>
-        <h2 className="text-2xl font-black tracking-tight text-white mt-1">
+        <h2 className="text-2xl font-black tracking-tight text-slate-900 dark:text-white mt-1">
           7 Уровней модели OSI и стек TCP/IP
         </h2>
-        <p className="text-xs text-slate-400 mt-1">
+        <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
           Нажмите на любой уровень, чтобы изучить его PDU, протоколы, структуру заголовков, устройства и CLI-команды
         </p>
       </div>
@@ -131,7 +131,7 @@ export const OsiExplorer: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Layer Stack list (7 -> 1) */}
         <div className="lg:col-span-5 space-y-2.5">
-          <div className="text-xs font-bold uppercase tracking-wider text-slate-400 px-1 mb-2">
+          <div className="text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400 px-1 mb-2">
             Стек уровней (от L7 к L1)
           </div>
           {OSI_LAYERS.map((layer) => {
@@ -143,26 +143,26 @@ export const OsiExplorer: React.FC = () => {
                 type="button"
                 className={`w-full p-3.5 rounded-xl text-left border transition-all flex items-center justify-between cursor-pointer min-h-[54px] ${
                   isSelected
-                    ? `bg-slate-900/90 border-cyan-400 shadow-lg shadow-cyan-500/20 ring-1 ring-cyan-400`
-                    : 'bg-slate-900/40 border-slate-800 hover:border-slate-700 text-slate-300'
+                    ? `bg-cyan-50 dark:bg-slate-900/90 border-cyan-500 dark:border-cyan-400 shadow-lg shadow-cyan-500/10 dark:shadow-cyan-500/20 ring-1 ring-cyan-400/60 dark:ring-cyan-400`
+                    : 'bg-slate-50 dark:bg-slate-900/40 border-slate-200 dark:border-slate-800 hover:border-cyan-300 dark:hover:border-slate-700 text-slate-700 dark:text-slate-300'
                 }`}
               >
                 <div className="flex items-center gap-3">
                   <span
                     className={`w-8 h-8 rounded-lg flex items-center justify-center font-mono font-black text-xs ${
-                      isSelected ? 'bg-cyan-500 text-slate-950 font-bold' : 'bg-slate-800 text-slate-400'
+                      isSelected ? 'bg-cyan-500 text-slate-950 font-bold' : 'bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-400'
                     }`}
                   >
                     L{layer.number}
                   </span>
                   <div>
-                    <div className="text-xs font-bold text-white">{layer.name}</div>
-                    <div className="text-[10px] text-slate-400 font-mono">PDU: {layer.pdu}</div>
+                    <div className="text-xs font-bold text-slate-900 dark:text-white">{layer.name}</div>
+                    <div className="text-[10px] text-slate-600 dark:text-slate-400 font-mono">PDU: {layer.pdu}</div>
                   </div>
                 </div>
 
                 <div className="text-right hidden sm:block">
-                  <span className="text-[10px] px-2 py-0.5 rounded bg-black/40 font-mono text-cyan-300">
+                  <span className="text-[10px] px-2 py-0.5 rounded bg-cyan-100 dark:bg-black/40 font-mono text-cyan-800 dark:text-cyan-300">
                     {layer.tcpIpName.split(' ')[0]}
                   </span>
                 </div>
@@ -172,44 +172,44 @@ export const OsiExplorer: React.FC = () => {
         </div>
 
         {/* Selected Layer Details */}
-        <div className="lg:col-span-7 p-6 rounded-2xl glass-panel border border-cyan-500/20 shadow-xl space-y-5">
-          <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-slate-800">
+        <div className="lg:col-span-7 p-6 rounded-2xl bg-white dark:bg-[#091524] border border-slate-200 dark:border-cyan-500/20 shadow-xl space-y-5">
+          <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-slate-200 dark:border-slate-800">
             <div>
               <div className="flex items-center gap-2">
-                <span className="px-2.5 py-1 rounded bg-cyan-500/20 border border-cyan-400/40 font-mono font-bold text-cyan-300 text-xs">
+                <span className="px-2.5 py-1 rounded bg-cyan-100 dark:bg-cyan-500/20 border border-cyan-400/40 font-mono font-bold text-cyan-800 dark:text-cyan-300 text-xs">
                   Уровень {selected.number}
                 </span>
-                <span className="text-xs text-slate-400 font-mono">
-                  Стек TCP/IP: <span className="text-white font-bold">{selected.tcpIpName}</span>
+                <span className="text-xs text-slate-600 dark:text-slate-400 font-mono">
+                  Стек TCP/IP: <span className="text-slate-900 dark:text-white font-bold">{selected.tcpIpName}</span>
                 </span>
               </div>
-              <h3 className="text-xl font-black text-white mt-2">{selected.name}</h3>
+              <h3 className="text-xl font-black text-slate-900 dark:text-white mt-2">{selected.name}</h3>
             </div>
-            <div className="p-3 rounded-xl bg-slate-900 border border-slate-800 text-right">
-              <span className="text-[10px] uppercase font-bold text-slate-400 block">Единица данных (PDU)</span>
-              <span className="font-mono text-sm font-bold text-cyan-300">{selected.pdu}</span>
+            <div className="p-3 rounded-xl bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-right">
+              <span className="text-[10px] uppercase font-bold text-slate-600 dark:text-slate-400 block">Единица данных (PDU)</span>
+              <span className="font-mono text-sm font-bold text-cyan-800 dark:text-cyan-300">{selected.pdu}</span>
             </div>
           </div>
 
           <div>
-            <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-1.5">
               Назначение и функции
             </h4>
-            <p className="text-xs sm:text-sm text-slate-200 leading-relaxed bg-slate-900/60 p-3.5 rounded-xl border border-slate-800">
+            <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-200 leading-relaxed bg-slate-50 dark:bg-slate-900/60 p-3.5 rounded-xl border border-slate-200 dark:border-slate-800">
               {selected.functions}
             </p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <h4 className="text-xs font-bold uppercase tracking-wider text-cyan-400 mb-2">
+              <h4 className="text-xs font-bold uppercase tracking-wider text-cyan-700 dark:text-cyan-400 mb-2">
                 Ключевые протоколы
               </h4>
               <div className="flex flex-wrap gap-1.5">
                 {selected.protocols.map((p) => (
                   <span
                     key={p}
-                    className="px-2.5 py-1 rounded-md bg-cyan-950/50 border border-cyan-500/30 text-cyan-300 font-mono text-xs"
+                    className="px-2.5 py-1 rounded-md bg-cyan-100 dark:bg-cyan-950/50 border border-cyan-300 dark:border-cyan-500/30 text-cyan-800 dark:text-cyan-300 font-mono text-xs"
                   >
                     {p}
                   </span>
@@ -218,14 +218,14 @@ export const OsiExplorer: React.FC = () => {
             </div>
 
             <div>
-              <h4 className="text-xs font-bold uppercase tracking-wider text-purple-400 mb-2">
+              <h4 className="text-xs font-bold uppercase tracking-wider text-purple-700 dark:text-purple-400 mb-2">
                 Оборудование уровня
               </h4>
               <div className="flex flex-wrap gap-1.5">
                 {selected.devices.map((d) => (
                   <span
                     key={d}
-                    className="px-2.5 py-1 rounded-md bg-purple-950/50 border border-purple-500/30 text-purple-300 text-xs"
+                    className="px-2.5 py-1 rounded-md bg-purple-100 dark:bg-purple-950/50 border border-purple-300 dark:border-purple-500/30 text-purple-800 dark:text-purple-300 text-xs"
                   >
                     {d}
                   </span>
@@ -235,14 +235,14 @@ export const OsiExplorer: React.FC = () => {
           </div>
 
           <div>
-            <h4 className="text-xs font-bold uppercase tracking-wider text-emerald-400 mb-2">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-400 mb-2">
               CLI команды диагностики
             </h4>
             <div className="flex flex-wrap gap-2">
               {selected.cliTools.map((tool) => (
                 <span
                   key={tool}
-                  className="px-2.5 py-1 rounded-md bg-black/60 border border-emerald-500/40 text-emerald-300 font-mono text-xs"
+                  className="px-2.5 py-1 rounded-md bg-emerald-50 dark:bg-black/60 border border-emerald-300 dark:border-emerald-500/40 text-emerald-800 dark:text-emerald-300 font-mono text-xs"
                 >
                   $ {tool}
                 </span>
@@ -251,13 +251,13 @@ export const OsiExplorer: React.FC = () => {
           </div>
 
           <div>
-            <h4 className="text-xs font-bold uppercase tracking-wider text-amber-400 mb-2">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-amber-700 dark:text-amber-400 mb-2">
               Поля заголовка кадра / пакета
             </h4>
-            <div className="p-3 rounded-xl bg-black/40 border border-slate-800 font-mono text-xs text-slate-300 space-y-1">
+            <div className="p-3 rounded-xl bg-slate-50 dark:bg-black/40 border border-slate-200 dark:border-slate-800 font-mono text-xs text-slate-700 dark:text-slate-300 space-y-1">
               {selected.headers.map((h, i) => (
                 <div key={i} className="flex items-center gap-2">
-                  <span className="text-amber-400">▸</span>
+                  <span className="text-amber-700 dark:text-amber-400">▸</span>
                   <span>{h}</span>
                 </div>
               ))}

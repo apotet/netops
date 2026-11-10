@@ -38,7 +38,7 @@ export const ciscoL3GatewayScenario: Scenario = {
   vendor: 'cisco-ios',
   concepts: ['ipv4', 'static-route', 'interface-admin', 'cisco-ios-modes'],
   difficulty: 1,
-  modesAllowed: ['learn', 'drill', 'task', 'exam'],
+  modesAllowed: ['learn', 'drill', 'task'],
   initialState: buildInitialState(),
   steps: [
     {

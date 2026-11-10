@@ -7,6 +7,9 @@ import { ciscoIosCommands } from './vendors/cisco-ios/commands';
 import { ciscoVlanAccessScenario } from './scenarios/cisco-vlan-access';
 import { ciscoL3GatewayScenario } from './scenarios/cisco-l3-gateway';
 import { ciscoTrunkScenario } from './scenarios/cisco-trunk';
+import { ciscoTwoSwitchVlanScenario } from './scenarios/cisco-two-switch-vlan';
+import { ciscoThreeSwitchMissingVlanScenario } from './scenarios/cisco-three-switch-missing-vlan';
+import { ciscoTwoSwitchTrunkDiagnosticScenario } from './scenarios/cisco-two-switch-trunk-diagnostics';
 import {
   Terminal as TerminalIcon,
   RotateCcw,
@@ -30,10 +33,17 @@ const SCENARIOS: Scenario[] = [
   ciscoVlanAccessScenario,
   ciscoTrunkScenario,
   ciscoL3GatewayScenario,
+  ciscoTwoSwitchVlanScenario,
+  ciscoThreeSwitchMissingVlanScenario,
+  ciscoTwoSwitchTrunkDiagnosticScenario,
 ];
 
 function goalLabel(g: Scenario['goals'][number]): string {
   switch (g.type) {
+    case 'l2.vlanReachable':
+      return `VLAN ${g.vlanId}: ${g.fromDevice} ${g.fromIf} ↔ ${g.toDevice} ${g.toIf} (L2-путь)`;
+    case 'config.saved':
+      return `${g.device.toUpperCase()}: конфигурация сохранена`;
     case 'vlan.exists':
       return `VLAN ${g.vlanId}${g.name ? ` (${g.name})` : ''}`;
     case 'if.accessVlan':
@@ -70,13 +80,21 @@ export const CliLabShell: React.FC = () => {
   const [completed, setCompleted] = useState(false);
   const [goalResults, setGoalResults] = useState<ReturnType<typeof evaluateGoals> | null>(null);
   const [tick, setTick] = useState(0);
+  const [selectedDeviceId, setSelectedDeviceId] = useState(scenario.initialState.activeDeviceId);
   const [fullscreen, setFullscreen] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [cmdHistory, setCmdHistory] = useState<string[]>([]);
   const [histIndex, setHistIndex] = useState<number | null>(null);
 
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const stepIndexRef = useRef(0);
+
+  // Toolbar buttons take DOM focus; return it to the CLI input after layout updates.
+  // Keep the existing input text and caret intact when only changing layout.
+  const focusCliInput = () => {
+    requestAnimationFrame(() => inputRef.current?.focus({ preventScroll: true }));
+  };
 
   const engine = useMemo(() => {
     return new LabEngine(ciscoIosProfile, ciscoIosCommands, structuredClone(scenario.initialState));
@@ -94,7 +112,7 @@ export const CliLabShell: React.FC = () => {
     const intro = `${scenario.title}\n${scenario.description}\n\nVendor: ${ciscoIosProfile.displayName} (documented subset).\nType ? for commands. Tab completes. ↑↓ — history. Mode: ${labMode}`;
     const stepLine =
       labMode === 'learn' && first
-        ? `\n—— Шаг 1 / ${scenario.steps!.length} ——\n${first.instruction}${first.hint ? `\nПодсказка: ${first.hint}` : ''}`
+        ? `\n—— Шаг 1 / ${scenario.steps!.length} ——\n${first.instruction}`
         : '';
     setHistory([{ type: 'system', text: intro + stepLine }]);
     setStepIndex(0);
@@ -105,6 +123,7 @@ export const CliLabShell: React.FC = () => {
     setInput('');
     setHistIndex(null);
     setTick((t) => t + 1);
+    setSelectedDeviceId(scenario.initialState.activeDeviceId);
     inputRef.current?.focus();
   };
 
@@ -126,6 +145,15 @@ export const CliLabShell: React.FC = () => {
     window.addEventListener('keydown', onEsc);
     return () => window.removeEventListener('keydown', onEsc);
   }, [fullscreen]);
+
+  const switchConsole = (id: string) => {
+    if (!engine.selectDevice(id)) return;
+    setSelectedDeviceId(id);
+    setInput('');
+    setHistIndex(null);
+    setHistory((h) => [...h, { type: 'system', text: `— Консоль ${engine.getState().devices[id].hostname} —` }]);
+    focusCliInput();
+  };
 
   const steps = scenario.steps ?? [];
 
@@ -160,9 +188,7 @@ export const CliLabShell: React.FC = () => {
 
     const nextStep = steps[next];
     const nextLine = nextStep
-      ? `\n—— Шаг ${next + 1} / ${steps.length} ——\n${nextStep.instruction}${
-          nextStep.hint ? `\nПодсказка: ${nextStep.hint}` : ''
-        }`
+      ? `\n—— Шаг ${next + 1} / ${steps.length} ——\n${nextStep.instruction}`
       : '';
     stepIndexRef.current = next;
     setStepIndex(next);
@@ -184,13 +210,27 @@ export const CliLabShell: React.FC = () => {
         type: 'system',
         text: result.allPassed
           ? `✓ ${scenario.successMessage}`
-          : `Проверка: ${result.results.filter((r) => r.passed).length}/${result.results.length} целей.\n` +
-            result.results.map((r) => `${r.passed ? '✓' : '✗'} ${r.detail}`).join('\n'),
+          : scenario.diagnostic
+            ? `Проверка: ${result.results.filter((r) => r.passed).length}/${result.results.length} целей. Продолжайте диагностику по всем узлам: статус портов, VLAN, trunk и сохранение изменений.`
+            : `Проверка: ${result.results.filter((r) => r.passed).length}/${result.results.length} целей.\n` +
+              result.results.map((r) => `${r.passed ? '✓' : '✗'} ${r.detail}`).join('\n'),
       },
     ]);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === '?') {
+      // Cisco contextual help appears immediately without Enter and does not
+      // modify the input line, running configuration, or command history.
+      e.preventDefault();
+      const prompt = engine.getPrompt();
+      const help = engine.help(input + '?');
+      setHistory((h) => [...h,
+        { type: 'input', prompt, text: input + '?' },
+        { type: 'output', text: help },
+      ]);
+      return;
+    }
     if (e.key === 'Tab') {
       e.preventDefault();
       const result = engine.complete(input);
@@ -247,6 +287,11 @@ export const CliLabShell: React.FC = () => {
         ? [{ type: 'output' as const, text: result.output, error: result.error }]
         : []),
     ]);
+    if (line.trim().endsWith('?')) {
+      requestAnimationFrame(() => inputRef.current?.focus());
+      setInput(line.slice(0, -1));
+      return;
+    }
     setCmdHistory((prev) => {
       if (prev[prev.length - 1] === line) return prev;
       return [...prev, line].slice(-80);
@@ -255,13 +300,11 @@ export const CliLabShell: React.FC = () => {
     setInput('');
     setTick((t) => t + 1);
 
-    if (labMode !== 'exam') {
-      refreshGoals();
-    }
+    refreshGoals();
 
     tryAdvanceLearnStep();
 
-    if (labMode === 'task' || labMode === 'exam' || labMode === 'drill') {
+    if (labMode === 'task' || labMode === 'drill') {
       const g = engine.checkGoals(scenario.goals);
       if (g.allPassed) {
         setCompleted(true);
@@ -273,16 +316,15 @@ export const CliLabShell: React.FC = () => {
     requestAnimationFrame(() => inputRef.current?.focus());
   };
 
-  const modes: LabMode[] = ['learn', 'drill', 'task', 'exam'];
+  const modes: LabMode[] = ['learn', 'drill', 'task'];
   void tick;
   const currentStep = steps[stepIndex];
-  const showGoalsLive = labMode !== 'exam' || completed;
 
   return (
     <div
       className={
         fullscreen
-          ? 'fixed inset-0 z-50 bg-slate-950/95 backdrop-blur-sm p-4 sm:p-6 overflow-auto space-y-4'
+          ? 'fixed inset-0 z-[60] h-[100dvh] w-screen bg-slate-950 p-3 sm:p-4 overflow-hidden flex flex-col gap-3'
           : 'space-y-4 max-w-5xl mx-auto'
       }
     >
@@ -296,12 +338,22 @@ export const CliLabShell: React.FC = () => {
             {ciscoIosProfile.displayName} · проверка по состоянию · Tab · ↑↓ history
           </p>
         </div>
-        <div className="flex flex-wrap gap-1.5">
+        <div className="flex flex-wrap items-center gap-1.5">
+          {fullscreen && (
+            <button
+              type="button"
+              onClick={() => { setSidebarCollapsed((v) => !v); focusCliInput(); }}
+              aria-pressed={sidebarCollapsed}
+              className="rounded-lg border border-cyan-600/60 px-2.5 py-1 text-[11px] font-bold text-cyan-300 hover:bg-cyan-900/40"
+            >
+              {sidebarCollapsed ? 'Показать задание' : 'Скрыть задание'}
+            </button>
+          )}
           {modes.map((m) => (
             <button
               key={m}
               type="button"
-              onClick={() => setLabMode(m)}
+              onClick={() => { setLabMode(m); focusCliInput(); }}
               className={
                 labMode === m
                   ? 'px-2.5 py-1 rounded-lg text-[11px] font-bold uppercase tracking-wide cursor-pointer bg-cyan-500 text-slate-950'
@@ -319,7 +371,7 @@ export const CliLabShell: React.FC = () => {
           <button
             key={s.id}
             type="button"
-            onClick={() => setScenarioId(s.id)}
+            onClick={() => { setScenarioId(s.id); focusCliInput(); }}
             className={
               scenarioId === s.id
                 ? 'px-3 py-1.5 rounded-xl text-xs font-semibold border border-cyan-500 bg-cyan-500/15 text-cyan-800 dark:text-cyan-200 cursor-pointer'
@@ -331,17 +383,35 @@ export const CliLabShell: React.FC = () => {
         ))}
       </div>
 
+      {Object.keys(engine.getState().devices).length > 1 && (
+        <div className="flex flex-wrap items-center gap-2" aria-label="Выбор консоли устройства">
+          <span className="text-xs text-slate-500 dark:text-slate-400">Консоль:</span>
+          {Object.values(engine.getState().devices).map((device) => (
+            <button key={device.id} type="button" onClick={() => switchConsole(device.id)}
+              aria-pressed={selectedDeviceId === device.id}
+              className={selectedDeviceId === device.id
+                ? 'rounded-lg border border-cyan-500 bg-cyan-500/20 px-3 py-1.5 text-xs font-bold text-cyan-700 dark:text-cyan-200'
+                : 'rounded-lg border border-slate-400/40 px-3 py-1.5 text-xs text-slate-600 dark:text-slate-300'}>
+              {device.hostname}
+            </button>
+          ))}
+          <span className="text-xs text-slate-500 dark:text-slate-400">{engine.getState().links.map((link) => `${link.a.toUpperCase()} ${link.aIf.replace('FastEthernet', 'Fa')} ↔ ${link.b.toUpperCase()} ${link.bIf.replace('FastEthernet', 'Fa')}`).join(' · ')} · модель конфигурации L2</span>
+        </div>
+      )}
+
       <div
         className={
           fullscreen
-            ? 'grid grid-cols-1 lg:grid-cols-3 gap-4 max-w-7xl mx-auto'
+            ? sidebarCollapsed
+              ? 'grid flex-1 min-h-0 grid-cols-1 gap-3 w-full overflow-y-auto lg:overflow-hidden'
+              : 'grid flex-1 min-h-0 grid-cols-1 lg:grid-cols-[minmax(0,4fr)_minmax(240px,1fr)] gap-3 w-full overflow-y-auto lg:overflow-hidden'
             : 'grid grid-cols-1 lg:grid-cols-3 gap-4'
         }
       >
         <div
           className={
             fullscreen
-              ? 'lg:col-span-2 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-950 text-slate-100 overflow-hidden shadow-xl flex flex-col min-h-[calc(100vh-10rem)]'
+              ? 'min-w-0 rounded-2xl border border-slate-700 bg-slate-950 text-slate-100 overflow-hidden shadow-xl flex flex-col min-h-[55dvh] lg:min-h-0 lg:h-full'
               : 'lg:col-span-2 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-950 text-slate-100 overflow-hidden shadow-xl flex flex-col min-h-[420px]'
           }
         >
@@ -353,8 +423,8 @@ export const CliLabShell: React.FC = () => {
             <div className="flex items-center gap-3">
               <button
                 type="button"
-                onClick={() => setFullscreen((v) => !v)}
-                className="hidden sm:inline-flex text-xs text-slate-400 hover:text-white items-center gap-1 cursor-pointer"
+                onClick={() => { setFullscreen((v) => !v); focusCliInput(); }}
+                className="inline-flex text-xs text-slate-400 hover:text-white items-center gap-1 cursor-pointer"
                 title={fullscreen ? 'Выйти из полного экрана (Esc)' : 'Полный экран'}
               >
                 {fullscreen ? <Minimize2 className="w-3.5 h-3.5" /> : <Maximize2 className="w-3.5 h-3.5" />}
@@ -372,7 +442,7 @@ export const CliLabShell: React.FC = () => {
 
           <div
             ref={scrollRef}
-            className="flex-1 overflow-y-auto p-3 font-mono text-[12px] leading-relaxed space-y-1"
+            className={`flex-1 min-h-0 overflow-y-auto p-3 font-mono leading-relaxed space-y-1 ${fullscreen ? 'text-[14px] sm:text-base' : 'text-[12px]'}`}
           >
             {history.map((h, i) => (
               <div
@@ -427,7 +497,7 @@ export const CliLabShell: React.FC = () => {
           </form>
         </div>
 
-        <div className="space-y-3">
+        {(!fullscreen || !sidebarCollapsed) && <div className={fullscreen ? 'min-w-0 space-y-3 lg:overflow-y-auto lg:min-h-0 lg:pr-1' : 'space-y-3'}>
           <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900/60 p-4 space-y-2">
             <div className="text-[11px] font-bold uppercase tracking-wider text-slate-500 font-mono">
               Сценарий
@@ -448,7 +518,7 @@ export const CliLabShell: React.FC = () => {
               </p>
               <button
                 type="button"
-                onClick={() => setHintOpen((v) => !v)}
+                onClick={() => { setHintOpen((v) => !v); focusCliInput(); }}
                 className="text-xs text-cyan-700 dark:text-cyan-300 flex items-center gap-1 cursor-pointer"
               >
                 <HelpCircle className="w-3.5 h-3.5" />
@@ -467,7 +537,7 @@ export const CliLabShell: React.FC = () => {
               <div className="text-[11px] font-bold uppercase tracking-wider text-slate-500 font-mono">
                 Цели
               </div>
-              {(labMode === 'task' || labMode === 'exam' || labMode === 'drill') && (
+              {(labMode === 'task' || labMode === 'drill') && (
                 <button
                   type="button"
                   onClick={runCheck}
@@ -478,19 +548,11 @@ export const CliLabShell: React.FC = () => {
               )}
             </div>
             <ul className="space-y-1.5">
-              {(showGoalsLive
-                ? goalResults?.results ??
-                  scenario.goals.map((g) => ({
-                    predicate: g,
-                    passed: false,
-                    detail: goalLabel(g),
-                  }))
-                : scenario.goals.map((g) => ({
-                    predicate: g,
-                    passed: false,
-                    detail: goalLabel(g),
-                  }))
-              ).map((r, i) => (
+              {(goalResults?.results ?? scenario.goals.map((g) => ({
+                predicate: g,
+                passed: false,
+                detail: goalLabel(g),
+              }))).map((r, i) => (
                 <li
                   key={i}
                   className="flex items-start gap-2 text-xs text-slate-700 dark:text-slate-300"
@@ -500,7 +562,7 @@ export const CliLabShell: React.FC = () => {
                   ) : (
                     <Circle className="w-3.5 h-3.5 text-slate-400 shrink-0 mt-0.5" />
                   )}
-                  <span>{r.detail}</span>
+                  <span>{scenario.diagnostic && scenario.publicGoalLabels?.[i] ? scenario.publicGoalLabels[i] : r.detail}</span>
                 </li>
               ))}
             </ul>
@@ -516,8 +578,7 @@ export const CliLabShell: React.FC = () => {
             <p>
               <span className="font-mono text-cyan-600 dark:text-cyan-400">learn</span> — пошагово с
               подсказками · <span className="font-mono text-cyan-600 dark:text-cyan-400">drill</span> —
-              свободная практика · <span className="font-mono text-cyan-600 dark:text-cyan-400">task</span>/
-              <span className="font-mono text-cyan-600 dark:text-cyan-400">exam</span> — только цели,
+              свободная практика · <span className="font-mono text-cyan-600 dark:text-cyan-400">task</span> — только цели,
               проверка по кнопке или автоматически.
             </p>
             <p className="mt-2">
@@ -525,7 +586,7 @@ export const CliLabShell: React.FC = () => {
               <span className="font-mono">gi0/0</span>. Из config: <span className="font-mono">do show …</span>
             </p>
           </div>
-        </div>
+        </div>}
       </div>
     </div>
   );

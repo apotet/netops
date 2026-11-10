@@ -9,7 +9,7 @@ export type VendorId =
   | 'siemens-scalance'
   | 'linux-host';
 
-export type LabMode = 'learn' | 'drill' | 'task' | 'exam';
+export type LabMode = 'learn' | 'drill' | 'task';
 
 export type DeviceMode =
   | 'exec'
@@ -60,6 +60,13 @@ export interface RouteEntry {
   metric?: number;
 }
 
+export interface SavedDeviceConfig {
+  hostname: string;
+  interfaces: Record<string, InterfaceState>;
+  vlans: Record<number, VlanState>;
+  routes: RouteEntry[];
+}
+
 export interface DeviceState {
   id: string;
   hostname: string;
@@ -69,6 +76,7 @@ export interface DeviceState {
   interfaces: Record<string, InterfaceState>;
   vlans: Record<number, VlanState>;
   routes: RouteEntry[];
+  startupConfig?: SavedDeviceConfig;
 }
 
 export interface NetworkLink {
@@ -102,7 +110,9 @@ export type GoalPredicate =
   | { type: 'route.exists'; device: string; prefix: string; prefixLen: number; nextHop?: string }
   | { type: 'if.trunkAllowed'; device: string; ifName: string; vlans: number[] }
   | { type: 'mode'; device: string; modes: DeviceMode[] }
-  | { type: 'privilege'; device: string; min: number };
+  | { type: 'privilege'; device: string; min: number }
+  | { type: 'config.saved'; device: string }
+  | { type: 'l2.vlanReachable'; vlanId: number; fromDevice: string; fromIf: string; toDevice: string; toIf: string };
 
 export interface GoalCheckResult {
   predicate: GoalPredicate;
@@ -130,6 +140,10 @@ export interface Scenario {
   steps?: ScenarioStep[];
   goals: GoalPredicate[];
   successMessage: string;
+  /** Diagnostic exercises keep the root cause and repair target hidden until solved. */
+  diagnostic?: boolean;
+  /** Learner-facing goals; unlike internal predicates these must not disclose the fault. */
+  publicGoalLabels?: string[];
 }
 
 export interface VendorProfile {

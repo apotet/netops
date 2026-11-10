@@ -1,3 +1,6 @@
+import { contextualHelp } from './ContextualHelp';
+import { commandFor, resolveKeywords } from './CommandResolution';
+import { initializeStartupConfigs } from './ConfigPersistence';
 import { evaluateGoals } from './GoalEvaluator';
 import {
   CommandResult,
@@ -18,41 +21,29 @@ function activeDevice(state: NetworkState): DeviceState {
   return d;
 }
 
-function findCommand(specs: CommandSpec[], tokens: string[]): CommandSpec | undefined {
-  const lower = tokens.map((t) => t.toLowerCase());
-  let best: CommandSpec | undefined;
-  let bestLen = 0;
-  for (const spec of specs) {
-    const m = spec.match;
-    if (m.length > lower.length) continue;
-    let ok = true;
-    for (let i = 0; i < m.length; i++) {
-      if (m[i] !== lower[i]) {
-        ok = false;
-        break;
-      }
-    }
-    if (ok && m.length >= bestLen) {
-      best = spec;
-      bestLen = m.length;
-    }
-  }
-  return best;
-}
 
 export class LabEngine {
   constructor(
     private profile: VendorProfile,
     private commands: CommandSpec[],
     private state: NetworkState
-  ) {}
+  ) {
+    this.state = initializeStartupConfigs(state);
+  }
 
   getState(): NetworkState {
     return this.state;
   }
 
   setState(state: NetworkState) {
-    this.state = state;
+    this.state = initializeStartupConfigs(state);
+  }
+
+  /** Switch console target without resetting either device's mode/configuration. */
+  selectDevice(deviceId: string): boolean {
+    if (!this.state.devices[deviceId]) return false;
+    this.state = { ...this.state, activeDeviceId: deviceId };
+    return true;
   }
 
   getPrompt(): string {
@@ -60,7 +51,7 @@ export class LabEngine {
   }
 
   reset(initial: NetworkState) {
-    this.state = cloneState(initial);
+    this.state = initializeStartupConfigs(cloneState(initial));
   }
 
   /**
@@ -78,56 +69,41 @@ export class LabEngine {
     const tokens = endsWithSpace ? parts : parts.slice(0, -1);
     const partial = endsWithSpace ? '' : (parts[parts.length - 1] ?? '').toLowerCase();
 
-    const available = this.commands.filter((spec) => {
-      if (!spec.modes.includes(mode)) return false;
-      if (spec.minPrivilege != null && priv < spec.minPrivilege) return false;
-      if (tokens.length > spec.match.length) return false;
-      for (let i = 0; i < tokens.length; i++) {
-        if (spec.match[i] !== tokens[i].toLowerCase()) return false;
-      }
-      return true;
-    });
+    // An empty prefix is not a request to invent the next command keyword.
+    // In particular, repeated Tab presses must never construct a command.
+    if (!partial) return { candidates: [] };
 
-    const nextSet = new Set<string>();
-    const phraseCandidates: string[] = [];
+    const parsed = resolveKeywords(this.commands, tokens, mode, priv);
+    if (parsed.ambiguous) return { candidates: parsed.ambiguous };
+    const available = parsed.candidates.filter(spec =>
+      spec.match.length > tokens.length &&
+      spec.match.slice(0, tokens.length).every((word, i) => word === parsed.tokens[i].toLowerCase())
+    );
 
-    for (const spec of available) {
-      if (tokens.length >= spec.match.length) continue;
-      const rest = spec.match.slice(tokens.length);
-      if (rest.length === 0) continue;
-      if (partial && !rest[0].startsWith(partial)) continue;
-      nextSet.add(rest[0]);
-      phraseCandidates.push([...tokens, ...rest].join(' '));
-    }
+    // Complete exactly one CLI keyword per Tab press. Command arguments (VLAN ID,
+    // IP, interface name) are not part of the static keyword completion.
+    const nextTokens = Array.from(new Set(
+      available
+        .filter((spec) => tokens.length < spec.match.length)
+        .map((spec) => spec.match[tokens.length])
+        .filter((word) => word.startsWith(partial))
+    )).sort();
 
-    const nextTokens = Array.from(nextSet).sort();
-    const uniquePhrases = Array.from(new Set(phraseCandidates)).sort();
-
-    if (uniquePhrases.length === 1) {
-      return { completed: uniquePhrases[0] + ' ', candidates: uniquePhrases };
-    }
-
+    const base = tokens.join(' ');
+    const prefix = base ? base + ' ' : '';
     if (nextTokens.length === 1) {
-      const base = tokens.join(' ');
-      return {
-        completed: (base ? base + ' ' : '') + nextTokens[0] + ' ',
-        candidates: nextTokens,
-      };
+      return { completed: prefix + nextTokens[0] + ' ', candidates: nextTokens };
     }
 
     if (nextTokens.length > 1) {
-      let lcp = nextTokens[0];
-      for (const t of nextTokens.slice(1)) {
+      let common = nextTokens[0];
+      for (const word of nextTokens.slice(1)) {
         let i = 0;
-        while (i < lcp.length && i < t.length && lcp[i] === t[i]) i++;
-        lcp = lcp.slice(0, i);
+        while (i < common.length && i < word.length && common[i] === word[i]) i++;
+        common = common.slice(0, i);
       }
-      if (lcp.length > partial.length) {
-        const base = tokens.join(' ');
-        return {
-          completed: (base ? base + ' ' : '') + lcp,
-          candidates: nextTokens,
-        };
+      if (common.length > partial.length) {
+        return { completed: prefix + common, candidates: nextTokens };
       }
       return { candidates: nextTokens };
     }
@@ -135,32 +111,35 @@ export class LabEngine {
     return { candidates: [] };
   }
 
+  /** Context-sensitive ? help, read-only and available independent of scenario. */
+  help(line: string): string {
+    return contextualHelp(this.commands, activeDevice(this.state), line.endsWith('?') ? line : line + '?');
+  }
+
   execute(line: string): CommandResult {
     const trimmed = line.trim();
     if (!trimmed) return { output: '' };
+    if (trimmed.endsWith('?')) return { output: this.help(line) };
 
     const tokens = trimmed.split(/\s+/);
     const device = activeDevice(this.state);
-    const spec = findCommand(this.commands, tokens);
-
+    const resolved = commandFor(this.commands, tokens, device.modeCtx.mode, device.privilege);
+    if (resolved.ambiguous) {
+      return { output: '% Ambiguous command: ' + resolved.ambiguous.join(', '), error: true };
+    }
+    const spec = resolved.spec;
     if (!spec) {
-      return { output: this.profile.messages.invalid, error: true };
-    }
-
-    if (!spec.modes.includes(device.modeCtx.mode)) {
-      return {
-        output: `${this.profile.messages.invalid}\n(Команда недоступна в режиме ${device.modeCtx.mode})`,
-        error: true,
-      };
-    }
-
-    if (spec.minPrivilege != null && device.privilege < spec.minPrivilege) {
-      return { output: this.profile.messages.needEnable, error: true };
+      // Do not silently accept a command from another IOS configuration mode.
+      const elsewhere = this.commands.some(s =>
+        s.match.length <= tokens.length &&
+        s.match.every((word, i) => word.startsWith(tokens[i].toLowerCase()))
+      );
+      return { output: elsewhere ? this.profile.messages.invalid + '\n(Команда недоступна в этом режиме)' : this.profile.messages.invalid, error: true };
     }
 
     const working = cloneState(this.state);
     const workingDevice = activeDevice(working);
-    const result = spec.handler(tokens, working, workingDevice, this.profile);
+    const result = spec.handler(resolved.tokens, working, workingDevice, this.profile);
 
     if (result.state) {
       this.state = result.state;

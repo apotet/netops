@@ -43,7 +43,7 @@ export const TheoryCheatsheets: React.FC = () => {
     <div className="font-sans">
       <div className="h-14" aria-hidden />
       <nav aria-label="Навигация по шпаргалкам L1–L7" className="fixed top-16 left-0 right-0 z-30 px-3 sm:px-6">
-        <div ref={navRef} className="max-w-5xl mx-auto flex gap-1 rounded-xl border border-white/10 dark:border-cyan-500/15 bg-[#07111f]/55 p-1 backdrop-blur-md">
+        <div ref={navRef} className="max-w-5xl mx-auto flex gap-1 rounded-xl border border-slate-300/40 dark:border-cyan-500/15 bg-white/45 dark:bg-[#07111f]/35 p-1 backdrop-blur-md">
           {LEVEL_NOTES.map((note) => (
             <a
               key={note.level}
@@ -56,7 +56,7 @@ export const TheoryCheatsheets: React.FC = () => {
               className={`flex-1 min-w-0 px-1 py-1.5 rounded-lg text-xs font-bold text-center transition-colors ${
                 activeLevel === note.level
                   ? 'bg-cyan-400/90 text-slate-950'
-                  : 'text-slate-300/80 hover:bg-white/10'
+                  : 'text-slate-700/90 dark:text-slate-300/80 hover:bg-slate-900/5 dark:hover:bg-white/10'
               }`}
             >
               L{note.level}
