@@ -1,7 +1,11 @@
+import { formatAllowedVlans } from './trunkCommands';
+import { commandFor } from '../../engine/CommandResolution';
 import { CommandResult, CommandSpec, DeviceState, NetworkState } from '../../engine/types';
 import { ciscoIosProfile } from './profile';
 import { ciscoL3Commands } from './l3Commands';
 import { ciscoTrunkCommands } from './trunkCommands';
+import { ciscoInterfaceShowCommands } from './showInterfaceCommands';
+import { ciscoPersistenceCommands } from './persistenceCommands';
 
 function commitDevice(state: NetworkState, device: DeviceState): NetworkState {
   return {
@@ -332,8 +336,8 @@ const baseCommands: CommandSpec[] = [
         }
         if (iface.switchport?.mode === 'trunk') {
           lines.push(' switchport mode trunk');
-          if (iface.switchport.trunkAllowed?.length) {
-            lines.push(` switchport trunk allowed vlan ${iface.switchport.trunkAllowed.join(',')}`);
+          if (iface.switchport.trunkAllowed !== undefined) {
+            lines.push(` switchport trunk allowed vlan ${formatAllowedVlans(iface.switchport.trunkAllowed)}`);
           }
         }
         lines.push(iface.adminUp ? ' no shutdown' : ' shutdown');
@@ -367,31 +371,19 @@ const baseCommands: CommandSpec[] = [
       const savedPriv = device.privilege;
       device.modeCtx = { mode: 'privileged' };
       device.privilege = 15;
-      const lower = rest.map((t) => t.toLowerCase());
-      let best: (typeof ciscoIosCommands)[number] | undefined;
-      let bestLen = 0;
-      for (const spec of ciscoIosCommands) {
-        if (spec.id === 'cisco.do') continue;
-        const m = spec.match;
-        if (m.length > lower.length) continue;
-        let ok = true;
-        for (let i = 0; i < m.length; i++) {
-          if (m[i] !== lower[i]) {
-            ok = false;
-            break;
-          }
-        }
-        if (ok && m.length >= bestLen) {
-          best = spec;
-          bestLen = m.length;
-        }
+      const resolved = commandFor(ciscoIosCommands.filter(s => s.id !== 'cisco.do'), rest, 'privileged', 15);
+      if (resolved.ambiguous) {
+        device.modeCtx = savedMode;
+        device.privilege = savedPriv;
+        return { output: '% Ambiguous command: ' + resolved.ambiguous.join(', '), error: true };
       }
+      const best = resolved.spec;
       if (!best) {
         device.modeCtx = savedMode;
         device.privilege = savedPriv;
         return { output: profile.messages.invalid, error: true };
       }
-      const result = best.handler(rest, state, device, profile);
+      const result = best.handler(resolved.tokens, state, device, profile);
       if (result.state) {
         const d = result.state.devices[result.state.activeDeviceId];
         if (d) {
@@ -413,7 +405,7 @@ const baseCommands: CommandSpec[] = [
       const m = device.modeCtx.mode;
       const map: Record<string, string> = {
         exec: 'enable  show  ?',
-        privileged: 'configure terminal  show  show ip route  show interfaces trunk  disable  ?',
+        privileged: 'configure terminal  show  show ip route  show interfaces trunk  show startup-config  copy running-config startup-config  write memory  reload  disable  ?',
         config: 'hostname  vlan  interface  ip route  do show …  exit  end  ?',
         'config-if':
           'ip address  switchport …  shutdown  no shutdown  do show …  exit  end  ?',
@@ -430,6 +422,8 @@ export const ciscoIosCommands: CommandSpec[] = [
   ...baseCommands,
   ...ciscoL3Commands,
   ...ciscoTrunkCommands,
+  ...ciscoPersistenceCommands,
+  ...ciscoInterfaceShowCommands,
 ];
 
 function normalizeIfaceName(raw: string): string {

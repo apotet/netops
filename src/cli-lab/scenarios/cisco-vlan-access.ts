@@ -42,7 +42,7 @@ export const ciscoVlanAccessScenario: Scenario = {
   vendor: 'cisco-ios',
   concepts: ['vlan', 'access-port', 'cisco-ios-modes'],
   difficulty: 1,
-  modesAllowed: ['learn', 'drill', 'task', 'exam'],
+  modesAllowed: ['learn', 'drill', 'task'],
   initialState: buildInitialState(),
   steps: [
     {

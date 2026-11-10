@@ -42,7 +42,7 @@ export const ciscoTrunkScenario: Scenario = {
   vendor: 'cisco-ios',
   concepts: ['vlan', 'trunk', '802.1q', 'cisco-ios-modes'],
   difficulty: 2,
-  modesAllowed: ['learn', 'drill', 'task', 'exam'],
+  modesAllowed: ['learn', 'drill', 'task'],
   initialState: buildInitialState(),
   steps: [
     {

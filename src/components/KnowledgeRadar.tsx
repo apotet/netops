@@ -305,7 +305,7 @@ export const KnowledgeRadar: React.FC<KnowledgeRadarProps> = ({
         >
           <div>
             <div className="text-sm font-bold text-slate-900 dark:text-white">Работа над ошибками</div>
-            <div className="text-[11px] text-slate-500 dark:text-slate-400">по 20 за сеанс</div>
+            <div className="text-[11px] text-slate-500 dark:text-slate-400">по 5 за сеанс</div>
           </div>
           <div className="text-2xl font-black font-mono text-rose-600 dark:text-rose-300">{mistakesCount}</div>
         </button>

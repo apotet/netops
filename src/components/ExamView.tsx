@@ -20,7 +20,7 @@ import { ExamReview } from './ExamReview';
 import { getLessonForQuestion } from '../data/lessons';
 import { LAST_REVIEW_KEY, serializeReview, restoreReview } from '../utils/examReview';
 import { KnowledgeRadar } from './KnowledgeRadar';
-import { LivingOsiStack } from './LivingOsiStack';
+import { LivingOsiStack as HomeOsiStack } from './HomeOsiStack';
 import { ZoomableImage } from './ZoomableImage';
 import {
   CheckCircle2,
@@ -67,7 +67,8 @@ export const ExamView: React.FC<ExamViewProps> = ({ ref, soundEnabled, onNavigat
   const [lastReview, setLastReview] = useState<ProgressSession | null>(null);
   const [reviewSession, setReviewSession] = useState<ProgressSession | null>(null);
   const [reviewWarning, setReviewWarning] = useState(false);
-  const [showParameters, setShowParameters] = useState(false);
+  // Always enter the exam through its menu; a restored attempt stays available via Continue.
+  const [showParameters, setShowParameters] = useState(true);
   const parametersRef = useRef<HTMLDivElement>(null);
   const [moreModesOpen, setMoreModesOpen] = useState(false);
   const [pendingNewQuiz, setPendingNewQuiz] = useState<{ questions?: Question[]; count: number; mode: QuizModeId } | null>(null);
@@ -108,7 +109,7 @@ export const ExamView: React.FC<ExamViewProps> = ({ ref, soundEnabled, onNavigat
       const saved = localStorage.getItem('osi_active_session');
       if (saved) {
         const completed = restoreReview(JSON.stringify({ version: 1, session: JSON.parse(saved) }), getProgressEpoch());
-        if (completed) { setLastReview(completed); setReviewSession(completed); return; }
+        if (completed) { setLastReview(completed); return; }
         const parsed = restoreSession(saved, ALL_QUESTIONS);
         if (!parsed) { retainProgressBackup('osi_active_session', saved); setSessionWarning(true); return; }
         if (parsed.progressEpoch !== getProgressEpoch()) return;
@@ -301,13 +302,13 @@ export const ExamView: React.FC<ExamViewProps> = ({ ref, soundEnabled, onNavigat
         }} onReviewMistakes={() => {
           const pool = getMistakeQuestions();
           if (!pool.length) { setEmptyMistakes(true); return; }
-          startNewQuiz(pool, 20);
+          startNewQuiz(pool, 5);
         }} onOpenVisualL1={() => {
           setSelectedMode('visual-l1');
           startNewQuiz(ALL_QUESTIONS.filter(q => q.group === 'visual-l1'), questionCount, 'visual-l1');
         }} />
         {emptyMistakes && <p role="status" className="text-sm text-slate-500">Ошибок на повторение нет. Новые ошибки появятся здесь; для освоения нужны два верных ответа подряд.</p>}
-        <LivingOsiStack />
+        <HomeOsiStack />
         <div ref={parametersRef} className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 p-5 space-y-4">
           <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2"><Layers className="w-4 h-4 text-cyan-500" />Параметры тестирования</h3>
           <div className="space-y-3">

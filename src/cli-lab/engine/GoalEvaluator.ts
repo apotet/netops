@@ -1,3 +1,5 @@
+import { hasUnsavedChanges } from './ConfigPersistence';
+import { checkVlanPath } from './VlanPath';
 import { DeviceState, GoalCheckResult, GoalPredicate, NetworkState } from './types';
 
 function deviceOf(state: NetworkState, id: string): DeviceState | undefined {
@@ -8,6 +10,16 @@ export function evaluatePredicate(state: NetworkState, p: GoalPredicate): GoalCh
   const dev = 'device' in p ? deviceOf(state, p.device) : undefined;
 
   switch (p.type) {
+    case 'l2.vlanReachable': {
+      const result = checkVlanPath(state, p.vlanId, p.fromDevice, p.fromIf, p.toDevice, p.toIf);
+      return { predicate: p, passed: result.reachable, detail: result.detail };
+    }
+    case 'config.saved': {
+      const ok = !!dev && !hasUnsavedChanges(dev);
+      return { predicate: p, passed: ok, detail: ok
+        ? `${dev.hostname}: running-config сохранена в startup-config`
+        : `${dev?.hostname ?? p.device}: есть несохранённые изменения. Выполните copy running-config startup-config` };
+    }
     case 'hostname': {
       const ok = !!dev && dev.hostname.toLowerCase() === p.hostname.toLowerCase();
       return {

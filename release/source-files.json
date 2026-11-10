@@ -1,14 +1,10 @@
 {
-  "upstream": "apotet/my-gemini-mirror-site",
-  "source_sha": "c4965d7673f1b470f2e9c00e6fd2240530b17b88",
+  "upstream": "https://github.com/apotet/my-gemini-mirror-site",
+  "source_sha": "1fef298d8de58f295b7fd307b33529913e1722c8",
   "files": [
     {
       "path": ".gitignore",
       "sha": "05b806c7fb54ca1604cdd2373be3d13c01d8dc80"
-    },
-    {
-      "path": ".nojekyll",
-      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
     },
     {
       "path": "docs/QUESTION_BANK_EXPANSION.md",
@@ -20,7 +16,7 @@
     },
     {
       "path": "index.html",
-      "sha": "75d819d28bc8007331d5f2722e84e7312fed07aa"
+      "sha": "172d9828e6a0776cb56d59bdea871e23c1bd9d65"
     },
     {
       "path": "metadata.json",
@@ -45,6 +41,46 @@
     {
       "path": "scripts/base-exam.test.mjs",
       "sha": "b6b98877d8d6aae8437e2c5b5e78366a58246848"
+    },
+    {
+      "path": "scripts/cli-abbreviations.test.mjs",
+      "sha": "36b8e4c3fcfddd476a446b3fb101ebef2ab07c2e"
+    },
+    {
+      "path": "scripts/cli-contextual-help.test.mjs",
+      "sha": "1e48fc338ef54f9120b3d4863c1ce76183c26900"
+    },
+    {
+      "path": "scripts/cli-diagnostic-hints.test.mjs",
+      "sha": "a43ca5215f7f6c19b0b9dacf5a850b0caeb3b792"
+    },
+    {
+      "path": "scripts/cli-persistence.test.mjs",
+      "sha": "ff0ae6851cb7c6e5552b963341245ca891dec4a2"
+    },
+    {
+      "path": "scripts/cli-show-interfaces.test.mjs",
+      "sha": "37457ba558d4486a7f67d6d179759ac9838c5fed"
+    },
+    {
+      "path": "scripts/cli-tab.test.mjs",
+      "sha": "3a4a706b7bcecccd8ce73059338cb5931a0f4888"
+    },
+    {
+      "path": "scripts/cli-three-switch.test.mjs",
+      "sha": "fa7079604a0463624e066353f99c6abb3eb95c8c"
+    },
+    {
+      "path": "scripts/cli-trunk-allowed-ops.test.mjs",
+      "sha": "84dc6f442a081c0388e3bed4b9f69e498509ee94"
+    },
+    {
+      "path": "scripts/cli-trunk-diagnostics.test.mjs",
+      "sha": "f8cd5f7a9176c07dfe7b9685792bb927f0ff6bfb"
+    },
+    {
+      "path": "scripts/cli-two-switch.test.mjs",
+      "sha": "ba4a2f3ac7fc3cbb45517bca1be27e0ba51a4915"
     },
     {
       "path": "scripts/coverage-report.mjs",
@@ -100,51 +136,87 @@
     },
     {
       "path": "src/App.tsx",
-      "sha": "0f22d132aa0797f5ffd0f5beafc07e36874ee863"
+      "sha": "fdeba68245b050b48f40d1a7f861ecd273d5e782"
     },
     {
       "path": "src/cli-lab/CliLabShell.tsx",
-      "sha": "4b3a57334550ddf91dc844165c153985cbe7680d"
+      "sha": "e64da4963152fc454decebc3248e271ff7de5546"
+    },
+    {
+      "path": "src/cli-lab/engine/CommandResolution.ts",
+      "sha": "32f085d8434cc487ff9415c39acbe3caf78f45b6"
+    },
+    {
+      "path": "src/cli-lab/engine/ConfigPersistence.ts",
+      "sha": "524ad2ab69582486720a476c907ada0bd666072c"
+    },
+    {
+      "path": "src/cli-lab/engine/ContextualHelp.ts",
+      "sha": "a011b43b3e7bcbe8b15128dcff3309dcf629eea0"
     },
     {
       "path": "src/cli-lab/engine/GoalEvaluator.ts",
-      "sha": "cebc8fdd7b9cea2b96d7dde92fa7945222bc59c4"
+      "sha": "e88c7497f3c5022c3e076e3a0a11e1cb5e0198cb"
     },
     {
       "path": "src/cli-lab/engine/LabEngine.ts",
-      "sha": "2789a7f6eac0bb8d3a207e79604cb806567bb593"
+      "sha": "2280f1781c6b13f4f30d17d5c2f234d87e60976b"
     },
     {
       "path": "src/cli-lab/engine/types.ts",
-      "sha": "91d5e13c039c07cb3d77d6665f08a8e9f7688238"
+      "sha": "26f2bda1f60ea05e762e7c6775a6b30bdc2f9fc3"
+    },
+    {
+      "path": "src/cli-lab/engine/VlanPath.ts",
+      "sha": "1a5503323b205da005be08fd8cb6c2bae4de10a2"
     },
     {
       "path": "src/cli-lab/scenarios/cisco-l3-gateway.ts",
-      "sha": "cbd7a238c2ac20933c68191558f6dddcfd047084"
+      "sha": "f99d39ab0644e537beb3f82778280a2ddd4b894b"
+    },
+    {
+      "path": "src/cli-lab/scenarios/cisco-three-switch-missing-vlan.ts",
+      "sha": "1ade8ce8fec667d7268346335da19e989f39f08a"
     },
     {
       "path": "src/cli-lab/scenarios/cisco-trunk.ts",
-      "sha": "0292b4c3a78ec2901d2a895f112ac2f303a3c961"
+      "sha": "4cd0375ebb7968c807e9949282d1ccf791429e3e"
+    },
+    {
+      "path": "src/cli-lab/scenarios/cisco-two-switch-trunk-diagnostics.ts",
+      "sha": "50574ffb7860dca0b33c0e770a8490d549d8f80d"
+    },
+    {
+      "path": "src/cli-lab/scenarios/cisco-two-switch-vlan.ts",
+      "sha": "09d8ae1cb4019b3a7abbaa60d33be67c706fe291"
     },
     {
       "path": "src/cli-lab/scenarios/cisco-vlan-access.ts",
-      "sha": "6c17ea509652c33894383eeb8f3dc8fbc176d617"
+      "sha": "a5ea5afddc8df9c346bd615abc28e537bf758994"
     },
     {
       "path": "src/cli-lab/vendors/cisco-ios/commands.ts",
-      "sha": "de6a91f58bf5e196d569edb2efb66d3299b3f797"
+      "sha": "12150547af4b5ec26846dd8729e819a2fa4f3e32"
     },
     {
       "path": "src/cli-lab/vendors/cisco-ios/l3Commands.ts",
       "sha": "0dedc3168eb2c683836cdd065d0196bee1950ec1"
     },
     {
+      "path": "src/cli-lab/vendors/cisco-ios/persistenceCommands.ts",
+      "sha": "9dfeba2e806dd1d87b22241834b2aac98a1dad62"
+    },
+    {
       "path": "src/cli-lab/vendors/cisco-ios/profile.ts",
       "sha": "dfb5f26e5700588e7b15301039b04ba565d672b1"
     },
     {
+      "path": "src/cli-lab/vendors/cisco-ios/showInterfaceCommands.ts",
+      "sha": "531efcfb15a654078747bbdfd5cc0619140e0640"
+    },
+    {
       "path": "src/cli-lab/vendors/cisco-ios/trunkCommands.ts",
-      "sha": "8b44fb7c5577315b7e7574b77443d452444e4307"
+      "sha": "d02650515a9ccb9cf2b305b2b6732785b65573e2"
     },
     {
       "path": "src/components/CliSimulator.tsx",
@@ -168,7 +240,7 @@
     },
     {
       "path": "src/components/ExamView.tsx",
-      "sha": "8cafaf9c157ac506cd5ca61a4283363d4c832431"
+      "sha": "a2ea66f2a9208cefae0641210339869091690fec"
     },
     {
       "path": "src/components/GlossaryText.css",
@@ -179,8 +251,12 @@
       "sha": "1c1ba53c361daaeb5c31aaf22b56e24c2f6e8939"
     },
     {
+      "path": "src/components/HomeOsiStack.tsx",
+      "sha": "6a1726aaa6784e3de615f0b624b0fcb0bbac88e7"
+    },
+    {
       "path": "src/components/Ipv4Trainer.tsx",
-      "sha": "2f946e60d564d7ecb897074364ec6184866c38c6"
+      "sha": "e92a6d142e30bab87d2db77e24e42843961e8efc"
     },
     {
       "path": "src/components/Ipv6Trainer.tsx",
@@ -192,7 +268,7 @@
     },
     {
       "path": "src/components/KnowledgeRadar.tsx",
-      "sha": "d707d418293345816aee8b14d69bda6903906452"
+      "sha": "1deda0287476d65eb1e3536110576d23d1f27846"
     },
     {
       "path": "src/components/LessonTermTags.tsx",
@@ -204,15 +280,15 @@
     },
     {
       "path": "src/components/LivingOsiStack.tsx",
-      "sha": "70f47f43de54d5700a778e152c646fed5e496ad6"
+      "sha": "1979056c389afda6f7299279edcb6502cea0fb6e"
     },
     {
       "path": "src/components/MobileTabBar.tsx",
-      "sha": "de66dad3521c7c813ce044c2e2142f1a914b5bc4"
+      "sha": "20fb670e0360dc577903f97d867a7321464f8f3c"
     },
     {
       "path": "src/components/Navbar.tsx",
-      "sha": "5844e20b56a113d930fdfdc65e4b7a9ec85e3a05"
+      "sha": "8af3cb541599e8d919bad9a34643df6b0c4ca1cc"
     },
     {
       "path": "src/components/NetOpsLogo.tsx",
@@ -220,11 +296,11 @@
     },
     {
       "path": "src/components/OsiExplorer.tsx",
-      "sha": "79ddc8977839cc7b20ad7064e4e56f4cb69b1d23"
+      "sha": "8d8d0573d59a95ad7e104539800beb97a83d15be"
     },
     {
       "path": "src/components/PacketJourney.tsx",
-      "sha": "8f9225f4f405a888d6a02606e7a484bd6710b6e6"
+      "sha": "4324df2d44701c2df2c6c880ef7d71053c1fa6b0"
     },
     {
       "path": "src/components/PhotoCredits.tsx",
@@ -232,7 +308,7 @@
     },
     {
       "path": "src/components/PracticeHub.tsx",
-      "sha": "2dedeb5fb58943974d15f8bcf2d662f945c2bad2"
+      "sha": "197b0892d98ff1cad0929d593f63425e47b52b67"
     },
     {
       "path": "src/components/ProtocolSimulators.tsx",
@@ -248,7 +324,7 @@
     },
     {
       "path": "src/components/TheoryCheatsheets.tsx",
-      "sha": "3af0cfce456b17a7b320db32c23c64d25ee0a80e"
+      "sha": "9725eace549024179b54fc5b94698711576a12d4"
     },
     {
       "path": "src/components/TheoryModels.tsx",

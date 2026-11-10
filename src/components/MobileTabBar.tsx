@@ -23,10 +23,10 @@ export const MobileTabBar: React.FC<MobileTabBarProps> = ({ activeTab, onTabChan
 
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 z-40 lg:hidden bg-white/95 dark:bg-[#07111f]/96 backdrop-blur-2xl border-t border-slate-200 dark:border-cyan-500/20 px-3 pt-2 pb-5 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] dark:shadow-[0_-8px_24px_rgba(0,0,0,0.6)] select-none transition-colors"
-      style={{ paddingBottom: 'max(1.25rem, env(safe-area-inset-bottom, 1.25rem))' }}
+      className="fixed bottom-0 left-0 right-0 z-40 lg:hidden bg-white/95 dark:bg-[#07111f]/96 backdrop-blur-2xl border-t border-slate-200 dark:border-cyan-500/20 px-1 sm:px-3 pt-1 pb-2 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] dark:shadow-[0_-8px_24px_rgba(0,0,0,0.6)] select-none transition-colors"
+      style={{ paddingBottom: 'max(0.5rem, env(safe-area-inset-bottom, 0.5rem))' }}
     >
-      <div className="grid grid-cols-4 max-w-md mx-auto items-center">
+      <div className="grid grid-cols-5 w-full max-w-md mx-auto items-center gap-0.5">
         {tabs.map((tab) => {
           const isActive = activeTab === tab.id || (tab.id === 'theory' && activeTab === 'osi');
 
@@ -35,7 +35,8 @@ export const MobileTabBar: React.FC<MobileTabBarProps> = ({ activeTab, onTabChan
               key={tab.id}
               onClick={() => handleSelect(tab.id)}
               type="button"
-              className="flex flex-col items-center justify-center gap-1.5 py-1 px-2 cursor-pointer transition-all group"
+              aria-current={isActive ? "page" : undefined}
+              className="min-w-0 min-h-11 flex flex-col items-center justify-center gap-1 py-0.5 px-0.5 cursor-pointer transition-all group"
             >
               {/* Dot indicator matching exact design in mockup */}
               <div className="relative w-4 h-4 flex items-center justify-center">
@@ -51,7 +52,7 @@ export const MobileTabBar: React.FC<MobileTabBarProps> = ({ activeTab, onTabChan
 
               {/* Label */}
               <span
-                className={`text-[11px] font-bold tracking-tight transition-colors ${
+                className={`text-[10px] leading-tight whitespace-nowrap font-bold tracking-tight transition-colors ${
                   isActive
                     ? 'text-cyan-700 dark:text-cyan-300 font-extrabold'
                     : 'text-slate-500 dark:text-slate-400 group-hover:text-slate-800 dark:group-hover:text-slate-200'
