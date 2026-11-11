@@ -1,6 +1,6 @@
 {
   "upstream": "https://github.com/apotet/my-gemini-mirror-site",
-  "source_sha": "1fef298d8de58f295b7fd307b33529913e1722c8",
+  "source_sha": "79000e37ac6951a535229560e3e8eb1423843485",
   "files": [
     {
       "path": ".gitignore",
@@ -231,6 +231,10 @@
       "sha": "b0082bf61343abf011be59ef2638ae3d4f58a7eb"
     },
     {
+      "path": "src/components/DetectiveTopology.tsx",
+      "sha": "e6a95c3e025659dfcee37bfd7a0d18e2b4edbeb8"
+    },
+    {
       "path": "src/components/ExamReview.css",
       "sha": "6aff79adaf671fa748237df93eb7da461f0712ba"
     },
@@ -300,7 +304,7 @@
     },
     {
       "path": "src/components/PacketJourney.tsx",
-      "sha": "4324df2d44701c2df2c6c880ef7d71053c1fa6b0"
+      "sha": "2ceb4e2b744a52f584edeee294ae38e051901572"
     },
     {
       "path": "src/components/PhotoCredits.tsx",
@@ -312,7 +316,7 @@
     },
     {
       "path": "src/components/ProtocolSimulators.tsx",
-      "sha": "681ceeb93c24dd263c78a53803114f509d4396ae"
+      "sha": "35e51e73161bf2187ce923a12c8b1b5945b8666b"
     },
     {
       "path": "src/components/SniDiagram.tsx",
@@ -348,7 +352,7 @@
     },
     {
       "path": "src/components/VlanSimulator.tsx",
-      "sha": "e23b807af371e7c6acaaeb4f4e64c9fca761de09"
+      "sha": "68e160f8122bdb21555971ebadb26855834e3ca7"
     },
     {
       "path": "src/components/ZoomableImage.tsx",
@@ -542,5 +546,20 @@
       "path": "vite.config.ts",
       "sha": "7c53710bec4128b979f0748f08cc5ea7e706981c"
     }
-  ]
+  ],
+  "selection": {
+    "kind": "staging product snapshot excluding mock lab",
+    "prior_release_source_sha": "1fef298d8de58f295b7fd307b33529913e1722c8",
+    "excluded_staging_paths": [
+      "src/App.tsx",
+      "src/components/Navbar.tsx",
+      "src/components/MockPracticeHub.tsx",
+      "src/components/MockPacketJourney.tsx",
+      "src/components/MockVlanSimulator.tsx",
+      "src/components/MockProtocolSimulators.tsx",
+      "src/components/MockDetectiveTopology.tsx",
+      "src/cli-lab/MockCliLabShell.tsx"
+    ],
+    "note": "App and Navbar remain from N2 so no mock route or tab enters production. Other imported files match staging snapshot or are already retained from N2."
+  }
 }

@@ -1,3 +1,19 @@
+# NetOps production release — N3 (2026-11-11)
+
+- Pinned staging SHA: `79000e37ac6951a535229560e3e8eb1423843485`.
+- Staging CI: https://github.com/apotet/my-gemini-mirror-site/actions/runs/42958118874 — PASS.
+- Staging Pages: https://github.com/apotet/my-gemini-mirror-site/actions/runs/42958118895 — PASS.
+- Production: https://apotet.github.io/netops/.
+- Scope: accepted Grok Practice Packet Journey (ARP/ICMP), VLAN & Trunk, DHCP/NAT/TCP; required DetectiveTopology dependency. Four exact upstream component blobs.
+- No mock area: retain production src/App.tsx and Navbar.tsx (N2 originals); do not import any Mock* files or MockCliLabShell. Existing unrelated components retained unchanged.
+- Product files verified by release/source-files.json (136 entries); this is a selective promotion from accepted staging, **not** a claim that every file matches complete staging HEAD.
+- Production build: Node 22 / npm ci / Vite --base=/netops/; retain production CI and Pages workflow.
+- Previous production commit: `717fcf570b950d5840914667e28089b4497d70e3` (N2).
+- Rollback snapshot branch: `backup/netops-before-practice-grok-20261111`.
+- Only merge after production PR CI passes; inspect Pages run and /netops/release.json after deployment.
+
+---
+
 # NetOps production release — N2 (2026-11-10)
 
 - Upstream: https://github.com/apotet/my-gemini-mirror-site
