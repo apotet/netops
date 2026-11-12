@@ -9,7 +9,7 @@
  * Step-by-step Learn progression and the ability to continue after an error are preserved.
  */
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
+import { readFileSync, existsSync } from 'node:fs';
 import { build } from 'esbuild';
 
 const compiled = await build({
@@ -36,6 +36,8 @@ const { LabEngine, evaluateGoals, shouldShowCompletion, ciscoIosProfile, ciscoIo
 
 // The test imports the production completion gate rather than mirroring it.
 for (const file of ['src/cli-lab/CliLabShell.tsx','src/cli-lab/MockCliLabShell.tsx']) {
+  // Production deliberately excludes the mock lab; the real UI is mandatory.
+  if (file.endsWith('MockCliLabShell.tsx') && !existsSync(file)) continue;
   const source = readFileSync(file, 'utf8');
   assert.match(source, /import \{ shouldShowCompletion \} from '\.\/engine\/completionStatus'/,
     file + ': UI must import the tested function');
