@@ -44,6 +44,13 @@ const rewrittenL4MeaningOnlyIds = ["k-01", "k-02", "k-03", "k-04", "k-05", "k-07
 const rewrittenL57DualIds = ["l7-02", "l7-03", "l7-04", "gen-osi-a-19", "new-l7-dns", "new-l7-dhcp", "review-ptp-16", "review-syslog-23", "review-osi-34", "review-osi-35", "gen-port-6", "gen-port-7", "gen-port-8", "l57-x02", "l57-x04", "l57-x05", "l57-x06", "l57-x07", "l57-x08", "l57-x12", "l57-x14", "l57-x18", "l57-x19", "l57-x20", "l57-d01", "l57-d03", "l57-d04", "l57-d05", "l57-d06"];
 const rewrittenL57MeaningOnlyIds = ["l6-01", "l7-01", "l7-05", "gen-osi-a-18", "review-ptp-17", "review-ptp-18", "gen-port-9", "gen-port-11", "gen-port-13", "gen-port-14", "l57-x09", "l57-x10", "l57-x15", "l57-x16"];
 ids.push(...["l7-02", "l7-03", "l7-04", "gen-osi-a-19", "new-l7-dns", "new-l7-dhcp", "review-ptp-16", "review-syslog-23", "gen-port-6", "gen-port-7", "gen-port-8", "l57-x04", "l57-x05", "l57-x06", "l57-x14", "l57-x19", "l57-x20", "l57-d04", "l57-d06"]);
+const newDiagnosticDualIds = ['tr-03', 'tr-05', 'tr-10', 'gen-diag-6', 'gen-diag-8', 'gen-diag-11', 'new-ts-photo-panel', 'new-ts-vlan'];
+const newL3DualIds = ['l3-05', 'l3-16'];
+const newPhotoDualIds = ["photo-formfactor-compat", "photo-dirty-end", "photo-otdr-use", "photo-polarity", "l1v2-c-qsfp-cage", "l1v2-c-poe-budget", "l1v2-c-converter-polarity"];
+const gapPackIds = ALL_QUESTIONS.filter(q => /^gap-pack[123]-(?:0[1-9]|[12]\d|30)$/.test(q.id)).map(q => q.id);
+const stpIds = Array.from({ length: 15 }, (_, i) => `stp-new-${String(i + 1).padStart(2, '0')}`);
+const fourParagraphDualIds = [...newDiagnosticDualIds, ...newL3DualIds, ...newPhotoDualIds, ...gapPackIds, ...stpIds];
+ids.push(...fourParagraphDualIds);
 const diagnosticSkippedIds = ["ts-pack1-01","ts-pack1-02","ts-pack1-03","ts-pack1-07","ts-pack1-08","ts-pack1-09","ts-pack1-10","ts-pack1-11","ts-pack1-12","ts-pack1-13","ts-pack1-14","ts-pack1-15","ts-pack1-16","ts-pack1-17","ts-pack1-18","ts-pack1-19"];
 for (const id of diagnosticSkippedIds) {
   const q = ALL_QUESTIONS.find(q => q.id === id);
@@ -56,10 +63,24 @@ assert.deepEqual(LESSONS.filter(l => l.professional).map(l => l.id).sort(), ['l2
 for (const id of ids) {
   const q = ALL_QUESTIONS.find(q => q.id === id), deep = getQuestionDeepDive(q);
   assert.ok(deep.professional.brief && deep.professional.deep);
-  assert.match(deep.professional.sourceCommit, /^[a-f0-9]{40}$/);
-  assert.equal(deep.deepAnalysis.split(/\n\s*\n/).length, 3, id + ': current plain wording retained');
+  if (stpIds.includes(id)) assert.equal(deep.professional.sourceCommit, undefined, 'new prose has no historical source revision');
+  else assert.match(deep.professional.sourceCommit, /^[a-f0-9]{40}$/);
+  assert.equal(deep.deepAnalysis.split(/\n\s*\n/).length, fourParagraphDualIds.includes(id) ? 4 : 3, id + ': plain paragraph structure');
+  if (fourParagraphDualIds.includes(id)) {
+    const sentences = [...new Intl.Segmenter('ru', { granularity: 'sentence' }).segment(deep.briefAnswer)];
+    const gapPack = gapPackIds.includes(id) || stpIds.includes(id);
+    assert.ok(sentences.length >= (gapPack ? 1 : 2) && sentences.length <= (gapPack ? 2 : 3), id + ': plain brief sentence count');
+    assert.ok(deep.hasIndividualDeep && deep.commonTrap && deep.professional.trap, id + ': both layers complete');
+  }
+  if (gapPackIds.includes(id)) {
+    assert.equal(deep.plain, deep.deepAnalysis, id + ': meaning uses plain');
+    assert.equal(deep.pro, deep.professional.deep, id + ': professional uses pro');
+    assert.equal(deep.professional.brief, deep.briefAnswer, id + ': brief is unchanged across modes');
+    assert.equal(deep.professional.trap, deep.commonTrap, id + ': trap is unchanged across modes');
+  }
   assert.notEqual(deep.professional.deep, deep.deepAnalysis);
 }
+assert.equal(new Set(gapPackIds.map(id => getQuestionDeepDive(ALL_QUESTIONS.find(q => q.id === id)).pro)).size, gapPackIds.length, 'individual pro text, no repeated gap-pack template');
 assert.equal(getQuestionDeepDive(ALL_QUESTIONS.find(q => q.id === 'review-dot1x-19')).professional, undefined, 'MISSING history stays missing');
 
 const ospfMeaningOnly = getQuestionDeepDive(ALL_QUESTIONS.find(q => q.id === 'review-ospf-26'));

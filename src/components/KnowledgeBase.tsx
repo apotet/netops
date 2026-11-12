@@ -1,23 +1,26 @@
 import React, { useMemo, useState } from 'react';
 import { LESSONS, searchLessons, getLesson } from '../data/lessons';
 import type { Lesson } from '../data/lessons/types';
+import type { PracticeLink } from '../data/practiceLinks';
 import { LessonView } from './LessonView';
+import { CliReference } from './CliReference';
 import { Library, Search } from 'lucide-react';
 
 interface KnowledgeBaseProps {
   initialLessonId?: string | null;
   returnQuestionId?: string | null;
   onOpenQuestion?: (questionId: string) => void;
+  onOpenPractice?: (link: PracticeLink) => void;
   onClearLesson?: () => void;
 }
 
-const LAYERS = ['all', 'L1', 'L2', 'L3', 'L4', 'L5–L7', 'L7'];
+const LAYERS = ['all', 'CLI', 'L1', 'L2', 'L3', 'L4', 'L5–L7', 'L7'];
 type DifficultyFilter = 'all' | Lesson['difficulty'];
 const DIFFICULTIES: { id: DifficultyFilter; label: string }[] = [
   { id: 'all', label: 'Все' },
   { id: 'beginner', label: 'База' },
-  { id: 'applied', label: 'Практика' },
-  { id: 'advanced', label: 'Разбор полётов' },
+  { id: 'applied', label: 'Средний' },
+  { id: 'advanced', label: 'Продвинутый' },
 ];
 const DIFFICULTY_ORDER = { beginner: 0, applied: 1, advanced: 2 };
 const FILTER_KEYS = {
@@ -42,13 +45,16 @@ export const KnowledgeBase: React.FC<KnowledgeBaseProps> = ({
   initialLessonId,
   returnQuestionId,
   onOpenQuestion,
+  onOpenPractice,
   onClearLesson,
 }) => {
+  const [section, setSection] = useState<'lessons' | 'cli-reference'>('lessons');
   const [query, setQuery] = useState('');
   const [layer, setLayer] = useState(() => readFilter('layer', LAYERS));
   const [difficulty, setDifficulty] = useState<DifficultyFilter>(() =>
     readFilter('difficulty', DIFFICULTIES.map(item => item.id)) as DifficultyFilter);
   const [openId, setOpenId] = useState<string | null>(initialLessonId || null);
+  const [expandedSummaryId, setExpandedSummaryId] = useState<string | null>(null);
 
   React.useEffect(() => {
     if (initialLessonId) setOpenId(initialLessonId);
@@ -75,6 +81,7 @@ export const KnowledgeBase: React.FC<KnowledgeBaseProps> = ({
         }}
         returnQuestionId={returnQuestionId}
         onOpenQuestion={onOpenQuestion}
+        onOpenPractice={onOpenPractice}
         onBack={() => {
           setOpenId(null);
           onClearLesson?.();
@@ -91,6 +98,24 @@ export const KnowledgeBase: React.FC<KnowledgeBaseProps> = ({
         <span className="text-[11px] font-mono text-slate-500">{LESSONS.length} урок</span>
       </div>
 
+      <div className="flex flex-wrap gap-2" role="group" aria-label="Раздел базы знаний">
+        <button type="button" aria-pressed={section === 'lessons'} onClick={() => setSection('lessons')}
+          className={`rounded-lg px-3 py-2 text-sm font-semibold cursor-pointer ${section === 'lessons' ? 'bg-cyan-500 text-slate-950' : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200'}`}>
+          Уроки
+        </button>
+        <button type="button" aria-pressed={section === 'cli-reference'} onClick={() => setSection('cli-reference')}
+          className={`rounded-lg px-3 py-2 text-sm font-semibold cursor-pointer ${section === 'cli-reference' ? 'bg-cyan-500 text-slate-950' : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200'}`}>
+          Справочник CLI
+        </button>
+      </div>
+
+      {section === 'cli-reference' ? (
+        <CliReference onOpenLesson={id => {
+          setOpenId(id);
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }} />
+      ) : (
+      <>
       <div className="relative">
         <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
         <input
@@ -101,7 +126,7 @@ export const KnowledgeBase: React.FC<KnowledgeBaseProps> = ({
         />
       </div>
 
-      <div role="group" aria-label="Уровень OSI" className="flex flex-wrap gap-1.5">
+      <div role="group" aria-label="Раздел базы знаний" className="flex flex-wrap gap-1.5">
         {LAYERS.map((l) => (
           <button
             key={l}
@@ -115,7 +140,7 @@ export const KnowledgeBase: React.FC<KnowledgeBaseProps> = ({
               layer === l ? 'bg-cyan-500 text-slate-950' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300'
             }`}
           >
-            {l === 'all' ? 'Все уровни' : l}
+            {l === 'all' ? 'Все темы' : l === 'CLI' ? 'CLI и управление' : l}
           </button>
         ))}
       </div>
@@ -146,6 +171,7 @@ export const KnowledgeBase: React.FC<KnowledgeBaseProps> = ({
           {list.map((l) => (
             <button
               key={l.id}
+              title={l.summary}
               type="button"
               onClick={() => setOpenId(l.id)}
               className="text-left rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#091524] p-4 space-y-2 cursor-pointer hover:border-cyan-500/40"
@@ -154,11 +180,20 @@ export const KnowledgeBase: React.FC<KnowledgeBaseProps> = ({
                 {l.category} · {l.difficulty}
               </div>
               <div className="font-semibold text-slate-900 dark:text-white">{l.title}</div>
-              <p className="text-xs text-slate-600 dark:text-slate-400 line-clamp-3">{l.summary}</p>
+              <p
+                className={`text-xs text-slate-600 dark:text-slate-400${expandedSummaryId === l.id ? '' : ' line-clamp-3'}`}
+                onClick={event => {
+                  if (!window.matchMedia('(hover: none), (pointer: coarse)').matches) return;
+                  event.stopPropagation();
+                  setExpandedSummaryId(current => current === l.id ? null : l.id);
+                }}
+              >{l.summary}</p>
               <div className="text-[11px] text-slate-500">Вопросов: {l.relatedQuestionIds.length}</div>
             </button>
           ))}
         </div>
+      )}
+      </>
       )}
     </div>
   );

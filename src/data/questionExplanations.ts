@@ -1,5 +1,6 @@
+import type { PracticeLink } from './practiceLinks';
 import { Question } from '../types/quiz';
-import { APPLIED_INDIVIDUAL_DEEP, type ProfessionalExplanation } from './questionExplanationsApplied';
+import { APPLIED_INDIVIDUAL_DEEP, GAP_PACK_PRO_SOURCE_COMMIT, type ProfessionalExplanation } from './questionExplanationsApplied';
 
 export interface QuestionDeepDive {
   questionId: string;
@@ -9,8 +10,11 @@ export interface QuestionDeepDive {
   briefAnswer: string;
   coreConcept: string;
   deepAnalysis: string;
+  plain?: string;
+  pro?: string;
   engineeringDeep?: string;
-  professional?: ProfessionalExplanation;
+  professional?: Omit<ProfessionalExplanation, 'sourceCommit'> & { sourceCommit?: string };
+  practiceLink?: PracticeLink;
   hasIndividualDeep: boolean;
   commonTrap: string;
   practicalTip?: string;
@@ -30,7 +34,7 @@ export interface QuestionDeepDive {
 /** Hand-authored deep dives for advanced IDs (no generic L1–L7 paste). */
 const ADVANCED_INDIVIDUAL_DEEP: Record<
   string,
-  { brief: string; deep: string; trap?: string; next?: string; professional?: ProfessionalExplanation }
+  { brief: string; deep: string; trap?: string; next?: string; professional?: ProfessionalExplanation; practiceLink?: PracticeLink }
 > = {
   'l12-d01': {
     "brief": "Сначала проверьте, распознаётся ли подключение компьютера как конечное и настроена ли защита от появления другого коммутатора.",
@@ -46,15 +50,10 @@ const ADVANCED_INDIVIDUAL_DEEP: Record<
     }
   },
   'l12-d02': {
-    brief: "S1 маршрутизирует из VLAN 30 в VLAN 10; к S2 кадр идёт в VLAN 10, без обязательного переноса VLAN 30.",
-    deep: `Шлюз ПК расположен на S1 в SVI 30. Поэтому пакет сначала попадает к этому L3-интерфейсу, а затем S1 выбирает сеть сервера, подключённую через SVI 10.
-
-После маршрутизации кадр к серверу относится к VLAN 10 и проходит trunk S1—S2 в этой VLAN. VLAN 30 заканчивает нужный для данного обмена участок на S1, поэтому её отсутствие в allowed list этого trunk не нарушает описанный путь.
-
-S2 выполняет L2-пересылку в VLAN 10 к access-порту сервера. Он не переносит кадр из VLAN 30 в VLAN 10 заменой тега и не выбирает VLAN по IP назначения: межсетевой переход уже выполнен на S1.
-
-Проверьте шлюзы конечных узлов, маршрут и соседство сервера на S1, а на trunk — перенос и forwarding VLAN 10. Для обратного обмена сервер также использует SVI 10 на S1; расширять allowed list VLAN 30 только из-за номера VLAN ПК здесь не требуется.`,
-    trap: "Считать, что VLAN исходного ПК должна проходить каждый trunk после маршрутизации на его шлюзе.",
+    practiceLink: "vlan",
+    brief: "Первый коммутатор переводит данные в сеть сервера; между коммутаторами нужна уже эта сеть.",
+    deep: "Компьютер сначала передаёт данные первому коммутатору, который связывает его сеть с сетью сервера. После этого межсетевого перехода данные идут ко второму коммутатору уже по сети сервера. Продлевать исходную сеть компьютера через соединение между коммутаторами для такого обмена не требуется.\n\nНа S1 шлюз компьютера — SVI 30, а шлюз сервера — SVI 10. S1 выполняет маршрутизацию из VLAN 30 в VLAN 10 и отправляет по trunk S1—S2 кадр VLAN 10. Она разрешена на этом trunk; S2 выполняет обычную L2-пересылку к access-порту сервера.\n\nОтправка по trunk кадра VLAN 30 игнорирует уже выполненную маршрутизацию на S1. S2 не переводит этот обмен между сетями заменой тега и не выбирает VLAN по адресу IP сервера. Поэтому отсутствие VLAN 30 в allowed list здесь не мешает указанному пути; для обратного обмена сервер использует свой шлюз SVI 10 на S1.",
+    trap: "Не требовать переноса исходной сети через каждый участок после перехода в сеть получателя.",
   },
   'l12-d03': {
     "brief": "Без метки получатель выбирает сеть 20; с явной меткой 10 — сеть 10.",
@@ -109,6 +108,7 @@ S2 выполняет L2-пересылку в VLAN 10 к access-порту се
 Пакет в хост из /25 идёт в /25, даже если metric хуже.`,
   },
   'l3-d05': {
+    practiceLink: "nat",
     "brief": "Чтобы вернуть ответ нужному компьютеру, устройство учитывает адреса, порты и протокол обмена.",
     "deep": "Один внешний адрес могут одновременно использовать несколько внутренних компьютеров. Одного этого адреса недостаточно, чтобы понять, кому вернуть ответ. Устройство хранит соответствия, в которых различаются адреса участников, номера портов и используемый протокол.\n\nЭто работа PAT, также называемого NAT overload. Для TCP или UDP обмен описывают адресами источника и назначения, их портами и протоколом; эту пятёрку часто называют 5-tuple. Транслятор сопоставляет внутренние и внешние адреса и порты с учётом протокола. При проверке таблицы нужны именно эти значения; правила выделения портов и зависимость сопоставления от удалённой стороны определяются реализацией.\n\nMAC-адрес клиента относится к локальному каналу и не заменяет сведения об обмене с удалённым сервером. VLAN ID задаёт принадлежность к локальной сети, а DSCP обозначает класс обработки трафика. Ни один из этих признаков по отдельности не различает все сеансы, использующие общий внешний адрес.",
     "trap": "Считать общий внешний адрес или локальную метку устройства достаточным описанием каждого отдельного обмена.",
@@ -245,6 +245,7 @@ S2 выполняет L2-пересылку в VLAN 10 к access-порту се
     }
   },
   "tcpip-d01": {
+    practiceLink: "packet",
     "brief": "Данные пришли к маршрутизатору по одному участку, а дальше пойдут по другому. Он убирает местную оболочку, выбирает путь по адресу назначения и создаёт новую оболочку для следующего соседа.",
     "deep": "Данные пришли к маршрутизатору по одному участку, а дальше пойдут по другому. Он убирает местную оболочку, выбирает путь по адресу назначения и создаёт новую оболочку для следующего соседа.\n\nЭто декапсуляция L2, решение на L3 и новая инкапсуляция L2. Без NAT конечные IP src/dst обычно сохраняются; в новом Ethernet-кадре Source MAC принадлежит выходному интерфейсу, Destination MAC — следующему узлу. IPv4 TTL уменьшается.\n\nНовая местная доставка не требует менять адрес клиента, транспортные порты или содержимое приложения. Сохранение конечных IP не означает неизменности всего пакета: TTL обновляется, а вместе с ним и контрольная сумма IPv4-заголовка.",
     "trap": "Смотрите точные формулировки стандартов и исключения.",
@@ -459,25 +460,11 @@ S2 выполняет L2-пересылку в VLAN 10 к access-порту се
     trap: 'Увеличивать импульс или менять только IOR в надежде разделить близкие события.',
     next: 'Теория/практика OTDR',
   },
-  'l1v2-c-ring-evidence': {
-    brief: 'Положение переключателя RING и Link на двух портах не доказывают работающее резервированное кольцо. Нужно сверить схему и настройки протокола, затем проверить поведение при контролируемом отказе пути.',
-    deep: `Краткий ответ. Подтверждают соединения, роли и настройки протокола (MRP, RSTP и др.) и реакцию на разрыв.
-
-Как это работает. Кольцо требует согласованной конфигурации: менеджер/root, клиенты, ring-порты. Протокол блокирует один порт в норме и открывает его при отказе. Link и положение переключателя показывают только физику или разрешение режима, не сходимость.
-
-Практический пример. RING включён, оба порта Link Up, но domain MRP не совпадает. При обрыве волокна трафик пропадает. После выставления ролей и теста обрыва кольцо сходится в пределах профиля.
-
-Диагностика. Схема, роли, статус blocking/forwarding, контролируемый обрыв, отсутствие неуправляемых устройств на пути.
-
-Типичные ловушки. Принимать два Link или положение RING за доказательство. Не тестировать отказ.`,
-    trap: 'Считать кольцо работающим только по RING или по Link на двух портах.',
-    next: 'Теория STP/RSTP и промышленных колец',
-  },
 };
 
 const INDIVIDUAL_DEEP: Record<
   string,
-  { brief: string; deep: string; trap?: string; next?: string; ipv6Practice?: boolean; professional?: ProfessionalExplanation }
+  { brief: string; deep: string; plain?: string; pro?: string; trap?: string; next?: string; ipv6Practice?: boolean; professional?: ProfessionalExplanation; practiceLink?: PracticeLink }
 > = {
   ...ADVANCED_INDIVIDUAL_DEEP,
   ...APPLIED_INDIVIDUAL_DEEP,
@@ -496,13 +483,28 @@ export function getQuestionDeepDive(question: Question): QuestionDeepDive {
       : `Правильный ответ: «${correctText}».`);
 
   const deepAnalysis = individual
-    ? individual.deep
+    ? individual.plain ?? individual.deep
     : enrichExplanation(question, category, baseExpl);
 
   const engineeringDeep =
     question.difficulty === 'advanced' || question.difficulty === 'applied'
-      ? individual?.deep || (baseExpl.length > 80 ? baseExpl : undefined)
-      : individual?.deep;
+      ? (individual ? deepAnalysis : undefined) || (baseExpl.length > 80 ? baseExpl : undefined)
+      : (individual ? deepAnalysis : undefined);
+
+  // The existing theory/review toggle consumes professional. Layered entries
+  // change only the detailed text; their brief and trap stay the same in both modes.
+  const professional = individual?.pro
+    ? {
+        ...individual.professional,
+        brief: individual.brief,
+        deep: individual.pro,
+        trap: individual.trap,
+        // Historical gap-pack wording has a source revision; newly authored
+        // plain/pro entries must not inherit that unrelated provenance.
+        sourceCommit: individual.professional?.sourceCommit ??
+          (/^gap-pack[123]-/.test(question.id) ? GAP_PACK_PRO_SOURCE_COMMIT : undefined),
+      }
+    : individual?.professional;
 
   return {
     questionId: question.id,
@@ -512,8 +514,11 @@ export function getQuestionDeepDive(question: Question): QuestionDeepDive {
     briefAnswer,
     coreConcept: `Правильный ответ: «${correctText}». Тема: ${question.topic}.`,
     deepAnalysis,
+    ...(individual?.plain !== undefined ? { plain: individual.plain } : {}),
+    ...(individual?.pro !== undefined ? { pro: individual.pro } : {}),
     engineeringDeep,
-    professional: individual?.professional,
+    professional,
+    practiceLink: individual?.practiceLink,
     hasIndividualDeep: Boolean(individual),
     commonTrap: individual?.trap || detectCommonTrap(question),
     practicalTip: question.remember || getPracticalTip(category),

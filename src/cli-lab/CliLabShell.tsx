@@ -1,15 +1,20 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { LabEngine } from './engine/LabEngine';
 import { evaluateGoals } from './engine/GoalEvaluator';
+import { shouldShowCompletion } from './engine/completionStatus';
 import { LabMode, Scenario } from './engine/types';
 import { ciscoIosProfile } from './vendors/cisco-ios/profile';
 import { ciscoIosCommands } from './vendors/cisco-ios/commands';
 import { ciscoVlanAccessScenario } from './scenarios/cisco-vlan-access';
+import { ciscoAccessSviFollowupScenario } from './scenarios/cisco-access-svi-followup';
+import { ciscoIosModesScenario } from './scenarios/cisco-ios-modes';
 import { ciscoL3GatewayScenario } from './scenarios/cisco-l3-gateway';
 import { ciscoTrunkScenario } from './scenarios/cisco-trunk';
 import { ciscoTwoSwitchVlanScenario } from './scenarios/cisco-two-switch-vlan';
+import { ciscoTwoSwitchSviScenario } from './scenarios/cisco-two-switch-svi';
 import { ciscoThreeSwitchMissingVlanScenario } from './scenarios/cisco-three-switch-missing-vlan';
 import { ciscoTwoSwitchTrunkDiagnosticScenario } from './scenarios/cisco-two-switch-trunk-diagnostics';
+import { ciscoShowDiagnosticScenario } from './scenarios/cisco-show-diagnostic';
 import {
   Terminal as TerminalIcon,
   RotateCcw,
@@ -30,16 +35,22 @@ interface HistoryLine {
 }
 
 const SCENARIOS: Scenario[] = [
+  ciscoIosModesScenario,
+  ciscoShowDiagnosticScenario,
   ciscoVlanAccessScenario,
+  ciscoAccessSviFollowupScenario,
   ciscoTrunkScenario,
   ciscoL3GatewayScenario,
   ciscoTwoSwitchVlanScenario,
+  ciscoTwoSwitchSviScenario,
   ciscoThreeSwitchMissingVlanScenario,
   ciscoTwoSwitchTrunkDiagnosticScenario,
 ];
 
 function goalLabel(g: Scenario['goals'][number]): string {
   switch (g.type) {
+    case 'ipv4.sviReachable':
+      return `${g.device.toUpperCase()}: SVI IPv4-путь к ${g.destination}`;
     case 'l2.vlanReachable':
       return `VLAN ${g.vlanId}: ${g.fromDevice} ${g.fromIf} ↔ ${g.toDevice} ${g.toIf} (L2-путь)`;
     case 'config.saved':
@@ -69,8 +80,10 @@ function goalLabel(g: Scenario['goals'][number]): string {
   }
 }
 
-export const CliLabShell: React.FC = () => {
-  const [scenarioId, setScenarioId] = useState(SCENARIOS[0].id);
+export const CliLabShell: React.FC<{ initialScenarioId?: string }> = ({ initialScenarioId }) => {
+  const [scenarioId, setScenarioId] = useState(() =>
+    SCENARIOS.find(scenario => scenario.id === initialScenarioId)?.id ?? SCENARIOS[0].id
+  );
   const scenario = SCENARIOS.find((s) => s.id === scenarioId) ?? SCENARIOS[0];
   const [labMode, setLabMode] = useState<LabMode>('learn');
   const [history, setHistory] = useState<HistoryLine[]>([]);
@@ -89,6 +102,7 @@ export const CliLabShell: React.FC = () => {
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const stepIndexRef = useRef(0);
+  const completedRef = useRef(false);
 
   // Toolbar buttons take DOM focus; return it to the CLI input after layout updates.
   // Keep the existing input text and caret intact when only changing layout.
@@ -119,6 +133,7 @@ export const CliLabShell: React.FC = () => {
     stepIndexRef.current = 0;
     setHintOpen(false);
     setCompleted(false);
+    completedRef.current = false;
     setGoalResults(null);
     setInput('');
     setHistIndex(null);
@@ -173,14 +188,11 @@ export const CliLabShell: React.FC = () => {
     if (next >= steps.length) {
       stepIndexRef.current = next;
       setStepIndex(next);
-      setCompleted(true);
-      const goals = evaluateGoals(state, scenario.goals);
-      setGoalResults(goals);
       setHistory((h) => [
         ...h,
         {
           type: 'system',
-          text: `✓ Шаг выполнен. ${current.explanation || ''}\n\n✓ ${scenario.successMessage}`,
+          text: `✓ Шаг выполнен. ${current.explanation || ''}`,
         },
       ]);
       return;
@@ -203,17 +215,22 @@ export const CliLabShell: React.FC = () => {
 
   const runCheck = () => {
     const result = refreshGoals();
-    setCompleted(result.allPassed);
+    const prev = completedRef.current;
+    const now = shouldShowCompletion(labMode, stepIndexRef.current, steps.length, result.allPassed);
+    setCompleted(now);
+    completedRef.current = now;
     setHistory((h) => [
       ...h,
       {
         type: 'system',
-        text: result.allPassed
+        text: now
           ? `✓ ${scenario.successMessage}`
-          : scenario.diagnostic
-            ? `Проверка: ${result.results.filter((r) => r.passed).length}/${result.results.length} целей. Продолжайте диагностику по всем узлам: статус портов, VLAN, trunk и сохранение изменений.`
-            : `Проверка: ${result.results.filter((r) => r.passed).length}/${result.results.length} целей.\n` +
-              result.results.map((r) => `${r.passed ? '✓' : '✗'} ${r.detail}`).join('\n'),
+          : prev
+            ? `Статус завершения снят: цели больше не выполнены.\nПроверка: ${result.results.filter((r) => r.passed).length}/${result.results.length} целей.`
+            : scenario.diagnostic
+              ? `Проверка: ${result.results.filter((r) => r.passed).length}/${result.results.length} целей. Продолжайте диагностику по всем узлам: статус портов, VLAN, trunk и сохранение изменений.`
+              : `Проверка: ${result.results.filter((r) => r.passed).length}/${result.results.length} целей.\n` +
+                result.results.map((r) => `${r.passed ? '✓' : '✗'} ${r.detail}`).join('\n'),
       },
     ]);
   };
@@ -304,12 +321,23 @@ export const CliLabShell: React.FC = () => {
 
     tryAdvanceLearnStep();
 
-    if (labMode === 'task' || labMode === 'drill') {
+    // Success status in every mode is driven exclusively by overall goals.
+    // A later command that breaks any goal immediately clears it; restoring goals re-shows it.
+    {
       const g = engine.checkGoals(scenario.goals);
-      if (g.allPassed) {
-        setCompleted(true);
+      const now = shouldShowCompletion(labMode, stepIndexRef.current, steps.length, g.allPassed);
+      const prev = completedRef.current;
+      if (now !== prev) {
+        setCompleted(now);
+        completedRef.current = now;
         setGoalResults(g);
-        setHistory((h) => [...h, { type: 'system', text: `✓ ${scenario.successMessage}` }]);
+        if (now) {
+          setHistory((h) => [...h, { type: 'system', text: `✓ ${scenario.successMessage}` }]);
+        } else if (prev) {
+          setHistory((h) => [...h, { type: 'system', text: 'Статус завершения снят: цели больше не выполнены.' }]);
+        }
+      } else {
+        setGoalResults(g);
       }
     }
 
@@ -371,6 +399,7 @@ export const CliLabShell: React.FC = () => {
           <button
             key={s.id}
             type="button"
+            aria-pressed={scenarioId === s.id}
             onClick={() => { setScenarioId(s.id); focusCliInput(); }}
             className={
               scenarioId === s.id
@@ -567,9 +596,20 @@ export const CliLabShell: React.FC = () => {
               ))}
             </ul>
             {completed && (
-              <p className="text-xs font-semibold text-emerald-600 dark:text-emerald-300 pt-1">
-                {scenario.successMessage}
-              </p>
+              <div className="space-y-2 pt-1">
+                <p className="text-xs font-semibold text-emerald-600 dark:text-emerald-300">
+                  {scenario.successMessage}
+                </p>
+                {scenario.nextScenarioId && SCENARIOS.some(s => s.id === scenario.nextScenarioId) && (
+                  <button
+                    type="button"
+                    onClick={() => { setScenarioId(scenario.nextScenarioId!); focusCliInput(); }}
+                    className="w-full rounded-xl bg-cyan-500 px-3 py-2 text-xs font-bold text-slate-950 cursor-pointer hover:bg-cyan-400"
+                  >
+                    Следующее задание: {SCENARIOS.find(s => s.id === scenario.nextScenarioId)?.title}
+                  </button>
+                )}
+              </div>
             )}
           </div>
 

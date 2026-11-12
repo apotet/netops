@@ -40,7 +40,8 @@ export interface SwitchportConfig {
 export interface InterfaceState {
   name: string;
   adminUp: boolean;
-  operUp: boolean;
+  /** @deprecated Legacy scenario/snapshot input only; effective status comes from OperationalState. */
+  operUp?: boolean;
   ipv4?: Ipv4Address;
   switchport?: SwitchportConfig;
   description?: string;
@@ -60,9 +61,11 @@ export interface RouteEntry {
   metric?: number;
 }
 
+export type InterfaceConfig = Omit<InterfaceState, 'operUp'>;
+
 export interface SavedDeviceConfig {
   hostname: string;
-  interfaces: Record<string, InterfaceState>;
+  interfaces: Record<string, InterfaceConfig>;
   vlans: Record<number, VlanState>;
   routes: RouteEntry[];
 }
@@ -112,7 +115,8 @@ export type GoalPredicate =
   | { type: 'mode'; device: string; modes: DeviceMode[] }
   | { type: 'privilege'; device: string; min: number }
   | { type: 'config.saved'; device: string }
-  | { type: 'l2.vlanReachable'; vlanId: number; fromDevice: string; fromIf: string; toDevice: string; toIf: string };
+  | { type: 'l2.vlanReachable'; vlanId: number; fromDevice: string; fromIf: string; toDevice: string; toIf: string }
+  | { type: 'ipv4.sviReachable'; device: string; destination: string };
 
 export interface GoalCheckResult {
   predicate: GoalPredicate;
@@ -140,6 +144,8 @@ export interface Scenario {
   steps?: ScenarioStep[];
   goals: GoalPredicate[];
   successMessage: string;
+  /** Optional guided next scenario shown only after successful completion. */
+  nextScenarioId?: string;
   /** Diagnostic exercises keep the root cause and repair target hidden until solved. */
   diagnostic?: boolean;
   /** Learner-facing goals; unlike internal predicates these must not disclose the fault. */
@@ -171,10 +177,20 @@ export type CommandHandler = (
   profile: VendorProfile
 ) => CommandResult;
 
+/** A suffix node after a command's canonical keyword path. Validators are read-only. */
+export type CommandArgument =
+  | { keyword: string; description?: string }
+  | { name: string; description: string;
+      validate: (value: string, device: DeviceState | undefined, preceding: string[]) => boolean;
+      /** A final free-text argument can consume multiple words (e.g. VLAN name). */
+      rest?: boolean };
+
 export interface CommandSpec {
   id: string;
   match: string[];
   modes: DeviceMode[];
   minPrivilege?: number;
+  /** Alternative argument paths; omitted means exactly the registered keywords. */
+  arguments?: CommandArgument[][];
   handler: CommandHandler;
 }

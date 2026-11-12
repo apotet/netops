@@ -1,3 +1,5 @@
+import { PracticeLinkButton } from './PracticeLinkButton';
+import type { PracticeLink } from '../data/practiceLinks';
 import React, { useEffect, useId, useRef, useState } from 'react';
 import { BookOpen, CalendarDays, Check, CheckCircle2, ChevronDown, Circle, Diamond, Info, RotateCcw, XCircle } from 'lucide-react';
 import { GlossaryText } from './GlossaryText';
@@ -12,6 +14,7 @@ import { getOrAssignMemeTitle } from '../data/memeTitles';
 import './ExamReview.css';
 
 interface Props {
+  onOpenPractice?: (link: PracticeLink) => void;
   session: ProgressSession;
   onExit: () => void;
   onRetry?: () => void;
@@ -40,7 +43,7 @@ function scoreLabel(percent: number): { text: string; tone: string } {
   return { text: 'Слабо', tone: 'weak' };
 }
 
-function EngineeringReview({ question }: { question: Question }) {
+function EngineeringReview({ question, onOpenPractice }: { question: Question; onOpenPractice?: (link: PracticeLink) => void }) {
   const [textMode, setTextMode] = useStudyTextMode();
   const [expanded, setExpanded] = useState(false);
   const contentId = useId();
@@ -62,6 +65,7 @@ function EngineeringReview({ question }: { question: Question }) {
         <div id={contentId} className="review-engineering-body" data-collapsed={isLong && !expanded}>
           {analysis.split(/\n\s*\n/).map((paragraph, index) => <p key={index}><GlossaryText key={textMode} enabled={!professional}>{paragraph}</GlossaryText></p>)}
         </div>
+        <PracticeLinkButton link={deepDive.practiceLink} onOpenPractice={onOpenPractice} className="review-button mt-3" />
         {isLong && <button type="button" className="review-button review-engineering-toggle"
           aria-expanded={expanded} aria-controls={contentId} onClick={() => setExpanded(current => !current)}>
           {expanded ? 'Свернуть разбор' : 'Читать полный разбор'}
@@ -71,7 +75,7 @@ function EngineeringReview({ question }: { question: Question }) {
   );
 }
 
-export function ExamReview({ session, onExit, onRetry, onLearning, onNavigateToTheory }: Props) {
+export function ExamReview({ session, onExit, onRetry, onLearning, onNavigateToTheory, onOpenPractice }: Props) {
   const viewKey = `osi_review_view:${session.attemptId || session.startTime}`;
   const totals = session.isCompleted ? reviewTotals(session) : { total: 0, correct: 0, wrong: 0, unanswered: 0, percentage: 0 };
   const preferred: ReviewFilter = totals.wrong > 0 ? 'wrong' : 'all';
@@ -206,7 +210,7 @@ export function ExamReview({ session, onExit, onRetry, onLearning, onNavigateToT
                 <div className="review-explanation-text"><h4>Почему так</h4><p>{row.explanation || 'Индивидуальное объяснение в сохранённом вопросе отсутствует.'}</p></div>
                 {row.lesson && onNavigateToTheory && <button type="button" onClick={() => onNavigateToTheory(row.question.id)} className="review-button review-lesson" aria-label={`Разобрать подробнее: ${row.lesson.title}`}><BookOpen aria-hidden="true" /><span>Разобрать подробнее<span className="review-lesson-title">{row.lesson.title}</span></span></button>}
               </div>
-              <EngineeringReview question={row.question} />
+              <EngineeringReview question={row.question} onOpenPractice={onOpenPractice} />
             </div>
           </details>
         ))}

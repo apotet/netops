@@ -1,3 +1,5 @@
+import { normalizeIfaceName, wordArgument, vlanArgument, vlanNameArgument, interfaceArgument, interfaceTypeArgument, interfaceNumberArgument, isLayer2Interface } from './arguments';
+import { interfaceStatus } from '../../engine/OperationalState';
 import { formatAllowedVlans } from './trunkCommands';
 import { commandFor } from '../../engine/CommandResolution';
 import { CommandResult, CommandSpec, DeviceState, NetworkState } from '../../engine/types';
@@ -86,21 +88,9 @@ const baseCommands: CommandSpec[] = [
     },
   },
   {
-    id: 'cisco.configure_terminal_short',
-    match: ['conf', 't'],
-    modes: ['privileged'],
-    minPrivilege: 15,
-    handler: (_tokens, state, device) => {
-      device.modeCtx = { mode: 'config' };
-      return {
-        output: 'Enter configuration commands, one per line. End with CNTL/Z.',
-        state: commitDevice(state, device),
-      };
-    },
-  },
-  {
     id: 'cisco.hostname',
     match: ['hostname'],
+    arguments: [[wordArgument]],
     modes: ['config'],
     minPrivilege: 15,
     handler: (tokens, state, device) => {
@@ -114,6 +104,7 @@ const baseCommands: CommandSpec[] = [
   {
     id: 'cisco.vlan',
     match: ['vlan'],
+    arguments: [[vlanArgument]],
     modes: ['config'],
     minPrivilege: 15,
     handler: (tokens, state, device) => {
@@ -132,6 +123,7 @@ const baseCommands: CommandSpec[] = [
   {
     id: 'cisco.vlan_name',
     match: ['name'],
+    arguments: [[vlanNameArgument]],
     modes: ['config-vlan'],
     minPrivilege: 15,
     handler: (tokens, state, device) => {
@@ -142,13 +134,14 @@ const baseCommands: CommandSpec[] = [
       if (id == null || !device.vlans[id]) {
         return { output: ciscoIosProfile.messages.invalid, error: true };
       }
-      device.vlans[id] = { ...device.vlans[id], name: tokens[1] };
+      device.vlans[id] = { ...device.vlans[id], name: tokens.slice(1).join(' ') };
       return { output: '', state: commitDevice(state, device) };
     },
   },
   {
     id: 'cisco.interface',
     match: ['interface'],
+    arguments: [[interfaceArgument], [interfaceTypeArgument, interfaceNumberArgument]],
     modes: ['config'],
     minPrivilege: 15,
     handler: (tokens, state, device) => {
@@ -176,7 +169,7 @@ const baseCommands: CommandSpec[] = [
       if (!ifName || !device.interfaces[ifName]) {
         return { output: ciscoIosProfile.messages.invalid, error: true };
       }
-      const iface = { ...device.interfaces[ifName], adminUp: true, operUp: true };
+      const iface = { ...device.interfaces[ifName], adminUp: true };
       device.interfaces = { ...device.interfaces, [ifName]: iface };
       return { output: '', state: commitDevice(state, device) };
     },
@@ -191,7 +184,7 @@ const baseCommands: CommandSpec[] = [
       if (!ifName || !device.interfaces[ifName]) {
         return { output: ciscoIosProfile.messages.invalid, error: true };
       }
-      const iface = { ...device.interfaces[ifName], adminUp: false, operUp: false };
+      const iface = { ...device.interfaces[ifName], adminUp: false };
       device.interfaces = { ...device.interfaces, [ifName]: iface };
       return { output: '', state: commitDevice(state, device) };
     },
@@ -205,6 +198,9 @@ const baseCommands: CommandSpec[] = [
       const ifName = device.modeCtx.ifName;
       if (!ifName || !device.interfaces[ifName]) {
         return { output: ciscoIosProfile.messages.invalid, error: true };
+      }
+      if (!isLayer2Interface(device, ifName)) {
+        return { output: '% Switchport configuration is not available on this interface', error: true };
       }
       const prev = device.interfaces[ifName];
       const iface = {
@@ -221,6 +217,7 @@ const baseCommands: CommandSpec[] = [
   {
     id: 'cisco.switchport_access_vlan',
     match: ['switchport', 'access', 'vlan'],
+    arguments: [[vlanArgument]],
     modes: ['config-if'],
     minPrivilege: 15,
     handler: (tokens, state, device) => {
@@ -234,6 +231,9 @@ const baseCommands: CommandSpec[] = [
       const ifName = device.modeCtx.ifName;
       if (!ifName || !device.interfaces[ifName]) {
         return { output: ciscoIosProfile.messages.invalid, error: true };
+      }
+      if (!isLayer2Interface(device, ifName)) {
+        return { output: '% Switchport configuration is not available on this interface', error: true };
       }
       ensureVlan(device, vlanId);
       const prev = device.interfaces[ifName];
@@ -288,14 +288,13 @@ const baseCommands: CommandSpec[] = [
     id: 'cisco.show_ip_interface_brief',
     match: ['show', 'ip', 'interface', 'brief'],
     modes: ['exec', 'privileged'],
-    handler: (_tokens, _state, device) => {
+    handler: (_tokens, state, device) => {
       const lines = [
         'Interface                  IP-Address      OK? Method Status                Protocol',
       ];
       for (const iface of Object.values(device.interfaces)) {
         const ip = iface.ipv4?.address ?? 'unassigned';
-        const status = iface.adminUp ? 'up' : 'administratively down';
-        const proto = iface.operUp ? 'up' : 'down';
+        const { physical: status, protocol: proto } = interfaceStatus(state, device, iface);
         lines.push(
           `${iface.name.padEnd(26, ' ')} ${ip.padEnd(15, ' ')} YES unset  ${status.padEnd(22, ' ')} ${proto}`
         );
@@ -348,16 +347,6 @@ const baseCommands: CommandSpec[] = [
     },
   },
   {
-    id: 'cisco.show_run_short',
-    match: ['show', 'run'],
-    modes: ['privileged', 'exec'],
-    minPrivilege: 1,
-    handler: (tokens, state, device, profile) => {
-      const full = ciscoIosCommands.find((c) => c.id === 'cisco.show_running_config');
-      return full ? full.handler(tokens, state, device, profile) : { output: '' };
-    },
-  },
-  {
     id: 'cisco.do',
     match: ['do'],
     modes: ['config', 'config-if', 'config-vlan'],
@@ -371,7 +360,7 @@ const baseCommands: CommandSpec[] = [
       const savedPriv = device.privilege;
       device.modeCtx = { mode: 'privileged' };
       device.privilege = 15;
-      const resolved = commandFor(ciscoIosCommands.filter(s => s.id !== 'cisco.do'), rest, 'privileged', 15);
+      const resolved = commandFor(ciscoIosCommands.filter(s => s.id !== 'cisco.do'), rest, 'privileged', 15, device);
       if (resolved.ambiguous) {
         device.modeCtx = savedMode;
         device.privilege = savedPriv;
@@ -381,7 +370,7 @@ const baseCommands: CommandSpec[] = [
       if (!best) {
         device.modeCtx = savedMode;
         device.privilege = savedPriv;
-        return { output: profile.messages.invalid, error: true };
+        return { output: resolved.status === 'incomplete' ? profile.messages.incomplete : profile.messages.invalid, error: true };
       }
       const result = best.handler(resolved.tokens, state, device, profile);
       if (result.state) {
@@ -397,25 +386,6 @@ const baseCommands: CommandSpec[] = [
       return result;
     },
   },
-  {
-    id: 'cisco.help_question',
-    match: ['?'],
-    modes: ['exec', 'privileged', 'config', 'config-if', 'config-vlan'],
-    handler: (_tokens, _state, device) => {
-      const m = device.modeCtx.mode;
-      const map: Record<string, string> = {
-        exec: 'enable  show  ?',
-        privileged: 'configure terminal  show  show ip route  show interfaces trunk  show startup-config  copy running-config startup-config  write memory  reload  disable  ?',
-        config: 'hostname  vlan  interface  ip route  do show …  exit  end  ?',
-        'config-if':
-          'ip address  switchport …  shutdown  no shutdown  do show …  exit  end  ?',
-        'config-vlan': 'name  exit  end  ?',
-      };
-      return {
-        output: `Supported in this lab (${m}):\n  ${(map[m] || '').replace(/  /g, '\n  ')}\n\nOnly a documented subset of IOS is implemented.`,
-      };
-    },
-  },
 ];
 
 export const ciscoIosCommands: CommandSpec[] = [
@@ -425,17 +395,5 @@ export const ciscoIosCommands: CommandSpec[] = [
   ...ciscoPersistenceCommands,
   ...ciscoInterfaceShowCommands,
 ];
-
-function normalizeIfaceName(raw: string): string {
-  const s = raw.replace(/\s+/g, '');
-  const m = s.match(/^(FastEthernet|Fa|GigabitEthernet|Gi|Ethernet|Eth)([0-9/]+)$/i);
-  if (!m) return s;
-  const type = m[1].toLowerCase();
-  const num = m[2];
-  if (type === 'fa' || type === 'fastethernet') return `FastEthernet${num}`;
-  if (type === 'gi' || type === 'gigabitethernet') return `GigabitEthernet${num}`;
-  if (type === 'eth' || type === 'ethernet') return `Ethernet${num}`;
-  return s;
-}
 
 export { normalizeIfaceName };

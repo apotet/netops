@@ -1,3 +1,4 @@
+import { PRACTICE_DESTINATIONS, type PracticeLink } from '../data/practiceLinks';
 import React, { useState } from 'react';
 import { Activity, Layers, Cpu, Terminal, FlaskConical } from 'lucide-react';
 import { PacketJourney } from './PacketJourney';
@@ -59,9 +60,10 @@ function iconWrapClass(isActive: boolean): string {
     : 'p-2 rounded-xl bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400';
 }
 
-export const PracticeHub: React.FC<{ initialSimulator?: PracticeSimulator }> = ({ initialSimulator }) => {
+export const PracticeHub: React.FC<{ initialSimulator?: PracticeSimulator; initialPracticeLink?: PracticeLink }> = ({ initialSimulator, initialPracticeLink }) => {
+  const destination = initialPracticeLink ? PRACTICE_DESTINATIONS[initialPracticeLink] : undefined;
   const [activeSimulator, setActiveSimulator] = useState<PracticeSimulator>(() =>
-    initialSimulator ?? (typeof window !== 'undefined' && window.innerWidth < 640 ? 'journey' : 'cli')
+    destination?.simulator ?? initialSimulator ?? (typeof window !== 'undefined' && window.innerWidth < 640 ? 'journey' : 'cli')
   );
 
   return (
@@ -88,6 +90,7 @@ export const PracticeHub: React.FC<{ initialSimulator?: PracticeSimulator }> = (
             return (
               <button
                 key={item.id}
+                aria-pressed={isActive}
                 onClick={() => setActiveSimulator(item.id)}
                 type="button"
                 className={cardClass(isActive)}
@@ -111,8 +114,8 @@ export const PracticeHub: React.FC<{ initialSimulator?: PracticeSimulator }> = (
       <div className="animate-fade-in">
         {activeSimulator === 'journey' && <PacketJourney />}
         {activeSimulator === 'vlan' && <VlanSimulator />}
-        {activeSimulator === 'protocols' && <ProtocolSimulators />}
-        {activeSimulator === 'cli' && <CliLabShell />}
+        {activeSimulator === 'protocols' && <ProtocolSimulators initialLab={destination?.protocol} />}
+        {activeSimulator === 'cli' && <CliLabShell initialScenarioId={destination?.scenarioId} />}
       </div>
     </div>
   );

@@ -1,10 +1,14 @@
-import { DeviceState, NetworkState, SavedDeviceConfig } from './types';
+import { DeviceState, InterfaceConfig, InterfaceState, NetworkState, SavedDeviceConfig } from './types';
 
-/** Lab-only startup snapshot; mode/privilege and physical links are not saved. */
-export function snapshotConfig(device: DeviceState): SavedDeviceConfig {
+function configInterfaces(interfaces: Record<string, InterfaceState>): Record<string, InterfaceConfig> {
+  return Object.fromEntries(Object.entries(interfaces).map(([name, { operUp: _legacy, ...config }]) => [name, config]));
+}
+
+/** Lab-only configuration snapshot; runtime, mode/privilege and links are not saved. */
+export function snapshotConfig(device: Pick<DeviceState, 'hostname' | 'interfaces' | 'vlans' | 'routes'>): SavedDeviceConfig {
   return structuredClone({
     hostname: device.hostname,
-    interfaces: device.interfaces,
+    interfaces: configInterfaces(device.interfaces),
     vlans: device.vlans,
     routes: device.routes,
   });
@@ -13,14 +17,16 @@ export function snapshotConfig(device: DeviceState): SavedDeviceConfig {
 export function initializeStartupConfigs(state: NetworkState): NetworkState {
   const next = structuredClone(state);
   for (const device of Object.values(next.devices)) {
-    if (!device.startupConfig) device.startupConfig = snapshotConfig(device);
+    // Accept old scenarios and startup snapshots, but discard their cached runtime.
+    device.interfaces = configInterfaces(device.interfaces);
+    device.startupConfig = snapshotConfig(device.startupConfig ?? device);
   }
   return next;
 }
 
 export function hasUnsavedChanges(device: DeviceState): boolean {
   return !device.startupConfig ||
-    JSON.stringify(snapshotConfig(device)) !== JSON.stringify(device.startupConfig);
+    JSON.stringify(snapshotConfig(device)) !== JSON.stringify(snapshotConfig(device.startupConfig));
 }
 
 export function saveStartup(device: DeviceState): void {
@@ -28,8 +34,9 @@ export function saveStartup(device: DeviceState): void {
 }
 
 export function reloadFromStartup(device: DeviceState): void {
-  const saved = device.startupConfig;
-  if (!saved) throw new Error('Startup configuration not initialized');
+  if (!device.startupConfig) throw new Error('Startup configuration not initialized');
+  const saved = snapshotConfig(device.startupConfig);
+  device.startupConfig = saved;
   device.hostname = saved.hostname;
   device.interfaces = structuredClone(saved.interfaces);
   device.vlans = structuredClone(saved.vlans);

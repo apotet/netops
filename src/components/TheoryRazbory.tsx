@@ -1,3 +1,5 @@
+import { PracticeLinkButton } from './PracticeLinkButton';
+import type { PracticeLink } from '../data/practiceLinks';
 import { GlossaryText } from './GlossaryText';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { ALL_QUESTIONS, TOTAL_QUESTION_COUNT, resolveImageUrl } from '../data/questionsData';
@@ -20,6 +22,7 @@ import {
 } from 'lucide-react';
 
 interface Props {
+  onOpenPractice?: (link: PracticeLink) => void;
   initialQuestionId?: string | null;
   fromExam?: boolean;
   onReturnToExam?: () => void;
@@ -30,6 +33,7 @@ interface Props {
 }
 
 export const TheoryRazbory: React.FC<Props> = ({
+  onOpenPractice,
   initialQuestionId,
   fromExam,
   onReturnToExam,
@@ -150,6 +154,8 @@ export const TheoryRazbory: React.FC<Props> = ({
             <GlossaryText key={textMode} enabled={!professional}>{brief}</GlossaryText>
           </p>
         </div>
+
+        <PracticeLinkButton link={deep.practiceLink} onOpenPractice={onOpenPractice} />
 
         {(isAdvanced || deep.engineeringDeep || deep.deepAnalysis) && (
           <div className="rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden">

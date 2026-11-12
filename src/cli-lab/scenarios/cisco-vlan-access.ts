@@ -84,7 +84,8 @@ export const ciscoVlanAccessScenario: Scenario = {
     { type: 'if.accessVlan', device: 'sw1', ifName: 'FastEthernet0/1', vlanId: 10 },
     { type: 'if.admin', device: 'sw1', ifName: 'FastEthernet0/1', up: true },
   ],
-  successMessage: 'Готово: VLAN 10 (Users), Fa0/1 access VLAN 10, порт up. Проверьте: show vlan brief',
+  successMessage: 'Готово: VLAN 10 (Users), Fa0/1 access VLAN 10, порт admin up. Конфигурация выполнена; физический линк проверяется отдельно через show interfaces.',
+  nextScenarioId: 'cisco-access-vlan-svi-followup',
 };
 
 export const ciscoScenarios = [ciscoVlanAccessScenario];

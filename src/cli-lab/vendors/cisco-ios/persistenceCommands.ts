@@ -35,7 +35,7 @@ function displayStartup(config: SavedDeviceConfig): string {
 }
 
 function save(tokens: string[], state: NetworkState, device: DeviceState) {
-  if (tokens.length !== 1 && tokens.join(' ').toLowerCase() !== 'copy running-config startup-config' && tokens.join(' ').toLowerCase() !== 'write memory' && tokens.join(' ').toLowerCase() !== 'wr mem') {
+  if (tokens.length !== 1 && tokens.join(' ').toLowerCase() !== 'copy running-config startup-config' && tokens.join(' ').toLowerCase() !== 'write memory') {
     return { output: '% Invalid input detected', error: true };
   }
   saveStartup(device);
@@ -53,11 +53,6 @@ export const ciscoPersistenceCommands: CommandSpec[] = [
   },
   {
     id: 'cisco.write_memory', match: ['write', 'memory'],
-    modes: ['privileged'], minPrivilege: 15,
-    handler: (tokens, state, device) => save(tokens, state, device),
-  },
-  {
-    id: 'cisco.wr_mem', match: ['wr', 'mem'],
     modes: ['privileged'], minPrivilege: 15,
     handler: (tokens, state, device) => save(tokens, state, device),
   },
