@@ -148,9 +148,81 @@ export const OSI_STACK_DATA: OsiLayerItem[] = [
   },
 ];
 
+
+export const TCPIP_STACK_DATA: OsiLayerItem[] = [
+  {
+    id: 4,
+    level: 'T4',
+    name: 'Прикладной',
+    pdu: 'Данные',
+    color: 'text-pink-400',
+    glowColor: 'rgba(244, 114, 182, 0.4)',
+    protocols: ['HTTP', 'DNS', 'TLS', 'SSH'],
+    description: 'Прикладные протоколы. Session и Presentation не выделяются отдельными заголовками TCP/IP.',
+    devices: 'Клиенты и серверы приложений',
+    cliTool: 'curl -Iv, dig',
+    headerFields: ['HTTP', 'DNS', 'TLS record'],
+    actionDown: 'Приложение отдаёт данные',
+    actionUp: 'Приложение получает данные',
+    headerLabel: 'Data',
+    headerClass: 'bg-pink-500/80 text-pink-50 border-pink-400/50',
+  },
+  {
+    id: 3,
+    level: 'T3',
+    name: 'Транспортный',
+    pdu: 'Сегмент',
+    color: 'text-blue-400',
+    glowColor: 'rgba(96, 165, 250, 0.4)',
+    protocols: ['TCP', 'UDP'],
+    description: 'Порты, надёжность TCP или датаграммы UDP. Данные становятся сегментом.',
+    devices: 'Хосты',
+    cliTool: 'ss -tanp',
+    headerFields: ['Src Port', 'Dst Port', 'Seq/Ack', 'Flags'],
+    actionDown: 'Данные → TCP-сегмент',
+    actionUp: 'Снимается заголовок TCP',
+    headerLabel: 'TCP',
+    headerClass: 'bg-blue-500/90 text-white border-blue-300/60',
+  },
+  {
+    id: 2,
+    level: 'T2',
+    name: 'Межсетевой',
+    pdu: 'Пакет',
+    color: 'text-cyan-400',
+    glowColor: 'rgba(34, 211, 238, 0.4)',
+    protocols: ['IPv4', 'IPv6', 'ICMP'],
+    description: 'IP-адресация и маршрутизация. Сегмент становится пакетом.',
+    devices: 'Маршрутизаторы',
+    cliTool: 'ip route',
+    headerFields: ['Src IP', 'Dst IP', 'TTL', 'Protocol'],
+    actionDown: 'Сегмент → IP-пакет',
+    actionUp: 'Снимается заголовок IP',
+    headerLabel: 'IP',
+    headerClass: 'bg-cyan-500/90 text-slate-950 border-cyan-300/60',
+  },
+  {
+    id: 1,
+    level: 'T1',
+    name: 'Доступ к сети',
+    pdu: 'Кадр / биты',
+    color: 'text-emerald-400',
+    glowColor: 'rgba(52, 211, 153, 0.4)',
+    protocols: ['Ethernet', 'ARP', '1000BASE-T'],
+    description: 'Кадр Ethernet и физические сигналы. Сигналы не являются новым IP-заголовком.',
+    devices: 'Коммутаторы, NIC, среда передачи',
+    cliTool: 'ip link',
+    headerFields: ['Dst MAC', 'Src MAC', 'EtherType', 'сигналы среды'],
+    actionDown: 'Пакет → Ethernet-кадр → сигналы',
+    actionUp: 'Сигналы → кадр, снимается Ethernet',
+    headerLabel: 'Eth',
+    headerClass: 'bg-emerald-500/90 text-slate-950 border-emerald-300/60',
+  },
+];
+
 /** Headers present when the packet is *at* this layer going down (encapsulation complete through this layer). */
-function headersAtLayer(layerId: number): OsiLayerItem[] {
-  return OSI_STACK_DATA.filter((l) => l.id >= layerId).reverse();
+function headersAtLayer(layerId: number, stack: OsiLayerItem[]): OsiLayerItem[] {
+  return stack.filter((l) => l.id >= layerId).reverse();
 }
 
 interface LivingOsiStackProps {
@@ -167,39 +239,50 @@ export const LivingOsiStack: React.FC<LivingOsiStackProps> = ({
   onExploreTheory,
   onStartExamForLevel,
 }) => {
+  const [model, setModel] = useState<'osi' | 'tcpip'>('osi');
   const [selectedLayerId, setSelectedLayerId] = useState<number>(4);
   const [direction, setDirection] = useState<'down' | 'up'>('down');
   const [isAutoAnimating, setIsAutoAnimating] = useState<boolean>(true);
+  const stack = model === 'osi' ? OSI_STACK_DATA : TCPIP_STACK_DATA;
+  const topId = stack[0].id;
+  const bottomId = stack[stack.length - 1].id;
 
   useEffect(() => {
-    if (activeLevel) {
-      const num = parseInt(activeLevel.replace(/\D/g, ''), 10);
-      if (!isNaN(num) && num >= 1 && num <= 7) {
-        setSelectedLayerId(num);
-      }
+    if (model !== 'osi' || !activeLevel) return;
+    const num = parseInt(activeLevel.replace(/\D/g, ''), 10);
+    if (!isNaN(num) && num >= 1 && num <= 7) {
+      setSelectedLayerId(num);
     }
-  }, [activeLevel]);
+  }, [activeLevel, model]);
 
   useEffect(() => {
     if (!isAutoAnimating) return;
     const interval = setInterval(() => {
       setSelectedLayerId((prev) => {
         if (direction === 'down') {
-          if (prev <= 1) {
+          if (prev <= bottomId) {
             setDirection('up');
-            return 2;
+            return bottomId + 1;
           }
           return prev - 1;
         }
-        if (prev >= 7) {
+        if (prev >= topId) {
           setDirection('down');
-          return 6;
+          return topId - 1;
         }
         return prev + 1;
       });
     }, 2600);
     return () => clearInterval(interval);
-  }, [direction, isAutoAnimating]);
+  }, [direction, isAutoAnimating, topId, bottomId]);
+
+  const switchModel = (next: 'osi' | 'tcpip') => {
+    triggerHaptic('light');
+    setModel(next);
+    setDirection('down');
+    setIsAutoAnimating(true);
+    setSelectedLayerId(next === 'osi' ? 7 : 4);
+  };
 
   const handleLayerClick = (layer: OsiLayerItem) => {
     triggerHaptic('selection');
@@ -208,8 +291,8 @@ export const LivingOsiStack: React.FC<LivingOsiStackProps> = ({
     onSelectLevel?.(layer.level);
   };
 
-  const selectedLayer = OSI_STACK_DATA.find((l) => l.id === selectedLayerId) || OSI_STACK_DATA[3];
-  const presentHeaders = headersAtLayer(selectedLayerId);
+  const selectedLayer = stack.find((l) => l.id === selectedLayerId) || stack[0];
+  const presentHeaders = headersAtLayer(selectedLayerId, stack);
   const actionText = direction === 'down' ? selectedLayer.actionDown : selectedLayer.actionUp;
 
   return (
@@ -220,6 +303,10 @@ export const LivingOsiStack: React.FC<LivingOsiStackProps> = ({
             <span>Путь пакета</span>
             <span className="w-1.5 h-1.5 rounded-full bg-cyan-500 dark:bg-cyan-400 animate-pulse" />
           </span>
+          <div className="flex rounded-lg border border-slate-300 dark:border-slate-700 p-0.5">
+            <button type="button" onClick={() => switchModel('osi')} className={'px-2 py-0.5 rounded-md text-[11px] font-semibold cursor-pointer ' + (model === 'osi' ? 'bg-cyan-500 text-slate-950' : 'text-slate-600 dark:text-slate-300')}>OSI</button>
+            <button type="button" onClick={() => switchModel('tcpip')} className={'px-2 py-0.5 rounded-md text-[11px] font-semibold cursor-pointer ' + (model === 'tcpip' ? 'bg-cyan-500 text-slate-950' : 'text-slate-600 dark:text-slate-300')}>TCP/IP</button>
+          </div>
           <span className="text-[11px] text-slate-500 dark:text-slate-400 font-mono hidden sm:inline">
             {direction === 'down' ? 'инкапсуляция ↓' : 'декапсуляция ↑'}
           </span>
@@ -236,12 +323,12 @@ export const LivingOsiStack: React.FC<LivingOsiStackProps> = ({
         >
           {direction === 'down' ? (
             <>
-              <span>L7 → L1</span>
+              <span>{model === 'osi' ? 'L7 → L1' : 'App → Access'}</span>
               <ArrowDown className="w-3 h-3 text-cyan-600 dark:text-cyan-400" />
             </>
           ) : (
             <>
-              <span>L1 → L7</span>
+              <span>{model === 'osi' ? 'L1 → L7' : 'Access → App'}</span>
               <ArrowUp className="w-3 h-3 text-cyan-600 dark:text-cyan-400" />
             </>
           )}
@@ -293,7 +380,7 @@ export const LivingOsiStack: React.FC<LivingOsiStackProps> = ({
         />
 
         <div className="space-y-1.5 relative z-10">
-          {OSI_STACK_DATA.map((layer) => {
+          {stack.map((layer) => {
             const isSelected = selectedLayerId === layer.id;
             const isEncapsulated = layer.id >= selectedLayerId;
 

@@ -36,6 +36,15 @@ assert.match(help('switchport mode a?'),/access/);
 assert.doesNotMatch(help('switchport mode a?'),/trunk/);
 assert.match(help('switchport mode access ?'),/<cr>/);
 assert.match(help('switchport access vlan ?'),/<1-4094>/);
+// Cisco distinguishes 'trunk?' (complete current keyword) and 'trunk ?' (children).
+const inlineTrunk = help('switchport trunk?');
+assert.match(inlineTrunk, /trunk +Trunk-port characteristics/);
+assert.match(inlineTrunk, /switchport trunk [ ?]+/);
+assert.doesNotMatch(inlineTrunk, /allowed\\s+Set permitted/, 'inline ? must not silently change IOS semantics');
+assert.match(help('switchport trunk ?'), /allowed +Set permitted trunk VLANs/);
+assert.match(help('switchport trunk allowed ?'), /vlan/);
+assert.match(help('switchport trunk allowed vlan ?'), /add/);
+assert.match(help('switchport trunk allowed vlan ?'), /remove/);
 assert.match(help('switchport trunk allowed vlan ?'),/<vlan-list>/);
 assert.match(help('do show interfaces ?'),/status/);
 assert.match(help('do show interfaces ?'),/trunk/);

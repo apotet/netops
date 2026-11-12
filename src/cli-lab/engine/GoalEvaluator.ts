@@ -1,5 +1,6 @@
 import { hasUnsavedChanges } from './ConfigPersistence';
 import { checkVlanPath } from './VlanPath';
+import { checkSviIpv4Reachability } from './SviIpv4Reachability';
 import { DeviceState, GoalCheckResult, GoalPredicate, NetworkState } from './types';
 
 function deviceOf(state: NetworkState, id: string): DeviceState | undefined {
@@ -10,6 +11,10 @@ export function evaluatePredicate(state: NetworkState, p: GoalPredicate): GoalCh
   const dev = 'device' in p ? deviceOf(state, p.device) : undefined;
 
   switch (p.type) {
+    case 'ipv4.sviReachable': {
+      const result = checkSviIpv4Reachability(state, p.device, p.destination);
+      return { predicate: p, passed: result.kind === 'remote', detail: result.detail };
+    }
     case 'l2.vlanReachable': {
       const result = checkVlanPath(state, p.vlanId, p.fromDevice, p.fromIf, p.toDevice, p.toIf);
       return { predicate: p, passed: result.reachable, detail: result.detail };

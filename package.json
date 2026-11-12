@@ -12,7 +12,7 @@
     "validate:questions": "node scripts/validate-questions.mjs",
     "coverage:explanations": "node scripts/coverage-report.mjs",
     "test:logic": "node scripts/quiz-logic.test.mjs",
-    "prebuild": "node scripts/validate-questions.mjs"
+    "prebuild": "node scripts/validate-questions.mjs && node scripts/stp-lesson-links.test.mjs && node scripts/advanced-glossary.test.mjs && node scripts/cli-two-switch-svi.test.mjs && node scripts/svi-lesson.test.mjs && node scripts/cli-access-svi-followup.test.mjs && node scripts/cli-completion-status.test.mjs"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.3.3",

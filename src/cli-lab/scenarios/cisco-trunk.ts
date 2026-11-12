@@ -90,5 +90,5 @@ export const ciscoTrunkScenario: Scenario = {
     { type: 'if.admin', device: 'sw1', ifName: 'FastEthernet0/1', up: true },
   ],
   successMessage:
-    'Готово: VLAN 10/20, Fa0/1 trunk, allowed 10,20, порт up. Проверьте: show interfaces trunk',
+    'Готово: VLAN 10/20, Fa0/1 trunk, allowed 10,20, порт admin up. Trunk настроен; его operational-состояние проверьте через show interfaces trunk.',
 };

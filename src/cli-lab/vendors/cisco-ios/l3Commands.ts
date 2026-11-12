@@ -1,5 +1,7 @@
+import { isIpv4, isAssignableIpv4, isLayer2Interface, maskToPrefix, ipv4Argument, maskArgument } from './arguments';
 import { CommandSpec, DeviceState, NetworkState } from '../../engine/types';
 import { ciscoIosProfile } from './profile';
+import { checkSviIpv4Reachability } from '../../engine/SviIpv4Reachability';
 
 function commitDevice(state: NetworkState, device: DeviceState): NetworkState {
   return {
@@ -11,34 +13,24 @@ function commitDevice(state: NetworkState, device: DeviceState): NetworkState {
   };
 }
 
-function maskToPrefix(mask: string): number | null {
-  const parts = mask.split('.').map((x) => Number(x));
-  if (parts.length !== 4 || parts.some((n) => !Number.isInteger(n) || n < 0 || n > 255)) return null;
-  let bits = 0;
-  let seenZero = false;
-  for (const o of parts) {
-    for (let i = 7; i >= 0; i--) {
-      const bit = (o >> i) & 1;
-      if (bit === 1) {
-        if (seenZero) return null;
-        bits++;
-      } else {
-        seenZero = true;
-      }
-    }
-  }
-  return bits;
-}
-
-function isIpv4(s: string): boolean {
-  const p = s.split('.').map((x) => Number(x));
-  return p.length === 4 && p.every((n) => Number.isInteger(n) && n >= 0 && n <= 255);
-}
-
 export const ciscoL3Commands: CommandSpec[] = [
+  {
+    id: 'cisco.ping',
+    match: ['ping'],
+    arguments: [[ipv4Argument]],
+    modes: ['exec', 'privileged'],
+    handler: (tokens, state, device) => {
+      const target = tokens[1];
+      const check = checkSviIpv4Reachability(state, device.id, target);
+      const status = check.kind === 'local' ? 'LOCAL' : check.kind === 'conflict' ? 'CONFLICT' :
+        check.kind === 'remote' ? 'REACHABLE' : 'UNREACHABLE';
+      return { output: `CLI Lab ping ${target}: ${status} (SVI IPv4 configuration model; no ICMP packets).\n${check.detail}` };
+    },
+  },
   {
     id: 'cisco.ip_address',
     match: ['ip', 'address'],
+    arguments: [[ipv4Argument, maskArgument]],
     modes: ['config-if'],
     minPrivilege: 15,
     handler: (tokens, state, device) => {
@@ -57,6 +49,12 @@ export const ciscoL3Commands: CommandSpec[] = [
       const ifName = device.modeCtx.ifName;
       if (!ifName || !device.interfaces[ifName]) {
         return { output: ciscoIosProfile.messages.invalid, error: true };
+      }
+      if (isLayer2Interface(device, ifName)) {
+        return { output: '% IP address is not available on a Layer 2 switchport; use interface Vlan or a routed interface', error: true };
+      }
+      if (!isAssignableIpv4(addr, prefix)) {
+        return { output: '% Invalid interface host address for this subnet mask', error: true };
       }
       const iface = {
         ...device.interfaces[ifName],
@@ -85,6 +83,7 @@ export const ciscoL3Commands: CommandSpec[] = [
   {
     id: 'cisco.ip_route',
     match: ['ip', 'route'],
+    arguments: [[ipv4Argument, maskArgument, ipv4Argument]],
     modes: ['config'],
     minPrivilege: 15,
     handler: (tokens, state, device) => {

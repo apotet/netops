@@ -1,6 +1,9 @@
+import type { PracticeLink } from '../practiceLinks';
+
 export interface LessonBlock {
   heading: string;
   body: string;
+  practiceLink?: PracticeLink;
 }
 
 export interface LessonCommand {

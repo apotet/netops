@@ -58,7 +58,7 @@ export const ciscoL3GatewayScenario: Scenario = {
     {
       id: 's3',
       instruction: 'Gi0/0: ip address 192.168.10.1 255.255.255.0 и no shutdown',
-      explanation: 'Маска 255.255.255.0 = /24. no shutdown поднимает admin/oper в этой lab-модели.',
+      explanation: 'Маска 255.255.255.0 = /24. no shutdown снимает административное отключение; operational up требует описанного активного линка.',
       hint: 'interface GigabitEthernet0/0 → ip address 192.168.10.1 255.255.255.0 → no shutdown',
       accept: [
         { type: 'if.ipv4', device: 'r1', ifName: 'GigabitEthernet0/0', address: '192.168.10.1', prefix: 24 },
@@ -94,5 +94,5 @@ export const ciscoL3GatewayScenario: Scenario = {
     },
   ],
   successMessage:
-    'Готово: R1, Gi0/0 = 192.168.10.1/24 up, default via 192.168.10.254. Проверьте: show ip route',
+    'Готово: R1, Gi0/0 = 192.168.10.1/24 admin up, default route настроен via 192.168.10.254. Физическая связность не подтверждена; проверьте show interfaces.',
 };

@@ -491,8 +491,8 @@ function Stand({ lab, nodes, steps }: { lab: Lab; nodes: { id: string; x: number
   );
 }
 
-export const ProtocolSimulators: React.FC = () => {
-  const [lab, setLab] = useState<Lab>('dhcp');
+export const ProtocolSimulators: React.FC<{ initialLab?: Lab }> = ({ initialLab }) => {
+  const [lab, setLab] = useState<Lab>(initialLab ?? 'dhcp');
   return (
     <section className="mx-auto max-w-6xl space-y-3" aria-label="DHCP NAT TCP">
       <div>
@@ -501,7 +501,7 @@ export const ProtocolSimulators: React.FC = () => {
       </div>
       <div className="flex flex-wrap gap-1">
         {([['dhcp', 'DHCP'], ['nat', 'NAT/PAT'], ['tcp', 'TCP']] as const).map(([id, label]) => (
-          <button key={id} type="button" onClick={() => setLab(id)} className={'px-3 py-1.5 rounded-lg text-xs font-semibold border cursor-pointer ' + (lab === id ? 'bg-cyan-500 border-cyan-500 text-slate-950' : 'border-slate-200 dark:border-slate-700')}>{label}</button>
+          <button key={id} type="button" aria-pressed={lab === id} onClick={() => setLab(id)} className={'px-3 py-1.5 rounded-lg text-xs font-semibold border cursor-pointer ' + (lab === id ? 'bg-cyan-500 border-cyan-500 text-slate-950' : 'border-slate-200 dark:border-slate-700')}>{label}</button>
         ))}
       </div>
       {lab === 'dhcp' && <Stand lab="dhcp" nodes={DHCP_NODES} steps={DHCP_STEPS} />}

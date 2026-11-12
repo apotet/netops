@@ -1,3 +1,4 @@
+import type { PracticeLink } from '../data/practiceLinks';
 import React, { useState, useEffect, useRef, useImperativeHandle } from 'react';
 import {
   Question,
@@ -44,6 +45,7 @@ export interface ExamViewHandle {
 }
 
 interface ExamViewProps {
+  onOpenPractice?: (link: PracticeLink) => void;
   ref?: React.Ref<ExamViewHandle>;
   soundEnabled: boolean;
   onNavigateToLearning?: () => void;
@@ -51,7 +53,7 @@ interface ExamViewProps {
   onSelectLevel?: (level: string) => void;
 }
 
-export const ExamView: React.FC<ExamViewProps> = ({ ref, soundEnabled, onNavigateToTheory, onNavigateToLearning }) => {
+export const ExamView: React.FC<ExamViewProps> = ({ ref, soundEnabled, onNavigateToTheory, onNavigateToLearning, onOpenPractice }) => {
   const [session, setSession] = useState<ProgressSession | null>(null);
   const [selectedMode, setSelectedMode] = useState<QuizModeId>('mixed');
   const [selectedDifficulty, setSelectedDifficulty] = useState<ExamDifficulty>('beginner');
@@ -258,7 +260,7 @@ export const ExamView: React.FC<ExamViewProps> = ({ ref, soundEnabled, onNavigat
 
   const availableReview = lastReview?.progressEpoch === getProgressEpoch() ? lastReview : null;
   if (reviewSession && reviewSession.progressEpoch === getProgressEpoch()) {
-    return <><ExamReview key={reviewSession.attemptId || reviewSession.startTime} session={reviewSession} onExit={handleExit} onLearning={onNavigateToLearning} onRetry={session && !session.isCompleted ? undefined : () => startNewQuiz()} onNavigateToTheory={onNavigateToTheory} />{replacementDialog}</>;
+    return <><ExamReview onOpenPractice={onOpenPractice} key={reviewSession.attemptId || reviewSession.startTime} session={reviewSession} onExit={handleExit} onLearning={onNavigateToLearning} onRetry={session && !session.isCompleted ? undefined : () => startNewQuiz()} onNavigateToTheory={onNavigateToTheory} />{replacementDialog}</>;
   }
 
   if (showParameters || !session || !currentQuestion) {
@@ -353,7 +355,7 @@ export const ExamView: React.FC<ExamViewProps> = ({ ref, soundEnabled, onNavigat
   }
 
   if (session.isCompleted) {
-    return <div className="space-y-3">{reviewWarning && <p role="status">Разбор доступен сейчас, но его сохранение не удалось.</p>}<ExamReview key={session.attemptId || session.startTime} session={session} onExit={handleExit} onLearning={onNavigateToLearning} onRetry={() => startNewQuiz()} onNavigateToTheory={onNavigateToTheory} />{replacementDialog}</div>;
+    return <div className="space-y-3">{reviewWarning && <p role="status">Разбор доступен сейчас, но его сохранение не удалось.</p>}<ExamReview onOpenPractice={onOpenPractice} key={session.attemptId || session.startTime} session={session} onExit={handleExit} onLearning={onNavigateToLearning} onRetry={() => startNewQuiz()} onNavigateToTheory={onNavigateToTheory} />{replacementDialog}</div>;
   }
 
   const progress = ((session.currentIndex + 1) / session.questions.length) * 100;

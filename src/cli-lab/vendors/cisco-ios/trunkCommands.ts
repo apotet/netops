@@ -1,3 +1,5 @@
+import { parseVlanList, vlanListArgument, isLayer2Interface } from './arguments';
+import { interfaceStatus } from '../../engine/OperationalState';
 import { CommandSpec, DeviceState, NetworkState } from '../../engine/types';
 import { ciscoIosProfile } from './profile';
 
@@ -13,19 +15,6 @@ function commitDevice(state: NetworkState, device: DeviceState): NetworkState {
 
 /** A trunk without an explicit allowed list permits VLAN IDs 1–4094. [] means none. */
 const ALL_VLANS = Array.from({ length: 4094 }, (_, i) => i + 1);
-
-function parseVlanList(raw: string): number[] | null {
-  // Accept VLAN IDs and inclusive ranges, without silent truncation of malformed input.
-  if (!/^\d+(?:-\d+)?(?:,\d+(?:-\d+)?)*$/.test(raw)) return null;
-  const result = new Set<number>();
-  for (const part of raw.split(',')) {
-    const [left, right = left] = part.split('-');
-    const lo = Number(left), hi = Number(right);
-    if (!Number.isInteger(lo) || !Number.isInteger(hi) || lo < 1 || hi > 4094 || lo > hi) return null;
-    for (let v = lo; v <= hi; v++) result.add(v);
-  }
-  return [...result].sort((a, b) => a - b);
-}
 
 export function formatAllowedVlans(allowed?: number[]): string {
   if (allowed === undefined) return '1-4094';
@@ -45,6 +34,7 @@ function updateAllowed(tokens: string[], state: NetworkState, device: DeviceStat
   const ifName = device.modeCtx.ifName;
   const iface = ifName ? device.interfaces[ifName] : undefined;
   if (!iface) return { output: ciscoIosProfile.messages.invalid, error: true };
+  if (!isLayer2Interface(device, ifName!)) return { output: '% Switchport configuration is not available on this interface', error: true };
   if (iface.switchport?.mode !== 'trunk') {
     return { output: '% Configure switchport mode trunk first', error: true };
   }
@@ -90,6 +80,9 @@ export const ciscoTrunkCommands: CommandSpec[] = [
       if (!ifName || !device.interfaces[ifName]) {
         return { output: ciscoIosProfile.messages.invalid, error: true };
       }
+      if (!isLayer2Interface(device, ifName)) {
+        return { output: '% Switchport configuration is not available on this interface', error: true };
+      }
       const prev = device.interfaces[ifName];
       const iface = {
         ...prev,
@@ -106,6 +99,7 @@ export const ciscoTrunkCommands: CommandSpec[] = [
   ...(['add', 'remove', 'all', 'none'] as const).map(operation => ({
     id: 'cisco.switchport_trunk_allowed_vlan_' + operation,
     match: ['switchport', 'trunk', 'allowed', 'vlan', operation],
+    arguments: operation === 'add' || operation === 'remove' ? [[vlanListArgument]] : [[]],
     modes: ['config-if'] as const as ('config-if')[],
     minPrivilege: 15,
     handler: (tokens: string[], state: NetworkState, device: DeviceState) => updateAllowed(tokens, state, device),
@@ -113,6 +107,7 @@ export const ciscoTrunkCommands: CommandSpec[] = [
   {
     id: 'cisco.switchport_trunk_allowed_vlan',
     match: ['switchport', 'trunk', 'allowed', 'vlan'],
+    arguments: [[vlanListArgument]],
     modes: ['config-if'],
     minPrivilege: 15,
     handler: updateAllowed,
@@ -121,7 +116,7 @@ export const ciscoTrunkCommands: CommandSpec[] = [
     id: 'cisco.show_interfaces_trunk',
     match: ['show', 'interfaces', 'trunk'],
     modes: ['exec', 'privileged'],
-    handler: (_tokens, _state, device) => {
+    handler: (_tokens, state, device) => {
       const lines = [
         `${'Port'.padEnd(21)}${'Mode'.padEnd(17)}${'Encapsulation'.padEnd(15)}${'Status'.padEnd(14)}Native vlan`,
       ];
@@ -130,7 +125,7 @@ export const ciscoTrunkCommands: CommandSpec[] = [
         return { output: lines.join('\n') + '\n' };
       }
       for (const iface of trunks) {
-        const status = iface.adminUp ? 'trunking' : 'down';
+        const status = interfaceStatus(state, device, iface).operUp ? 'trunking' : 'down';
         lines.push(
           `${iface.name.padEnd(21, ' ')}${'on'.padEnd(17)}${'802.1q'.padEnd(15)}${status.padEnd(14, ' ')}1`
         );
@@ -141,7 +136,7 @@ export const ciscoTrunkCommands: CommandSpec[] = [
         const allowed = formatAllowedVlans(iface.switchport?.trunkAllowed);
         lines.push(`${iface.name.padEnd(21, ' ')}${allowed}`);
       }
-      return { output: lines.join('\n') };
+      return { output: lines.join('\n') + '\n\nCLI Lab: configured trunks are listed even when down; negotiation and STP forwarding are not emulated.' };
     },
   },
 ];

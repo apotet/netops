@@ -1,4 +1,5 @@
 import { NetworkState } from './types';
+import { trunkNeighbors } from './SviIpv4Reachability';
 
 /** Configuration-level VLAN path check. Does not simulate frames, MAC learning, or ICMP. */
 export function checkVlanPath(
@@ -20,28 +21,17 @@ export function checkVlanPath(
     }
   }
 
-  const eligible = (deviceId: string, portName: string): boolean => {
-    const device = state.devices[deviceId];
-    const port = device?.interfaces[portName];
-    return !!device?.vlans[vlanId]?.active && !!port?.adminUp &&
-      port.switchport?.mode === 'trunk' &&
-      (port.switchport.trunkAllowed === undefined || port.switchport.trunkAllowed.includes(vlanId));
-  };
-
   const visited = new Set<string>([fromDevice]);
   const queue = [fromDevice];
   while (queue.length) {
     const current = queue.shift()!;
     if (current === toDevice) return { reachable: true, detail: `VLAN ${vlanId} проходит между ${fromDevice} и ${toDevice} (проверка конфигурации)` };
-    for (const link of state.links) {
-      if (!link.up) continue;
-      const peer = link.a === current ? { localIf: link.aIf, id: link.b, remoteIf: link.bIf }
-        : link.b === current ? { localIf: link.bIf, id: link.a, remoteIf: link.aIf } : null;
-      if (!peer || visited.has(peer.id)) continue;
-      if (!eligible(current, peer.localIf) || !eligible(peer.id, peer.remoteIf)) continue;
-      visited.add(peer.id);
-      queue.push(peer.id);
+    for (const peerId of trunkNeighbors(state, current, vlanId)) {
+      if (!visited.has(peerId)) {
+        visited.add(peerId);
+        queue.push(peerId);
+      }
     }
   }
-  return { reachable: false, detail: `VLAN ${vlanId}: сквозной L2-путь не подтверждён. Проверьте trunk, allowed VLAN и оба конца линка` };
+  return { reachable: false, detail: `VLAN ${vlanId}: сквозной L2-путь не подтверждён. Проверьте VLAN на портах, allowed list и оба конца линка` };
 }

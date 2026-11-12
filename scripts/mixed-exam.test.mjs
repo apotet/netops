@@ -31,7 +31,8 @@ function verify(questions) {
   return counts;
 }
 
-assert.equal(ALL_QUESTIONS.length, 657, 'test the complete current bank');
+// Guard against accidental truncation while allowing reviewed question-bank growth.
+assert.ok(ALL_QUESTIONS.length >= 657, `bank unexpectedly shrank: ${ALL_QUESTIONS.length} < 657`);
 const totals = Object.fromEntries(MIXED_GROUPS.map(group => [group, { min: 2, max: 0, total: 0 }]));
 const signatures = new Set();
 let storageReads = 0;

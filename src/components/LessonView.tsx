@@ -1,4 +1,6 @@
 import { GlossaryText } from './GlossaryText';
+import { PracticeLinkButton } from './PracticeLinkButton';
+import type { PracticeLink } from '../data/practiceLinks';
 import React, { useMemo, useState } from 'react';
 import { Lesson } from '../data/lessons/types';
 import { StudyTextToggle } from './StudyTextToggle';
@@ -12,10 +14,11 @@ interface LessonViewProps {
   onBack: () => void;
   onOpenLesson?: (lessonId: string) => void;
   onOpenQuestion?: (questionId: string) => void;
+  onOpenPractice?: (link: PracticeLink) => void;
   returnQuestionId?: string | null;
 }
 
-export const LessonView: React.FC<LessonViewProps> = ({ lesson, onBack, onOpenLesson, onOpenQuestion, returnQuestionId }) => {
+export const LessonView: React.FC<LessonViewProps> = ({ lesson, onBack, onOpenLesson, onOpenQuestion, onOpenPractice, returnQuestionId }) => {
   const [textMode, setTextMode] = useStudyTextMode();
   const content = textMode === 'professional' && lesson.professional ? lesson.professional : lesson;
   const [copied, setCopied] = useState<string | null>(null);
@@ -75,9 +78,10 @@ export const LessonView: React.FC<LessonViewProps> = ({ lesson, onBack, onOpenLe
           <section key={b.heading} className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#091524] p-4 space-y-2">
             <h3 className="text-sm font-semibold text-slate-900 dark:text-white flex items-center gap-2">
               <BookOpen className="w-4 h-4 text-cyan-500" />
-              {b.heading}
+              <GlossaryText key={textMode}>{b.heading}</GlossaryText>
             </h3>
             <p className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-line"><GlossaryText key={textMode}>{b.body}</GlossaryText></p>
+            <PracticeLinkButton link={b.practiceLink} onOpenPractice={onOpenPractice} />
           </section>
         ))}
       </div>

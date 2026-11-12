@@ -1,5 +1,5 @@
 import { contextualHelp } from './ContextualHelp';
-import { commandFor, resolveKeywords } from './CommandResolution';
+import { commandFor, inspectCommand, matchingKeywords } from './CommandResolution';
 import { initializeStartupConfigs } from './ConfigPersistence';
 import { evaluateGoals } from './GoalEvaluator';
 import {
@@ -73,21 +73,13 @@ export class LabEngine {
     // In particular, repeated Tab presses must never construct a command.
     if (!partial) return { candidates: [] };
 
-    const parsed = resolveKeywords(this.commands, tokens, mode, priv);
+    const parsed = inspectCommand(this.commands, tokens, mode, priv, device);
     if (parsed.ambiguous) return { candidates: parsed.ambiguous };
-    const available = parsed.candidates.filter(spec =>
-      spec.match.length > tokens.length &&
-      spec.match.slice(0, tokens.length).every((word, i) => word === parsed.tokens[i].toLowerCase())
-    );
-
-    // Complete exactly one CLI keyword per Tab press. Command arguments (VLAN ID,
-    // IP, interface name) are not part of the static keyword completion.
-    const nextTokens = Array.from(new Set(
-      available
-        .filter((spec) => tokens.length < spec.match.length)
-        .map((spec) => spec.match[tokens.length])
-        .filter((word) => word.startsWith(partial))
-    )).sort();
+    if (parsed.status === 'invalid') return { candidates: [] };
+    // Argument values are validated, never invented by TAB. Keywords after
+    // dynamic arguments use the same path as Enter and contextual help.
+    const keywords = [...new Set(parsed.next.flatMap(node => 'keyword' in node ? [node.keyword] : []))];
+    const nextTokens = matchingKeywords(keywords, partial).sort();
 
     const base = tokens.join(' ');
     const prefix = base ? base + ' ' : '';
@@ -113,7 +105,8 @@ export class LabEngine {
 
   /** Context-sensitive ? help, read-only and available independent of scenario. */
   help(line: string): string {
-    return contextualHelp(this.commands, activeDevice(this.state), line.endsWith('?') ? line : line + '?');
+    const trimmedEnd = line.trimEnd();
+    return contextualHelp(this.commands, activeDevice(this.state), trimmedEnd.endsWith('?') ? trimmedEnd : line + '?');
   }
 
   execute(line: string): CommandResult {
@@ -123,16 +116,20 @@ export class LabEngine {
 
     const tokens = trimmed.split(/\s+/);
     const device = activeDevice(this.state);
-    const resolved = commandFor(this.commands, tokens, device.modeCtx.mode, device.privilege);
+    const resolved = commandFor(this.commands, tokens, device.modeCtx.mode, device.privilege, device);
     if (resolved.ambiguous) {
       return { output: '% Ambiguous command: ' + resolved.ambiguous.join(', '), error: true };
     }
+    if (resolved.status === 'incomplete') return { output: this.profile.messages.incomplete, error: true };
     const spec = resolved.spec;
     if (!spec) {
       // Do not silently accept a command from another IOS configuration mode.
+      // Only report wrong mode if a full command, including its arguments,
+      // resolves in another mode. Matching leading keywords is insufficient.
       const elsewhere = this.commands.some(s =>
-        s.match.length <= tokens.length &&
-        s.match.every((word, i) => word.startsWith(tokens[i].toLowerCase()))
+        !s.modes.includes(device.modeCtx.mode) && s.modes.some(mode =>
+          inspectCommand(this.commands, tokens, mode, Math.max(device.privilege, s.minPrivilege ?? 0), device).spec === s
+        )
       );
       return { output: elsewhere ? this.profile.messages.invalid + '\n(Команда недоступна в этом режиме)' : this.profile.messages.invalid, error: true };
     }
@@ -141,15 +138,13 @@ export class LabEngine {
     const workingDevice = activeDevice(working);
     const result = spec.handler(resolved.tokens, working, workingDevice, this.profile);
 
-    if (result.state) {
+    if (!result.error && result.state) {
       this.state = result.state;
-    } else if (result.modeCtx) {
+    } else if (!result.error && result.modeCtx) {
       const next = cloneState(this.state);
       next.devices[next.activeDeviceId].modeCtx = result.modeCtx;
       this.state = next;
     }
-
-    if (result.state) this.state = result.state;
 
     return {
       output: result.output,
