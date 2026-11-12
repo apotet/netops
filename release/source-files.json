@@ -80,7 +80,7 @@
     },
     {
       "path": "scripts/cli-completion-status.test.mjs",
-      "sha": "210891428799491b675cfd602d7168dfdfbaf978"
+      "sha": "db3047736a92866a8a0dc9da5debd4eb77dda366"
     },
     {
       "path": "scripts/cli-contextual-help.test.mjs",
