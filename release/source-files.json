@@ -378,7 +378,7 @@
     },
     {
       "path": "scripts/poe-summary-glossary.test.mjs",
-      "sha": "a47d70f743507aaaf768301070050fcc94c75cf5",
+      "sha": "256c70010b827f07b53a3742316d35e19fb00533",
       "origin": "adapted",
       "upstream_sha": "c2308242cb802f93a9ff2276560d9211788f4b1c"
     },
@@ -1414,9 +1414,8 @@
     },
     {
       "path": "src/data/lessons/reviewStatus.ts",
-      "sha": "eb59b6274e3aec130c9c0d9454c2ee2fceaa467e",
-      "origin": "adapted",
-      "upstream_sha": "7cef7865e3e4ffc9471de4855a72c808e2e9c2a9"
+      "sha": "7cef7865e3e4ffc9471de4855a72c808e2e9c2a9",
+      "origin": "staging"
     },
     {
       "path": "src/data/lessons/tcp-window-retransmit.ts",
@@ -1639,7 +1638,7 @@
       "reason": "Verify trusted N4 photo history and rejected corrupted keys."
     },
     "scripts/poe-summary-glossary.test.mjs": {
-      "reason": "Require a pending badge for both PoE lessons."
+      "reason": "Require the explicitly approved injectors/splitters badge and preserve pending status for PoE screen reading and CLI diagnostics."
     },
     "scripts/production-attempt-compat.test.mjs": {
       "reason": "Test N4 question and review compatibility, N4/N5 rollback recovery, and successful/dropped slot transitions with safe replay of durable derivatives."
@@ -1673,9 +1672,6 @@
     },
     "src/data/glossary.ts": {
       "reason": "Define 25 missing lesson tags so their cards open in the transferred lessons."
-    },
-    "src/data/lessons/reviewStatus.ts": {
-      "reason": "Keep the two pending PoE lessons unapproved as instructed."
     },
     "src/data/previousProductionQuestions.json": {
       "reason": "Trusted historical questions generated from the N4 production bank."

@@ -161,7 +161,13 @@ assert.ok(renderLessonBadge('l1-poe-budget').includes('Проверен и ут�
   'PoE budget lesson must show approved wording');
 assert.equal(getLessonReviewStatus('l1-copper-fault-poe'), 'approved',
   'previously accepted copper troubleshooting lesson stays approved');
-for (const id of ['cli-poe-diagnostics', 'l1-poe-screen-reading', 'l1-poe-injectors-splitters']) {
+assert.equal(getLessonReviewStatus('l1-poe-injectors-splitters'), 'approved',
+  'production badge matches the mirror owner approval for PoE injectors and splitters');
+assert.ok(renderLessonBadge('l1-poe-injectors-splitters').includes('data-lesson-review-status="approved"'),
+  'PoE injectors and splitters badge must display approved state');
+assert.ok(renderLessonBadge('l1-poe-injectors-splitters').includes('Проверен и утверждён'),
+  'PoE injectors and splitters badge must show approved wording');
+for (const id of ['cli-poe-diagnostics', 'l1-poe-screen-reading']) {
   assert.equal(getLessonReviewStatus(id), 'needs-review', id + ' has no owner acceptance');
   assert.ok(renderLessonBadge(id).includes('data-lesson-review-status="needs-review"'),
     id + ' visible badge must remain pending');
