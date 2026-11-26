@@ -4,7 +4,7 @@ import { PREVIOUS_DIAGNOSTIC_QUESTIONS } from '../data/previousDiagnosticQuestio
 import { EXAM_DIFFICULTIES, TRIAL_DIFFICULTIES } from '../types/quiz';
 import type { QuizSession, Question, QuizModeId } from '../types/quiz';
 import { isLearningLevel } from '../types/learningLevel';
-import { getProgressEpoch, recordQuestionResult } from './userProgress';
+import { getProgressEpoch, recordQuestionResult, LEGACY_ACTIVE_ATTEMPT_KEY, N5_ACTIVE_ATTEMPT_KEY } from './userProgress';
 
 export type ProgressSession = QuizSession & { attemptId?: string; progressEpoch?: string; legacySubmittedIds?: string[]; answerTimes?: Record<string, number>; answerOrders?: Record<string, number[]> };
 
@@ -143,6 +143,57 @@ export function restoreSession(raw: string, bank: readonly Question[], now = Dat
     return identifySession({ ...saved, questions });
   } catch { return null; }
 }
+export type AttemptSlot = typeof LEGACY_ACTIVE_ATTEMPT_KEY | typeof N5_ACTIVE_ATTEMPT_KEY;
+export type SavedAttempt = { origin: AttemptSlot | 'backup'; raw: string; session: ProgressSession };
+
+export function readSavedAttempts(
+  storage: Pick<Storage, 'getItem'>, backups: readonly string[],
+  bank: readonly Question[], epoch: string, now = Date.now(),
+) {
+  const raws = {
+    [N5_ACTIVE_ATTEMPT_KEY]: storage.getItem(N5_ACTIVE_ATTEMPT_KEY),
+    [LEGACY_ACTIVE_ATTEMPT_KEY]: storage.getItem(LEGACY_ACTIVE_ATTEMPT_KEY),
+  };
+  const attempts: SavedAttempt[] = [];
+  const unreadable: AttemptSlot[] = [];
+  const seen = new Set<string>();
+  const add = (origin: SavedAttempt['origin'], raw: string) => {
+    // New slots and backups must have belonged to this epoch before normalization.
+    // Legacy active attempts without an epoch predate the versioned progress store.
+    let explicitEpoch: unknown;
+    try { explicitEpoch = JSON.parse(raw)?.progressEpoch; }
+    catch { if (origin !== 'backup') unreadable.push(origin); return; }
+    if (typeof explicitEpoch === 'string' && explicitEpoch !== epoch) return;
+    if (typeof explicitEpoch !== 'string' && !(explicitEpoch === undefined && origin === LEGACY_ACTIVE_ATTEMPT_KEY)) {
+      if (origin !== 'backup') unreadable.push(origin);
+      return;
+    }
+    const session = restoreSession(raw, bank, now);
+    if (!session) { if (origin !== 'backup') unreadable.push(origin); return; }
+    if (session.progressEpoch !== epoch || session.isCompleted || seen.has(session.attemptId!)) return;
+    seen.add(session.attemptId!);
+    attempts.push({ origin, raw, session });
+  };
+  for (const origin of [N5_ACTIVE_ATTEMPT_KEY, LEGACY_ACTIVE_ATTEMPT_KEY] as const) {
+    if (raws[origin] !== null) add(origin, raws[origin]!);
+  }
+  // Recover old N5 data parked by N4 only before the versioned slot is used.
+  // Keeping completed slots avoids resurfacing an already-recovered backup.
+  if (raws[N5_ACTIVE_ATTEMPT_KEY] === null) {
+    for (const raw of backups) add('backup', raw);
+  }
+  return { attempts, raws, unreadable };
+}
+
+/** Keep concurrent same-origin writes instead of replacing a slot we didn't load. */
+export function writeAttemptSlot(
+  storage: Pick<Storage, 'getItem' | 'setItem'>,
+  key: AttemptSlot, expected: string | null, next: string,
+): void {
+  if (storage.getItem(key) !== expected) throw Error('Saved attempt changed in another tab or version');
+  storage.setItem(key, next);
+}
+
 export function answerCorrect(chosen: number[], correct: number[]): boolean {
   return chosen.length > 0 && new Set(chosen).size === chosen.length &&
     chosen.length === correct.length && chosen.every(index => correct.includes(index));

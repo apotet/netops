@@ -16,8 +16,8 @@ import {
 import { getTestingPool, getTestingQuestions, getTestingEligibleQuestions, getTrialExamQuestions, TRIAL_EXAM_OPTIONS } from '../data/learningLevelExam';
 import { playSuccessSound, playErrorSound, playClickSound } from '../utils/sound';
 import { triggerHaptic } from '../utils/haptics';
-import { getInitialProgress, getMistakeQuestions, getProgressEpoch, subscribeProgress, retainProgressBackup } from '../utils/userProgress';
-import { prepareAttemptQuestions, restoreSession, confirmAnswer, recordConfirmedAnswers, expireTrial, TRIAL_MINUTES, TRIAL_QUESTION_COUNT, type ProgressSession } from '../utils/examProgress';
+import { getInitialProgress, getMistakeQuestions, getProgressEpoch, subscribeProgress, retainProgressBackup, getLegacyAttemptBackups, LEGACY_ACTIVE_ATTEMPT_KEY, N5_ACTIVE_ATTEMPT_KEY } from '../utils/userProgress';
+import { prepareAttemptQuestions, readSavedAttempts, writeAttemptSlot, confirmAnswer, recordConfirmedAnswers, expireTrial, TRIAL_MINUTES, TRIAL_QUESTION_COUNT, type AttemptSlot, type SavedAttempt, type ProgressSession } from '../utils/examProgress';
 import { ExamReview } from './ExamReview';
 import { getLessonForQuestion } from '../data/lessons';
 import { LAST_REVIEW_KEY, serializeReview, restoreReview } from '../utils/examReview';
@@ -148,6 +148,11 @@ export const ExamView: React.FC<ExamViewProps> = ({ ref, soundEnabled, onNavigat
   const [selectedAnswers, setSelectedAnswers] = useState<number[]>([]);
   const [isAnswerSubmitted, setIsAnswerSubmitted] = useState<boolean>(false);
   const sessionRef = useRef<ProgressSession | null>(null);
+  const sessionSlot = useRef<AttemptSlot>(N5_ACTIVE_ATTEMPT_KEY);
+  const sessionRaw = useRef<string | null>(null);
+  const [savedAttempts, setSavedAttempts] = useState<SavedAttempt[]>([]);
+  const inspectAttempts = useCallback(() =>
+    readSavedAttempts(localStorage, getLegacyAttemptBackups(), ALL_QUESTIONS, getProgressEpoch()), []);
   const [, refreshProgress] = useState(0);
   const [emptyMistakes, setEmptyMistakes] = useState(false);
   const [sessionWarning, setSessionWarning] = useState(false);
@@ -164,7 +169,7 @@ export const ExamView: React.FC<ExamViewProps> = ({ ref, soundEnabled, onNavigat
     if (showTrialOptions && dialog && !dialog.open) dialog.showModal();
   }, [showTrialOptions]);
   const [remainingSeconds, setRemainingSeconds] = useState(TRIAL_MINUTES * 60);
-  const [pendingNewQuiz, setPendingNewQuiz] = useState<{ questions?: Question[]; count: number; mode: QuizModeId; trial?: TrialDifficulty } | null>(null);
+  const [pendingNewQuiz, setPendingNewQuiz] = useState<{ questions?: Question[]; count: number; mode: QuizModeId; trial?: TrialDifficulty; expectedRaw: string | null; epoch: string; reason: 'active' | 'backup' | 'unreadable' } | null>(null);
   const epochRef = useRef(getProgressEpoch());
   useEffect(() => subscribeProgress(() => {
     if (sessionRef.current && sessionRef.current.progressEpoch !== getProgressEpoch()) {
@@ -173,7 +178,7 @@ export const ExamView: React.FC<ExamViewProps> = ({ ref, soundEnabled, onNavigat
     const epoch = getProgressEpoch();
     if (epochRef.current !== epoch) {
       epochRef.current = epoch;
-      setLastReview(null); setReviewSession(null);
+      setLastReview(null); setReviewSession(null); setSavedAttempts([]); setPendingNewQuiz(null);
       try { localStorage.removeItem(LAST_REVIEW_KEY); } catch { setReviewWarning(true); }
     }
     refreshProgress(value => value + 1);
@@ -181,15 +186,26 @@ export const ExamView: React.FC<ExamViewProps> = ({ ref, soundEnabled, onNavigat
   const saveSession = useCallback((next: ProgressSession) => {
     sessionRef.current = next;
     setSession(next);
-    try { localStorage.setItem('osi_active_session', JSON.stringify(next)); setSessionWarning(false); }
-    catch { setSessionWarning(true); }
+    try {
+      if (next.progressEpoch !== getProgressEpoch()) throw Error('Progress was reset');
+      const raw = JSON.stringify(next);
+      writeAttemptSlot(localStorage, sessionSlot.current, sessionRaw.current, raw);
+      sessionRaw.current = raw;
+      setSavedAttempts(inspectAttempts().attempts);
+      setSessionWarning(false);
+    } catch { setSessionWarning(true); }
     recordConfirmedAnswers(next);
-    if (next.isCompleted) {
-      setLastReview(next);
-      try { localStorage.setItem(LAST_REVIEW_KEY, serializeReview(next)); setReviewWarning(false); }
-      catch { setReviewWarning(true); }
+    if (next.isCompleted && next.progressEpoch === getProgressEpoch()) {
+      const endedAt = (attempt: ProgressSession) => attempt.endTime ?? attempt.startTime;
+      setLastReview(previous => previous && endedAt(previous) > endedAt(next) ? previous : next);
+      try {
+        const raw = localStorage.getItem(LAST_REVIEW_KEY);
+        const previous = raw ? restoreReview(raw, next.progressEpoch!) : null;
+        if (!previous || endedAt(previous) <= endedAt(next)) localStorage.setItem(LAST_REVIEW_KEY, serializeReview(next));
+        setReviewWarning(false);
+      } catch { setReviewWarning(true); }
     }
-  }, []);
+  }, [inspectAttempts]);
 
   const deadline = session && !session.isCompleted ? session.trialDeadline : undefined;
   useEffect(() => {
@@ -222,48 +238,85 @@ export const ExamView: React.FC<ExamViewProps> = ({ ref, soundEnabled, onNavigat
 
   const clock = `${Math.floor(remainingSeconds / 60)}:${String(remainingSeconds % 60).padStart(2, '0')}`;
 
+  const loadAttempt = useCallback((attempt: SavedAttempt, expectedRaw: string | null, open: boolean) => {
+    const restored = expireTrial(attempt.session);
+    sessionSlot.current = attempt.origin === 'backup' ? N5_ACTIVE_ATTEMPT_KEY : attempt.origin;
+    sessionRaw.current = expectedRaw;
+    setReviewSession(null);
+    if (open || restored.isCompleted) setShowParameters(false);
+    if (restored !== attempt.session || attempt.origin === 'backup') saveSession(restored);
+    else {
+      // Loading a resume choice is read-only. Persist subsequent progress in
+      // its original slot so rollback and the other attempt remain intact.
+      sessionRef.current = restored;
+      setSession(restored);
+      recordConfirmedAnswers(restored);
+    }
+    const questionId = restored.questions[restored.currentIndex]?.id;
+    setSelectedAnswers(restored.userAnswers[questionId] || []);
+    setIsAnswerSubmitted(restored.submittedQuestions[questionId] || false);
+  }, [saveSession]);
+
   useEffect(() => {
     try {
+      const result = inspectAttempts();
+      const epoch = getProgressEpoch();
       const last = localStorage.getItem(LAST_REVIEW_KEY);
-      if (last) {
-        const restored = restoreReview(last, getProgressEpoch());
-        if (restored) setLastReview(restored);
-        else setReviewWarning(true);
-      }
-      const saved = localStorage.getItem('osi_active_session');
-      if (saved) {
-        const completed = restoreReview(JSON.stringify({ version: 1, session: JSON.parse(saved) }), getProgressEpoch());
+      const previousReview = last === null ? null : restoreReview(last, epoch);
+      if (last !== null && !previousReview) setReviewWarning(true);
+      const reviews = previousReview ? [previousReview] : [];
+      for (const key of [N5_ACTIVE_ATTEMPT_KEY, LEGACY_ACTIVE_ATTEMPT_KEY] as const) {
+        const raw = result.raws[key];
+        if (raw === null) continue;
+        // Pass the original snapshot to the read-only review validator.
+        const completed = restoreReview(`{"version":1,"session":${raw}}`, epoch);
         if (completed) {
           if (completed.trialDeadline !== undefined) recordConfirmedAnswers(completed);
-          setLastReview(completed);
-          return;
-        }
-        const parsed = restoreSession(saved, ALL_QUESTIONS);
-        if (!parsed) { retainProgressBackup('osi_active_session', saved); setSessionWarning(true); return; }
-        if (parsed.progressEpoch !== getProgressEpoch()) return;
-        if (!parsed.isCompleted && parsed.questions && parsed.questions.length > 0) {
-          const restored = expireTrial(parsed);
-          if (restored !== parsed) {
-            saveSession(restored);
-            setShowParameters(false);
-            return;
-          }
-          saveSession(parsed);
-          setSelectedAnswers(parsed.userAnswers[parsed.questions[parsed.currentIndex]?.id] || []);
-          setIsAnswerSubmitted(parsed.submittedQuestions[parsed.questions[parsed.currentIndex]?.id] || false);
+          reviews.push(completed);
+        } else if (result.unreadable.includes(key)) {
+          if (key === LEGACY_ACTIVE_ATTEMPT_KEY && !getLegacyAttemptBackups().includes(raw)) retainProgressBackup(key, raw);
+          setSessionWarning(true);
         }
       }
-    } catch {
-      setReviewWarning(true);
-    }
-  }, [saveSession]);
+      reviews.sort((a, b) => (b.endTime ?? b.startTime) - (a.endTime ?? a.startTime));
+      if (reviews[0]) setLastReview(reviews[0]);
+      setSavedAttempts(result.attempts);
+      const active = result.attempts.find(attempt => attempt.origin !== 'backup');
+      if (active) loadAttempt(active, active.raw, false);
+    } catch { setSessionWarning(true); }
+  }, [inspectAttempts, loadAttempt]);
+
+  useEffect(() => {
+    const refresh = (event: StorageEvent) => {
+      if (event.key === null || event.key === N5_ACTIVE_ATTEMPT_KEY || event.key === LEGACY_ACTIVE_ATTEMPT_KEY) {
+        try {
+          const result = inspectAttempts();
+          setSavedAttempts(result.attempts);
+          if (sessionRef.current && result.raws[sessionSlot.current] !== sessionRaw.current) setSessionWarning(true);
+        } catch { setSessionWarning(true); }
+      }
+    };
+    window.addEventListener('storage', refresh);
+    return () => window.removeEventListener('storage', refresh);
+  }, [inspectAttempts]);
+
+  const chooseSavedAttempt = (shown: SavedAttempt) => {
+    try {
+      const result = inspectAttempts();
+      setSavedAttempts(result.attempts);
+      const attempt = result.attempts.find(item => item.origin === shown.origin && item.raw === shown.raw);
+      if (!attempt) { setSessionWarning(true); return; }
+      const target = attempt.origin === 'backup' ? N5_ACTIVE_ATTEMPT_KEY : attempt.origin;
+      loadAttempt(attempt, result.raws[target], true);
+    } catch { setSessionWarning(true); }
+  };
 
   const selectDifficulty = (difficulty: ExamDifficulty) => {
     setSelectedDifficulty(difficulty);
     setStartNotice('');
   };
 
-  const beginNewQuiz = (customQuestions: Question[] | undefined, count: number, mode: QuizModeId, trial?: TrialDifficulty) => {
+  const beginNewQuiz = (customQuestions: Question[] | undefined, count: number, mode: QuizModeId, trial: TrialDifficulty | undefined, expectedRaw: string | null) => {
     const difficulty = trial ? 'mixed' : selectedDifficulty;
     const questions = trial
       ? getTrialExamQuestions(trial)
@@ -298,6 +351,8 @@ export const ExamView: React.FC<ExamViewProps> = ({ ref, soundEnabled, onNavigat
       requestedCount: count,
       feedbackMode: trial ? 'exam' : feedbackMode,
     };
+    sessionSlot.current = N5_ACTIVE_ATTEMPT_KEY;
+    sessionRaw.current = expectedRaw;
     saveSession(newSession);
     setSelectedAnswers([]);
     setIsAnswerSubmitted(false);
@@ -305,11 +360,36 @@ export const ExamView: React.FC<ExamViewProps> = ({ ref, soundEnabled, onNavigat
   };
 
   const startNewQuiz = (customQuestions?: Question[], count = questionCount, mode = selectedMode, trial?: TrialDifficulty) => {
-    if (sessionRef.current && !sessionRef.current.isCompleted) {
-      setPendingNewQuiz({ questions: customQuestions, count, mode, trial });
-      return;
-    }
-    beginNewQuiz(customQuestions, count, mode, trial);
+    let expectedRaw: string | null = null;
+    try {
+      const result = inspectAttempts();
+      expectedRaw = result.raws[N5_ACTIVE_ATTEMPT_KEY];
+      const activeN5 = result.attempts.some(attempt => attempt.origin === N5_ACTIVE_ATTEMPT_KEY);
+      const unreadable = result.unreadable.includes(N5_ACTIVE_ATTEMPT_KEY);
+      const hadRecovery = result.attempts.some(attempt => attempt.origin === 'backup');
+      if (unreadable || activeN5 || hadRecovery || (sessionSlot.current === N5_ACTIVE_ATTEMPT_KEY && sessionRef.current && !sessionRef.current.isCompleted)) {
+        setPendingNewQuiz({ questions: customQuestions, count, mode, trial, expectedRaw, epoch: getProgressEpoch(),
+          reason: unreadable ? 'unreadable' : hadRecovery ? 'backup' : 'active' });
+        return;
+      }
+    } catch { setSessionWarning(true); }
+    beginNewQuiz(customQuestions, count, mode, trial, expectedRaw);
+  };
+
+  const confirmNewQuiz = () => {
+    const request = pendingNewQuiz;
+    if (!request) return;
+    setPendingNewQuiz(null);
+    try {
+      if (request.epoch !== getProgressEpoch() || localStorage.getItem(N5_ACTIVE_ATTEMPT_KEY) !== request.expectedRaw) {
+        throw Error('Saved attempt changed');
+      }
+      if (request.reason === 'unreadable' &&
+          (request.expectedRaw === null || !retainProgressBackup(N5_ACTIVE_ATTEMPT_KEY, request.expectedRaw))) {
+        throw Error('Unreadable attempt could not be archived');
+      }
+    } catch { setSessionWarning(true); return; }
+    beginNewQuiz(request.questions, request.count, request.mode, request.trial, request.expectedRaw);
   };
 
   const startTrial = (difficulty: TrialDifficulty) => startNewQuiz(undefined, TRIAL_QUESTION_COUNT, 'mixed', difficulty);
@@ -374,11 +454,12 @@ export const ExamView: React.FC<ExamViewProps> = ({ ref, soundEnabled, onNavigat
     setReviewSession(null);
     setShowParameters(true);
     if (!sessionRef.current || sessionRef.current.isCompleted) {
+      // Keep the completed slot as a snapshot; only a new attempt or progress
+      // reset replaces it. Closing a review must never alter the legacy slot.
       sessionRef.current = null;
       setSession(null);
       setSelectedAnswers([]);
       setIsAnswerSubmitted(false);
-      try { localStorage.removeItem('osi_active_session'); } catch { /* Safe fallback. */ }
     }
     window.scrollTo({ top: 0, behavior: 'instant' });
   };
@@ -412,9 +493,12 @@ export const ExamView: React.FC<ExamViewProps> = ({ ref, soundEnabled, onNavigat
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/80 p-4" role="presentation">
       <div role="alertdialog" aria-modal="true" aria-labelledby="replace-exam-title" aria-describedby="replace-exam-description" className="w-full max-w-md rounded-2xl border border-cyan-500/30 bg-white p-6 text-slate-900 shadow-2xl dark:bg-[#101e30] dark:text-slate-100 sm:p-7">
         <h2 id="replace-exam-title" className="text-2xl font-bold leading-tight sm:text-3xl">Начать заново?</h2>
-        <p id="replace-exam-description" className="mt-4 text-lg leading-relaxed text-slate-700 dark:text-slate-200">У тебя есть незавершённая попытка. Если начать новый тест, он заменит её.</p>
+        <p id="replace-exam-description" className="mt-4 text-lg leading-relaxed text-slate-700 dark:text-slate-200">{pendingNewQuiz.reason === 'unreadable'
+          ? 'Сохранение текущей версии не читается. Новый тест начнётся только после сохранения его копии для экспорта. Попытка предыдущей версии останется.'
+          : pendingNewQuiz.reason === 'backup' ? 'Можно восстановить сохранённую попытку вместо нового теста. Резервная копия останется в экспорте.'
+            : 'Новый тест заменит незавершённую попытку текущей версии. Сохранённая попытка предыдущей версии останется.'}</p>
         <div className="mt-7 grid gap-3">
-          <button type="button" onClick={() => { const request = pendingNewQuiz; setPendingNewQuiz(null); beginNewQuiz(request.questions, request.count, request.mode, request.trial); }} className="min-h-12 rounded-xl bg-cyan-400 px-4 py-3 text-base font-bold text-slate-950 hover:bg-cyan-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-500">Заменить попытку</button>
+          <button type="button" onClick={confirmNewQuiz} className="min-h-12 rounded-xl bg-cyan-400 px-4 py-3 text-base font-bold text-slate-950 hover:bg-cyan-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-500">{pendingNewQuiz.reason === 'backup' ? 'Начать новый тест' : 'Заменить попытку'}</button>
           <button type="button" onClick={() => setPendingNewQuiz(null)} className="min-h-12 rounded-xl border border-slate-400/50 px-4 py-3 text-base font-semibold hover:bg-slate-200 dark:hover:bg-slate-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-500">Отмена, сохранить попытку</button>
         </div>
       </div>
@@ -436,6 +520,14 @@ export const ExamView: React.FC<ExamViewProps> = ({ ref, soundEnabled, onNavigat
       <div className="space-y-5 max-w-3xl mx-auto pb-16 lg:pb-6">
         {sessionWarning && <p role="alert">Не удалось прочитать или сохранить сессию. Её продолжение может быть недоступно; скачайте экспорт.</p>}
         {reviewWarning && <p role="status">Последний разбор не удалось прочитать или сохранить. Он может быть недоступен после reload.</p>}
+        {savedAttempts.filter(attempt => attempt.session.attemptId !== session?.attemptId).map(attempt => (
+          <button key={attempt.session.attemptId} type="button" onClick={() => chooseSavedAttempt(attempt)}
+            className="block min-h-11 w-full rounded-xl border border-cyan-500/50 px-4 py-2 text-left text-sm font-semibold text-cyan-800 hover:bg-cyan-500/10 dark:text-cyan-200">
+            {attempt.origin === 'backup' ? 'Восстановить попытку из резервной копии'
+              : attempt.origin === LEGACY_ACTIVE_ATTEMPT_KEY ? 'Продолжить попытку предыдущей версии' : 'Продолжить попытку текущей версии'}
+            {' · '}{examLevels[attempt.session.difficulty ?? 'mixed'].title} · вопрос {attempt.session.currentIndex + 1} из {attempt.session.questions.length}
+          </button>
+        ))}
         {availableReview && <button type="button" onClick={() => setReviewSession(availableReview)} className="mx-auto block min-h-11 max-w-full rounded-xl border border-cyan-500/50 px-4 py-2 text-center text-sm font-semibold text-cyan-800 dark:text-cyan-200 hover:bg-cyan-500/10 cursor-pointer">Посмотреть разбор последней попытки</button>}
         <fieldset aria-labelledby="exam-level-title" className="min-w-0 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 p-4 space-y-3">
           <div id="exam-level-title" className="sr-only text-sm font-bold text-cyan-400 sm:not-sr-only">Выбери свой уровень</div>

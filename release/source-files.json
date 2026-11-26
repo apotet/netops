@@ -394,7 +394,7 @@
     },
     {
       "path": "scripts/production-attempt-compat.test.mjs",
-      "sha": "cdb7720d53081bf06627e68f874c3efa24e94dcf",
+      "sha": "324e66d92b7fe848fe2fc553fbd063938793184a",
       "origin": "adapted"
     },
     {
@@ -730,8 +730,9 @@
     },
     {
       "path": "src/components/ExamView.tsx",
-      "sha": "7e33c7c6f63e9f1ac096a29a9ff215c7e6e34807",
-      "origin": "staging"
+      "sha": "3885a109f63ad4f9805f06b53e290dcf746ea33c",
+      "origin": "adapted",
+      "upstream_sha": "7e33c7c6f63e9f1ac096a29a9ff215c7e6e34807"
     },
     {
       "path": "src/components/FormattedExplanation.tsx",
@@ -1569,7 +1570,7 @@
     },
     {
       "path": "src/utils/examProgress.ts",
-      "sha": "79df1b90dcc6bba293d996ca4f21f6f4f433438a",
+      "sha": "c72a98e96033d5806eddc1431af01c8422eac79b",
       "origin": "adapted",
       "upstream_sha": "f442ffb723899fddbd46d4a8d3257bcd4f6ec72b"
     },
@@ -1610,8 +1611,9 @@
     },
     {
       "path": "src/utils/userProgress.ts",
-      "sha": "5c5798daf9b54f8a318a054fbebeff6d12add153",
-      "origin": "staging"
+      "sha": "1dbb2f4344f304035ac0d7116b10867ac034b126",
+      "origin": "adapted",
+      "upstream_sha": "5c5798daf9b54f8a318a054fbebeff6d12add153"
     },
     {
       "path": "tsconfig.json",
@@ -1639,7 +1641,7 @@
       "reason": "Require a pending badge for both PoE lessons."
     },
     "scripts/production-attempt-compat.test.mjs": {
-      "reason": "Test N4 question, order, scoring and review compatibility."
+      "reason": "Test N4 question, order, scoring and review compatibility, same-origin rollback recovery, slot safety and reset epochs."
     },
     "scripts/stp-questions.test.mjs": {
       "reason": "Assert the published label for the existing explanation toggle."
@@ -1659,6 +1661,9 @@
     "src/components/EngineeringReview.tsx": {
       "reason": "Render the saved explanation for verified pre-release questions."
     },
+    "src/components/ExamView.tsx": {
+      "reason": "Keep mutually selectable N4 and N5 attempts in independent slots and offer explicit recovery without replacing the older-version active attempt."
+    },
     "src/components/Navbar.tsx": {
       "reason": "Remove experimental navigation on desktop and mobile."
     },
@@ -1675,7 +1680,10 @@
       "reason": "Trusted historical questions generated from the N4 production bank."
     },
     "src/utils/examProgress.ts": {
-      "reason": "Validate and restore trusted N4 attempts and preserve their displayed answer keys."
+      "reason": "Validate trusted N4 question snapshots and list and save independent N4/N5 attempt slots without implicit replacement."
+    },
+    "src/utils/userProgress.ts": {
+      "reason": "Expose legacy attempt backups, preserve unreadable slots for export before replacement and clear the N5 slot on reset."
     },
     "vite.config.ts": {
       "reason": "Set the local and default production base to /netops/."

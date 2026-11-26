@@ -2,7 +2,10 @@ import { ALL_QUESTIONS } from '../data/questionsData';
 import type { Question } from '../types/quiz';
 
 export const PROGRESS_KEY = 'osi_user_progress_v4';
-const LEGACY_KEYS = ['osi_user_progress_v3', 'osi_last_mistakes', 'osi_exam_history', 'osi_active_session'];
+export const LEGACY_ACTIVE_ATTEMPT_KEY = 'osi_active_session';
+export const N5_ACTIVE_ATTEMPT_KEY = 'osi_active_session_netops_n5';
+const LEGACY_KEYS = ['osi_user_progress_v3', 'osi_last_mistakes', 'osi_exam_history', LEGACY_ACTIVE_ATTEMPT_KEY];
+const RESET_KEYS = [...LEGACY_KEYS, N5_ACTIVE_ATTEMPT_KEY];
 const GROUP_NAMES: Record<string, string> = {
   'visual-l1': 'Фото L1', 'l1-l2': 'L1–L2', l3: 'L3', l4: 'L4', 'l5-l7': 'L5–L7',
   tcpip: 'TCP/IP', troubleshooting: 'Диагностика',
@@ -170,16 +173,22 @@ export function createProgressStore(bank: readonly Question[], storage: () => St
   function reset() {
     // The caller confirms irreversible deletion or exports first. Write the new epoch before cleanup.
     persist(emptyProgress());
-    if (!dirty) for (const key of LEGACY_KEYS) {
+    if (!dirty) for (const key of RESET_KEYS) {
       try { storage()?.removeItem(key); } catch { storageWarning = true; }
     }
     notify(); return summary();
   }
   function retainBackup(key: string, raw: string) {
     const model = load();
-    const name = model.backup[key] && model.backup[key] !== raw ? `${key}:${epoch()}` : key;
-    model.backup[name] = raw; model.migrationNotice = true;
+    const alreadyStored = Object.entries(model.backup).some(([name, value]) =>
+      (name === key || name.startsWith(key + ':')) && value === raw);
+    if (!alreadyStored) {
+      const name = model.backup[key] !== undefined ? `${key}:${epoch()}` : key;
+      model.backup[name] = raw;
+    }
+    model.migrationNotice = true;
     persist(model); notify();
+    return !dirty;
   }
   return { load, record, mistakes, summary, reset, retainBackup, subscribe(listener: () => void) {
     listeners.add(listener); return () => { listeners.delete(listener); };
@@ -191,6 +200,9 @@ if (typeof window !== 'undefined') window.addEventListener('storage', event => {
 });
 export const getInitialProgress = store.summary;
 export const getProgressEpoch = () => store.load().epoch;
+export const getLegacyAttemptBackups = () => Object.entries(store.load().backup)
+  .filter(([key]) => key === LEGACY_ACTIVE_ATTEMPT_KEY || key.startsWith(LEGACY_ACTIVE_ATTEMPT_KEY + ':'))
+  .map(([, raw]) => raw);
 export const getMistakeQuestions = store.mistakes;
 export const recordQuestionResult = store.record;
 export const subscribeProgress = store.subscribe;
