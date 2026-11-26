@@ -3,8 +3,8 @@ import { bundleEntry } from './load-bank.mjs';
 import { readFileSync } from 'node:fs';
 
 const { ALL_QUESTIONS } = await bundleEntry('src/data/questionsData.ts', 'production-compat-bank.mjs');
-const { restoreSession, isPreviousProductionQuestion, prepareAttemptQuestions, readSavedAttempts, writeAttemptSlot } = await bundleEntry('src/utils/examProgress.ts', 'production-compat-progress.mjs');
-const { serializeReview, restoreReview } = await bundleEntry('src/utils/examReview.ts', 'production-compat-review.mjs');
+const { restoreSession, isPreviousProductionQuestion, prepareAttemptQuestions, readSavedAttempts, writeAttemptSlot, recordConfirmedAnswers, hasDurableAnswerReceipts, expireTrial } = await bundleEntry('src/utils/examProgress.ts', 'production-compat-progress.mjs');
+const { serializeReview, restoreReview, reconcileLastReview, LAST_REVIEW_KEY } = await bundleEntry('src/utils/examReview.ts', 'production-compat-review.mjs');
 const snapshots = Object.values(JSON.parse(readFileSync('src/data/previousProductionQuestions.json', 'utf8')));
 assert.ok(snapshots.length > 30);
 
@@ -115,3 +115,61 @@ assert.equal(JSON.parse(storage.getItem(PROGRESS_KEY)).backup[N5_ACTIVE_ATTEMPT_
 writeAttemptSlot(storage, N5_ACTIVE_ATTEMPT_KEY, unreadableN5, n5);
 assert.equal(JSON.parse(storage.getItem(PROGRESS_KEY)).backup[N5_ACTIVE_ATTEMPT_KEY], unreadableN5);
 console.log('PASS: unreadable N5 slot is not replaced unless archived');
+
+
+// A slot write and its derives are separate durable transactions. Derivatives
+// can replay only from an accepted slot and must not cache a failed update.
+const progressData = new Map();
+let blocked = new Set();
+const baseStorage = {
+  getItem: key => progressData.get(key) ?? null,
+  setItem: (key, value) => progressData.set(key, value),
+  removeItem: key => progressData.delete(key),
+};
+const storeAStorage = {
+  ...baseStorage,
+  setItem(key, value) {
+    if (blocked.has(key)) throw Error('quota');
+    baseStorage.setItem(key, value);
+  },
+};
+const replicaA = createProgressStore(ALL_QUESTIONS, () => storeAStorage, () => now);
+const replicaB = createProgressStore(ALL_QUESTIONS, () => baseStorage, () => now);
+const reviewEpoch = replicaA.load().epoch;
+const completed = { ...sample('durable-completed', n5Data),
+  progressEpoch: reviewEpoch, isCompleted: true, endTime: now - 1 };
+const chosenId = completed.questions[0].id;
+const acceptedRaw = JSON.stringify(completed);
+writeAttemptSlot(baseStorage, N5_ACTIVE_ATTEMPT_KEY, null, acceptedRaw);
+blocked = new Set([PROGRESS_KEY, LAST_REVIEW_KEY, N5_ACTIVE_ATTEMPT_KEY]);
+const failedReplacement = JSON.stringify({ ...completed, attemptId: 'never-accepted' });
+assert.throws(() => writeAttemptSlot(storeAStorage, N5_ACTIVE_ATTEMPT_KEY, acceptedRaw, failedReplacement), /quota/);
+assert.equal(baseStorage.getItem(N5_ACTIVE_ATTEMPT_KEY), acceptedRaw);
+recordConfirmedAnswers(completed, replicaA.recordDurably);
+assert.equal(hasDurableAnswerReceipts(baseStorage, completed), false);
+assert.throws(() => reconcileLastReview(storeAStorage, completed), /quota/);
+assert.equal(baseStorage.getItem(LAST_REVIEW_KEY), null);
+assert.equal(replicaB.recordDurably(chosenId, false, 'other-tab-receipt', reviewEpoch, now - 6), true);
+blocked.clear();
+recordConfirmedAnswers(completed, replicaA.recordDurably);
+assert.equal(hasDurableAnswerReceipts(baseStorage, completed), true);
+assert.equal(reconcileLastReview(storeAStorage, completed).attemptId, completed.attemptId);
+const afterRepair = baseStorage.getItem(PROGRESS_KEY);
+recordConfirmedAnswers(completed, replicaA.recordDurably);
+reconcileLastReview(storeAStorage, completed);
+assert.equal(baseStorage.getItem(PROGRESS_KEY), afterRepair);
+assert.equal(JSON.parse(afterRepair).receipts['other-tab-receipt'], true);
+assert.equal(JSON.parse(afterRepair).questions[chosenId].seen, 2);
+assert.equal(restoreReview(baseStorage.getItem(LAST_REVIEW_KEY), reviewEpoch).attemptId, completed.attemptId);
+
+const trialRaw = { ...completed, attemptId: 'durable-trial', startTime: now - 15 * 60_000 - 5,
+  feedbackMode: 'exam', trialDeadline: now - 5, isCompleted: false, endTime: undefined };
+recordConfirmedAnswers(trialRaw, replicaB.recordDurably);
+assert.equal(baseStorage.getItem(PROGRESS_KEY), afterRepair, 'incomplete timed attempt never counts');
+const trialCompleted = expireTrial(trialRaw, now);
+writeAttemptSlot(baseStorage, LEGACY_ACTIVE_ATTEMPT_KEY, null, JSON.stringify(trialCompleted));
+recordConfirmedAnswers(trialCompleted, replicaB.recordDurably);
+assert.equal(hasDurableAnswerReceipts(baseStorage, trialCompleted), true);
+assert.equal(reconcileLastReview(baseStorage, trialCompleted).attemptId, completed.attemptId,
+  'replayed older trial must not replace a newer valid review');
+console.log('PASS: rejected slot unchanged, durable replay repairs stats and review, concurrent receipts survive quota and trial replay');

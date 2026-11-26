@@ -4,7 +4,7 @@ import { PREVIOUS_DIAGNOSTIC_QUESTIONS } from '../data/previousDiagnosticQuestio
 import { EXAM_DIFFICULTIES, TRIAL_DIFFICULTIES } from '../types/quiz';
 import type { QuizSession, Question, QuizModeId } from '../types/quiz';
 import { isLearningLevel } from '../types/learningLevel';
-import { getProgressEpoch, recordQuestionResult, LEGACY_ACTIVE_ATTEMPT_KEY, N5_ACTIVE_ATTEMPT_KEY } from './userProgress';
+import { getProgressEpoch, recordQuestionResult, PROGRESS_KEY, LEGACY_ACTIVE_ATTEMPT_KEY, N5_ACTIVE_ATTEMPT_KEY } from './userProgress';
 
 export type ProgressSession = QuizSession & { attemptId?: string; progressEpoch?: string; legacySubmittedIds?: string[]; answerTimes?: Record<string, number>; answerOrders?: Record<string, number[]> };
 
@@ -192,21 +192,47 @@ export function writeAttemptSlot(
 ): void {
   if (storage.getItem(key) !== expected) throw Error('Saved attempt changed in another tab or version');
   storage.setItem(key, next);
+  if (storage.getItem(key) !== next) throw Error('Saved attempt could not be verified');
+}
+
+/** Serialize cooperating N5 tabs; older writers do not participate. */
+export async function withAttemptCommitLock<T>(operation: () => T): Promise<T> {
+  const locks = typeof navigator === 'undefined' ? undefined : navigator.locks;
+  return locks ? locks.request('netops:production:active-attempts', operation) : operation();
 }
 
 export function answerCorrect(chosen: number[], correct: number[]): boolean {
   return chosen.length > 0 && new Set(chosen).size === chosen.length &&
     chosen.length === correct.length && chosen.every(index => correct.includes(index));
 }
-/** Replay only confirmed answers, including after a save-before-record interruption. */
-export function recordConfirmedAnswers(session: ProgressSession, record = recordQuestionResult) {
-  if (!session.attemptId || !session.progressEpoch || (session.trialDeadline !== undefined && !session.isCompleted)) return;
-  for (const q of session.questions) {
+function confirmedAnswers(session: ProgressSession) {
+  if (!session.attemptId || !session.progressEpoch || (session.trialDeadline !== undefined && !session.isCompleted)) return [];
+  return session.questions.flatMap(q => {
     const chosen = session.userAnswers[q.id];
     if (session.legacySubmittedIds?.includes(q.id) || !session.submittedQuestions[q.id] || !Array.isArray(chosen) || !chosen.length ||
-        chosen.some(index => !Number.isInteger(index) || index < 0 || index >= q.answers.length)) continue;
-    record(q.id, answerCorrect(chosen, q.correct), `${session.attemptId}:${q.id}`, session.progressEpoch, session.answerTimes?.[q.id]);
+        chosen.some(index => !Number.isInteger(index) || index < 0 || index >= q.answers.length)) return [];
+    return [{ id: q.id, correct: answerCorrect(chosen, q.correct), receipt: `${session.attemptId}:${q.id}`,
+      timestamp: session.answerTimes?.[q.id] }];
+  });
+}
+
+/** Replay only confirmed answers, including after a save-before-record interruption. */
+export function recordConfirmedAnswers(session: ProgressSession, record = recordQuestionResult) {
+  for (const answer of confirmedAnswers(session)) {
+    record(answer.id, answer.correct, answer.receipt, session.progressEpoch!, answer.timestamp);
   }
+}
+
+/** A dirty in-memory progress model is not proof that an old slot can be replaced. */
+export function hasDurableAnswerReceipts(storage: Pick<Storage, 'getItem'>, session: ProgressSession): boolean {
+  const answers = confirmedAnswers(session);
+  if (!answers.length) return true;
+  try {
+    const raw = storage.getItem(PROGRESS_KEY);
+    const progress = raw && JSON.parse(raw);
+    return progress?.epoch === session.progressEpoch &&
+      answers.every(answer => progress.receipts?.[answer.receipt] === true);
+  } catch { return false; }
 }
 export function confirmAnswer(session: ProgressSession, chosen: number[], now = Date.now()): ProgressSession {
   const q = session.questions[session.currentIndex];

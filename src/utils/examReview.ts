@@ -60,3 +60,23 @@ export function restoreReview(raw: string, epoch: string): ProgressSession | nul
     return s;
   } catch { return null; }
 }
+
+
+export const reviewTime = (session: ProgressSession): number => session.endTime ?? session.startTime;
+
+/** A completed active slot is the durable source if its separate review write failed. */
+export function reconcileLastReview(
+  storage: Pick<Storage, 'getItem' | 'setItem'>, session: ProgressSession,
+): ProgressSession {
+  if (!session.isCompleted || !session.progressEpoch) throw Error('No completed attempt to save');
+  const raw = storage.getItem(LAST_REVIEW_KEY);
+  const previous = raw && restoreReview(raw, session.progressEpoch);
+  if (previous && (reviewTime(previous) > reviewTime(session) ||
+      (reviewTime(previous) === reviewTime(session) && previous.attemptId !== session.attemptId))) return previous;
+  const expected = serializeReview(session);
+  if (raw !== expected) {
+    storage.setItem(LAST_REVIEW_KEY, expected);
+    if (storage.getItem(LAST_REVIEW_KEY) !== expected) throw Error('Last attempt review could not be verified');
+  }
+  return session;
+}

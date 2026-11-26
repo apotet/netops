@@ -17,10 +17,10 @@ import { getTestingPool, getTestingQuestions, getTestingEligibleQuestions, getTr
 import { playSuccessSound, playErrorSound, playClickSound } from '../utils/sound';
 import { triggerHaptic } from '../utils/haptics';
 import { getInitialProgress, getMistakeQuestions, getProgressEpoch, subscribeProgress, retainProgressBackup, getLegacyAttemptBackups, LEGACY_ACTIVE_ATTEMPT_KEY, N5_ACTIVE_ATTEMPT_KEY } from '../utils/userProgress';
-import { prepareAttemptQuestions, readSavedAttempts, writeAttemptSlot, confirmAnswer, recordConfirmedAnswers, expireTrial, TRIAL_MINUTES, TRIAL_QUESTION_COUNT, type AttemptSlot, type SavedAttempt, type ProgressSession } from '../utils/examProgress';
+import { prepareAttemptQuestions, restoreSession, readSavedAttempts, writeAttemptSlot, withAttemptCommitLock, confirmAnswer, recordConfirmedAnswers, hasDurableAnswerReceipts, expireTrial, TRIAL_MINUTES, TRIAL_QUESTION_COUNT, type AttemptSlot, type SavedAttempt, type ProgressSession } from '../utils/examProgress';
 import { ExamReview } from './ExamReview';
 import { getLessonForQuestion } from '../data/lessons';
-import { LAST_REVIEW_KEY, serializeReview, restoreReview } from '../utils/examReview';
+import { LAST_REVIEW_KEY, reconcileLastReview, restoreReview, reviewTime } from '../utils/examReview';
 import { KnowledgeRadar } from './KnowledgeRadar';
 import { LivingOsiStack as HomeOsiStack } from './HomeOsiStack';
 import { ZoomableImage } from './ZoomableImage';
@@ -127,6 +127,13 @@ const QuestionCountDropdown: React.FC<{ value: number; onChange: (count: number)
   );
 };
 
+type AttemptTarget = { slot: AttemptSlot; expectedRaw: string | null; archiveUnreadable?: boolean };
+
+function restoreAcceptedAttempt(raw: string, epoch: string): ProgressSession | null {
+  const attempt = restoreReview(`{"version":1,"session":${raw}}`, epoch) ?? restoreSession(raw, ALL_QUESTIONS);
+  return attempt?.progressEpoch === epoch ? attempt : null;
+}
+
 export interface ExamViewHandle {
   returnToParameters: () => void;
 }
@@ -150,12 +157,14 @@ export const ExamView: React.FC<ExamViewProps> = ({ ref, soundEnabled, onNavigat
   const sessionRef = useRef<ProgressSession | null>(null);
   const sessionSlot = useRef<AttemptSlot>(N5_ACTIVE_ATTEMPT_KEY);
   const sessionRaw = useRef<string | null>(null);
+  const transitionPending = useRef(false);
   const [savedAttempts, setSavedAttempts] = useState<SavedAttempt[]>([]);
   const inspectAttempts = useCallback(() =>
     readSavedAttempts(localStorage, getLegacyAttemptBackups(), ALL_QUESTIONS, getProgressEpoch()), []);
   const [, refreshProgress] = useState(0);
   const [emptyMistakes, setEmptyMistakes] = useState(false);
   const [sessionWarning, setSessionWarning] = useState(false);
+  const [statisticsWarning, setStatisticsWarning] = useState(false);
   const [lastReview, setLastReview] = useState<ProgressSession | null>(null);
   const [reviewSession, setReviewSession] = useState<ProgressSession | null>(null);
   const [reviewWarning, setReviewWarning] = useState(false);
@@ -178,54 +187,104 @@ export const ExamView: React.FC<ExamViewProps> = ({ ref, soundEnabled, onNavigat
     const epoch = getProgressEpoch();
     if (epochRef.current !== epoch) {
       epochRef.current = epoch;
-      setLastReview(null); setReviewSession(null); setSavedAttempts([]); setPendingNewQuiz(null);
+      setLastReview(null); setReviewSession(null); setSavedAttempts([]); setPendingNewQuiz(null); setStatisticsWarning(false);
       try { localStorage.removeItem(LAST_REVIEW_KEY); } catch { setReviewWarning(true); }
     }
     refreshProgress(value => value + 1);
   }), []);
-  const saveSession = useCallback((next: ProgressSession) => {
+  const adoptAttempt = useCallback((next: ProgressSession, slot: AttemptSlot, raw: string) => {
+    sessionSlot.current = slot;
+    sessionRaw.current = raw;
     sessionRef.current = next;
     setSession(next);
+    const questionId = next.questions[next.currentIndex]?.id;
+    setSelectedAnswers(next.userAnswers[questionId] || []);
+    setIsAnswerSubmitted(next.submittedQuestions[questionId] || false);
+  }, []);
+
+  const replayStatistics = useCallback((saved: ProgressSession): boolean => {
     try {
-      if (next.progressEpoch !== getProgressEpoch()) throw Error('Progress was reset');
-      const raw = JSON.stringify(next);
-      writeAttemptSlot(localStorage, sessionSlot.current, sessionRaw.current, raw);
-      sessionRaw.current = raw;
-      setSavedAttempts(inspectAttempts().attempts);
-      setSessionWarning(false);
-    } catch { setSessionWarning(true); }
-    recordConfirmedAnswers(next);
-    if (next.isCompleted && next.progressEpoch === getProgressEpoch()) {
-      const endedAt = (attempt: ProgressSession) => attempt.endTime ?? attempt.startTime;
-      setLastReview(previous => previous && endedAt(previous) > endedAt(next) ? previous : next);
-      try {
-        const raw = localStorage.getItem(LAST_REVIEW_KEY);
-        const previous = raw ? restoreReview(raw, next.progressEpoch!) : null;
-        if (!previous || endedAt(previous) <= endedAt(next)) localStorage.setItem(LAST_REVIEW_KEY, serializeReview(next));
-        setReviewWarning(false);
-      } catch { setReviewWarning(true); }
-    }
-  }, [inspectAttempts]);
+      recordConfirmedAnswers(saved);
+      return hasDurableAnswerReceipts(localStorage, saved);
+    } catch { return false; }
+  }, []);
+
+  const repairReview = useCallback((saved: ProgressSession): boolean => {
+    if (!saved.isCompleted) return true;
+    if (saved.progressEpoch !== getProgressEpoch()) return false;
+    setLastReview(previous => previous && reviewTime(previous) > reviewTime(saved) ? previous : saved);
+    try {
+      const latest = reconcileLastReview(localStorage, saved);
+      setLastReview(latest);
+      setReviewWarning(false);
+      return true;
+    } catch { setReviewWarning(true); return false; }
+  }, []);
+
+  const saveSession = useCallback(async (
+    next: ProgressSession,
+    target: AttemptTarget = { slot: sessionSlot.current, expectedRaw: sessionRaw.current },
+  ): Promise<boolean> => {
+    if (transitionPending.current) return false;
+    transitionPending.current = true;
+    try {
+      return await withAttemptCommitLock(() => {
+        const epoch = getProgressEpoch();
+        if (next.progressEpoch !== epoch || localStorage.getItem(target.slot) !== target.expectedRaw) {
+          throw Error('Saved attempt or progress epoch changed');
+        }
+        if (target.expectedRaw !== null) {
+          const prior = restoreAcceptedAttempt(target.expectedRaw, epoch);
+          if (prior && prior.attemptId !== next.attemptId) {
+            // A new attempt would erase our only replay source. Repair and
+            // verify the old durable state first; never depend on dirty memory.
+            const statsOK = replayStatistics(prior);
+            const reviewOK = repairReview(prior);
+            setStatisticsWarning(!statsOK);
+            if (!statsOK || !reviewOK) throw Error('Previous durable attempt still needs repair');
+          }
+          if (target.archiveUnreadable && !retainProgressBackup(target.slot, target.expectedRaw)) {
+            throw Error('Unreadable attempt could not be archived');
+          }
+        }
+        if (next.progressEpoch !== getProgressEpoch()) throw Error('Progress was reset');
+        const raw = JSON.stringify(next);
+        writeAttemptSlot(localStorage, target.slot, target.expectedRaw, raw);
+        // No state advance, receipt, completion or review before slot acceptance.
+        adoptAttempt(next, target.slot, raw);
+        setSessionWarning(false);
+        setStatisticsWarning(!replayStatistics(next));
+        repairReview(next);
+        try { setSavedAttempts(inspectAttempts().attempts); }
+        catch { setSessionWarning(true); }
+        return true;
+      });
+    } catch { setSessionWarning(true); return false; }
+    finally { transitionPending.current = false; }
+  }, [adoptAttempt, inspectAttempts, repairReview, replayStatistics]);
 
   const deadline = session && !session.isCompleted ? session.trialDeadline : undefined;
   useEffect(() => {
     if (deadline === undefined) return;
-    const tick = () => {
+    let expiryPending = false;
+    const tick = async () => {
       const current = sessionRef.current;
       if (!current || current.trialDeadline !== deadline || current.isCompleted) return;
       const now = Date.now();
       setRemainingSeconds(Math.max(0, Math.ceil((deadline - now) / 1000)));
       const expired = expireTrial(current, now);
-      if (expired !== current) {
-        saveSession(expired);
-        setPendingNewQuiz(null);
-        setShowTrialOptions(false);
-        setReviewSession(null);
-        setShowParameters(false);
-        window.scrollTo({ top: 0, behavior: 'instant' });
-      }
+      if (expired === current || expiryPending) return;
+      expiryPending = true;
+      const accepted = await saveSession(expired);
+      expiryPending = false;
+      if (!accepted) return;
+      setPendingNewQuiz(null);
+      setShowTrialOptions(false);
+      setReviewSession(null);
+      setShowParameters(false);
+      window.scrollTo({ top: 0, behavior: 'instant' });
     };
-    tick();
+    void tick();
     const interval = window.setInterval(tick, 500);
     window.addEventListener('focus', tick);
     document.addEventListener('visibilitychange', tick);
@@ -238,53 +297,70 @@ export const ExamView: React.FC<ExamViewProps> = ({ ref, soundEnabled, onNavigat
 
   const clock = `${Math.floor(remainingSeconds / 60)}:${String(remainingSeconds % 60).padStart(2, '0')}`;
 
-  const loadAttempt = useCallback((attempt: SavedAttempt, expectedRaw: string | null, open: boolean) => {
+  const loadAttempt = useCallback(async (attempt: SavedAttempt, expectedRaw: string | null, open: boolean) => {
     const restored = expireTrial(attempt.session);
-    sessionSlot.current = attempt.origin === 'backup' ? N5_ACTIVE_ATTEMPT_KEY : attempt.origin;
-    sessionRaw.current = expectedRaw;
+    const slot = attempt.origin === 'backup' ? N5_ACTIVE_ATTEMPT_KEY : attempt.origin;
+    if (restored !== attempt.session || attempt.origin === 'backup') {
+      if (!await saveSession(restored, { slot, expectedRaw })) return;
+    } else {
+      if (transitionPending.current) return;
+      transitionPending.current = true;
+      try {
+        await withAttemptCommitLock(() => {
+          if (expectedRaw === null || restored.progressEpoch !== getProgressEpoch() || localStorage.getItem(slot) !== expectedRaw) {
+            throw Error('Saved attempt changed');
+          }
+          adoptAttempt(restored, slot, expectedRaw);
+        });
+      } catch { setSessionWarning(true); return; }
+      finally { transitionPending.current = false; }
+    }
     setReviewSession(null);
     if (open || restored.isCompleted) setShowParameters(false);
-    if (restored !== attempt.session || attempt.origin === 'backup') saveSession(restored);
-    else {
-      // Loading a resume choice is read-only. Persist subsequent progress in
-      // its original slot so rollback and the other attempt remain intact.
-      sessionRef.current = restored;
-      setSession(restored);
-      recordConfirmedAnswers(restored);
-    }
-    const questionId = restored.questions[restored.currentIndex]?.id;
-    setSelectedAnswers(restored.userAnswers[questionId] || []);
-    setIsAnswerSubmitted(restored.submittedQuestions[questionId] || false);
-  }, [saveSession]);
+  }, [adoptAttempt, saveSession]);
 
   useEffect(() => {
-    try {
-      const result = inspectAttempts();
-      const epoch = getProgressEpoch();
-      const last = localStorage.getItem(LAST_REVIEW_KEY);
-      const previousReview = last === null ? null : restoreReview(last, epoch);
-      if (last !== null && !previousReview) setReviewWarning(true);
-      const reviews = previousReview ? [previousReview] : [];
-      for (const key of [N5_ACTIVE_ATTEMPT_KEY, LEGACY_ACTIVE_ATTEMPT_KEY] as const) {
-        const raw = result.raws[key];
-        if (raw === null) continue;
-        // Pass the original snapshot to the read-only review validator.
-        const completed = restoreReview(`{"version":1,"session":${raw}}`, epoch);
-        if (completed) {
-          if (completed.trialDeadline !== undefined) recordConfirmedAnswers(completed);
-          reviews.push(completed);
-        } else if (result.unreadable.includes(key)) {
-          if (key === LEGACY_ACTIVE_ATTEMPT_KEY && !getLegacyAttemptBackups().includes(raw)) retainProgressBackup(key, raw);
-          setSessionWarning(true);
+    let cancelled = false;
+    const init = async () => {
+      const active = await withAttemptCommitLock(() => {
+        if (cancelled) return undefined;
+        const result = inspectAttempts();
+        const epoch = getProgressEpoch();
+        try {
+          const last = localStorage.getItem(LAST_REVIEW_KEY);
+          const previous = last === null ? null : restoreReview(last, epoch);
+          if (previous) setLastReview(previous);
+          else if (last !== null) setReviewWarning(true);
+        } catch { setReviewWarning(true); }
+        const completedAttempts: ProgressSession[] = [];
+        let statsOK = true;
+        const currentAttempts = result.attempts.filter(attempt => attempt.origin !== 'backup');
+        for (const key of [N5_ACTIVE_ATTEMPT_KEY, LEGACY_ACTIVE_ATTEMPT_KEY] as const) {
+          const raw = result.raws[key];
+          if (raw === null || localStorage.getItem(key) !== raw || getProgressEpoch() !== epoch) continue;
+          const completed = restoreReview(`{"version":1,"session":${raw}}`, epoch);
+          const active = currentAttempts.find(attempt => attempt.origin === key);
+          if (completed) {
+            statsOK = replayStatistics(completed) && statsOK;
+            completedAttempts.push(completed);
+          } else if (active) {
+            statsOK = replayStatistics(active.session) && statsOK;
+          } else if (result.unreadable.includes(key)) {
+            if (key === LEGACY_ACTIVE_ATTEMPT_KEY && !getLegacyAttemptBackups().includes(raw)) retainProgressBackup(key, raw);
+            setSessionWarning(true);
+          }
         }
-      }
-      reviews.sort((a, b) => (b.endTime ?? b.startTime) - (a.endTime ?? a.startTime));
-      if (reviews[0]) setLastReview(reviews[0]);
-      setSavedAttempts(result.attempts);
-      const active = result.attempts.find(attempt => attempt.origin !== 'backup');
-      if (active) loadAttempt(active, active.raw, false);
-    } catch { setSessionWarning(true); }
-  }, [inspectAttempts, loadAttempt]);
+        setStatisticsWarning(!statsOK);
+        const latest = completedAttempts.sort((a, b) => reviewTime(b) - reviewTime(a))[0];
+        if (latest && latest.progressEpoch === getProgressEpoch()) repairReview(latest);
+        setSavedAttempts(result.attempts);
+        return currentAttempts[0];
+      });
+      if (active && !cancelled) await loadAttempt(active, active.raw, false);
+    };
+    void init().catch(() => { if (!cancelled) setSessionWarning(true); });
+    return () => { cancelled = true; };
+  }, [inspectAttempts, loadAttempt, replayStatistics, repairReview]);
 
   useEffect(() => {
     const refresh = (event: StorageEvent) => {
@@ -307,7 +383,7 @@ export const ExamView: React.FC<ExamViewProps> = ({ ref, soundEnabled, onNavigat
       const attempt = result.attempts.find(item => item.origin === shown.origin && item.raw === shown.raw);
       if (!attempt) { setSessionWarning(true); return; }
       const target = attempt.origin === 'backup' ? N5_ACTIVE_ATTEMPT_KEY : attempt.origin;
-      loadAttempt(attempt, result.raws[target], true);
+      void loadAttempt(attempt, result.raws[target], true);
     } catch { setSessionWarning(true); }
   };
 
@@ -316,7 +392,7 @@ export const ExamView: React.FC<ExamViewProps> = ({ ref, soundEnabled, onNavigat
     setStartNotice('');
   };
 
-  const beginNewQuiz = (customQuestions: Question[] | undefined, count: number, mode: QuizModeId, trial: TrialDifficulty | undefined, expectedRaw: string | null) => {
+  const beginNewQuiz = async (customQuestions: Question[] | undefined, count: number, mode: QuizModeId, trial: TrialDifficulty | undefined, expectedRaw: string | null, archiveUnreadable = false) => {
     const difficulty = trial ? 'mixed' : selectedDifficulty;
     const questions = trial
       ? getTrialExamQuestions(trial)
@@ -328,14 +404,7 @@ export const ExamView: React.FC<ExamViewProps> = ({ ref, soundEnabled, onNavigat
       setShowParameters(true);
       return;
     }
-    setStartNotice('');
-    setReviewSession(null);
-    setShowParameters(false);
     const startTime = Date.now();
-    if (trial) {
-      setRemainingSeconds(TRIAL_MINUTES * 60);
-      window.scrollTo({ top: 0, behavior: 'instant' });
-    }
     const newSession: ProgressSession = {
       attemptId: globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random()}`,
       progressEpoch: getProgressEpoch(),
@@ -351,11 +420,14 @@ export const ExamView: React.FC<ExamViewProps> = ({ ref, soundEnabled, onNavigat
       requestedCount: count,
       feedbackMode: trial ? 'exam' : feedbackMode,
     };
-    sessionSlot.current = N5_ACTIVE_ATTEMPT_KEY;
-    sessionRaw.current = expectedRaw;
-    saveSession(newSession);
-    setSelectedAnswers([]);
-    setIsAnswerSubmitted(false);
+    if (!await saveSession(newSession, { slot: N5_ACTIVE_ATTEMPT_KEY, expectedRaw, archiveUnreadable })) return;
+    setStartNotice('');
+    setReviewSession(null);
+    setShowParameters(false);
+    if (trial) {
+      setRemainingSeconds(TRIAL_MINUTES * 60);
+      window.scrollTo({ top: 0, behavior: 'instant' });
+    }
     setEmptyMistakes(false);
   };
 
@@ -373,7 +445,7 @@ export const ExamView: React.FC<ExamViewProps> = ({ ref, soundEnabled, onNavigat
         return;
       }
     } catch { setSessionWarning(true); }
-    beginNewQuiz(customQuestions, count, mode, trial, expectedRaw);
+    void beginNewQuiz(customQuestions, count, mode, trial, expectedRaw);
   };
 
   const confirmNewQuiz = () => {
@@ -384,12 +456,8 @@ export const ExamView: React.FC<ExamViewProps> = ({ ref, soundEnabled, onNavigat
       if (request.epoch !== getProgressEpoch() || localStorage.getItem(N5_ACTIVE_ATTEMPT_KEY) !== request.expectedRaw) {
         throw Error('Saved attempt changed');
       }
-      if (request.reason === 'unreadable' &&
-          (request.expectedRaw === null || !retainProgressBackup(N5_ACTIVE_ATTEMPT_KEY, request.expectedRaw))) {
-        throw Error('Unreadable attempt could not be archived');
-      }
     } catch { setSessionWarning(true); return; }
-    beginNewQuiz(request.questions, request.count, request.mode, request.trial, request.expectedRaw);
+    void beginNewQuiz(request.questions, request.count, request.mode, request.trial, request.expectedRaw, request.reason === 'unreadable');
   };
 
   const startTrial = (difficulty: TrialDifficulty) => startNewQuiz(undefined, TRIAL_QUESTION_COUNT, 'mixed', difficulty);
@@ -414,12 +482,12 @@ export const ExamView: React.FC<ExamViewProps> = ({ ref, soundEnabled, onNavigat
     }
   };
 
-  const handleSubmitAnswer = () => {
+  const handleSubmitAnswer = async () => {
     const current = sessionRef.current;
     if (!current) return;
     const now = Date.now();
     const updated = confirmAnswer(current, selectedAnswers, now);
-    if (updated === current) return;
+    if (updated === current || !await saveSession(updated)) return;
     if (current.trialDeadline === undefined) {
       const question = current.questions[current.currentIndex];
       const isCorrect = selectedAnswers.length === question.correct.length && selectedAnswers.every(a => question.correct.includes(a));
@@ -428,26 +496,20 @@ export const ExamView: React.FC<ExamViewProps> = ({ ref, soundEnabled, onNavigat
     } else {
       triggerHaptic('selection');
     }
-    saveSession(updated);
-    setIsAnswerSubmitted(true);
   };
 
-  const handleNext = () => {
-    if (!session || !currentQuestion || !session.submittedQuestions[currentQuestion.id]) return;
+  const handleNext = async () => {
+    const current = sessionRef.current;
+    if (!current || !current.submittedQuestions[current.questions[current.currentIndex]?.id]) return;
     const now = Date.now();
-    if (session.trialDeadline !== undefined && now >= session.trialDeadline) return;
-    const nextIndex = session.currentIndex + 1;
-    if (nextIndex >= session.questions.length) {
-      const completed: ProgressSession = { ...session, isCompleted: true, endTime: now };
-      saveSession(completed);
-      if (session.trialDeadline !== undefined) window.scrollTo({ top: 0, behavior: 'instant' });
+    if (current.trialDeadline !== undefined && now >= current.trialDeadline) return;
+    const nextIndex = current.currentIndex + 1;
+    if (nextIndex >= current.questions.length) {
+      const completed: ProgressSession = { ...current, isCompleted: true, endTime: now };
+      if (await saveSession(completed) && current.trialDeadline !== undefined) window.scrollTo({ top: 0, behavior: 'instant' });
       return;
     }
-    const nextQ = session.questions[nextIndex];
-    const updated: ProgressSession = { ...session, currentIndex: nextIndex };
-    saveSession(updated);
-    setSelectedAnswers(session.userAnswers[nextQ.id] || []);
-    setIsAnswerSubmitted(session.submittedQuestions[nextQ.id] || false);
+    await saveSession({ ...current, currentIndex: nextIndex });
   };
 
   const handleExit = () => {
@@ -518,7 +580,8 @@ export const ExamView: React.FC<ExamViewProps> = ({ ref, soundEnabled, onNavigat
     const availableCount = getTestingPool(selectedMode, selectedDifficulty).length;
     return (
       <div className="space-y-5 max-w-3xl mx-auto pb-16 lg:pb-6">
-        {sessionWarning && <p role="alert">Не удалось прочитать или сохранить сессию. Её продолжение может быть недоступно; скачайте экспорт.</p>}
+        {sessionWarning && <p role="alert">Не удалось прочитать или сохранить попытку. Если её открыли в другой вкладке, обновите страницу.</p>}
+        {statisticsWarning && <p role="status">Сохранённые ответы есть в попытке, но статистику пока не удалось записать.</p>}
         {reviewWarning && <p role="status">Последний разбор не удалось прочитать или сохранить. Он может быть недоступен после reload.</p>}
         {savedAttempts.filter(attempt => attempt.session.attemptId !== session?.attemptId).map(attempt => (
           <button key={attempt.session.attemptId} type="button" onClick={() => chooseSavedAttempt(attempt)}
@@ -652,7 +715,7 @@ export const ExamView: React.FC<ExamViewProps> = ({ ref, soundEnabled, onNavigat
   }
 
   if (session.isCompleted) {
-    return <div className="space-y-3">{reviewWarning && <p role="status">Разбор доступен сейчас, но его сохранение не удалось.</p>}<ExamReview {...navigation} key={session.attemptId || session.startTime} session={session} onExit={handleExit} onLearning={onNavigateToLearning} onRetry={() => retryAttempt(session)} />{replacementDialog}</div>;
+    return <div className="space-y-3">{statisticsWarning && <p role="status">Сохранённые ответы есть в попытке, но статистику пока не удалось записать.</p>}{reviewWarning && <p role="status">Разбор доступен сейчас, но его сохранение не удалось.</p>}<ExamReview {...navigation} key={session.attemptId || session.startTime} session={session} onExit={handleExit} onLearning={onNavigateToLearning} onRetry={() => retryAttempt(session)} />{replacementDialog}</div>;
   }
 
   const progress = ((session.currentIndex + 1) / session.questions.length) * 100;
@@ -665,7 +728,8 @@ export const ExamView: React.FC<ExamViewProps> = ({ ref, soundEnabled, onNavigat
           ? ` · Доступно ${session.questions.length} из запрошенных ${session.requestedCount}; попытка содержит ${session.questions.length} билетов.`
           : ''}
       </p>
-      {(sessionWarning || progressStatus.storageWarning) && <p role="alert">Не удалось сохранить данные. Не закрывайте вкладку; экспорт прогресса доступен в меню экзамена.</p>}
+      {sessionWarning && <p role="alert">Не удалось сохранить попытку. Если её открыли в другой вкладке, обновите страницу.</p>}
+      {(statisticsWarning || progressStatus.storageWarning) && <p role="status">Статистику пока не удалось сохранить. Сохранённые ответы остаются в попытке.</p>}
       <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
         <button type="button" onClick={handleExit} className="hover:text-cyan-500 cursor-pointer">Выйти в меню</button>
         {availableReview && session.trialDeadline === undefined && <button type="button" onClick={() => setReviewSession(availableReview)} className="px-2 py-2 underline">Последний разбор</button>}
