@@ -59,7 +59,7 @@ for (const [index, id] of ids.entries()) {
   // Theory opens the detailed panel in an effect (verified in a browser).
   // SSR can verify focus and brief; ExamReview renders its toggle immediately.
   assert.ok(theory.includes(q.text) && theory.replace(/<[^>]*>/g, '').includes(entry.brief), id + ': focused theory entry');
-  assert.ok(review.includes('Стиль объяснения') && review.includes('Смысл') && review.includes('По делу'), id + ': review toggle');
+  assert.ok(review.includes('Стиль объяснения') && review.includes('Простыми словами') && review.includes('По делу'), id + ': review toggle');
   assert.ok(review.replace(/<[^>]*>/g, '').includes(entry.brief), id + ': default plain brief');
 }
 

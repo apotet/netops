@@ -37,6 +37,22 @@ export interface SwitchportConfig {
   trunkAllowed?: number[];
 }
 
+/** Classic CST configuration only; derived roles/states never belong in snapshots. */
+export interface StpBridgeConfig {
+  priority?: number;
+  /** Unicast MAC, colon-separated; absent uses a deterministic locally administered MAC. */
+  mac?: string;
+}
+
+export interface StpPortConfig {
+  priority?: number;
+  /** Explicit port number for the low 12 bits of Port ID. */
+  number?: number;
+  pathCost?: number;
+  /** Configuration metadata only: steady-state calculation has no transition timers. */
+  portfast?: boolean;
+}
+
 export interface InterfaceState {
   name: string;
   adminUp: boolean;
@@ -45,6 +61,7 @@ export interface InterfaceState {
   ipv4?: Ipv4Address;
   switchport?: SwitchportConfig;
   description?: string;
+  stp?: StpPortConfig;
 }
 
 export interface VlanState {
@@ -64,6 +81,7 @@ export interface RouteEntry {
 export type InterfaceConfig = Omit<InterfaceState, 'operUp'>;
 
 export interface SavedDeviceConfig {
+  stp?: StpBridgeConfig;
   hostname: string;
   interfaces: Record<string, InterfaceConfig>;
   vlans: Record<number, VlanState>;
@@ -71,6 +89,7 @@ export interface SavedDeviceConfig {
 }
 
 export interface DeviceState {
+  stp?: StpBridgeConfig;
   id: string;
   hostname: string;
   vendor: VendorId;
@@ -116,7 +135,9 @@ export type GoalPredicate =
   | { type: 'privilege'; device: string; min: number }
   | { type: 'config.saved'; device: string }
   | { type: 'l2.vlanReachable'; vlanId: number; fromDevice: string; fromIf: string; toDevice: string; toIf: string }
-  | { type: 'ipv4.sviReachable'; device: string; destination: string };
+  | { type: 'ipv4.sviReachable'; device: string; destination: string }
+  | { type: 'ipv4.hostReachable'; fromHost: string; toHost: string }
+  | { type: 'stp.bridgePriority'; device: string; priority: number };
 
 export interface GoalCheckResult {
   predicate: GoalPredicate;
@@ -148,6 +169,8 @@ export interface Scenario {
   nextScenarioId?: string;
   /** Diagnostic exercises keep the root cause and repair target hidden until solved. */
   diagnostic?: boolean;
+  /** Allow user-driven physical cable failures; only enabled in explicit resilience labs. */
+  allowLinkToggle?: boolean;
   /** Learner-facing goals; unlike internal predicates these must not disclose the fault. */
   publicGoalLabels?: string[];
 }
@@ -182,10 +205,14 @@ export type CommandArgument =
   | { keyword: string; description?: string }
   | { name: string; description: string;
       validate: (value: string, device: DeviceState | undefined, preceding: string[]) => boolean;
+      /** Optional capability explanation when this argument rejects input. */
+      invalidMessage?: string;
       /** A final free-text argument can consume multiple words (e.g. VLAN name). */
       rest?: boolean };
 
 export interface CommandSpec {
+  /** Optional read-only device capability gate, shared by Enter, TAB and help. */
+  available?: (device: DeviceState) => boolean;
   id: string;
   match: string[];
   modes: DeviceMode[];

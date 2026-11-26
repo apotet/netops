@@ -1,0 +1,13 @@
+export { ALL_QUESTIONS } from '../src/data/questionsData';
+export { getTestingPool, getTestingQuestions, getLearningLevelPool } from '../src/data/learningLevelExam';
+export { QUESTION_LEARNING_LEVELS } from '../src/data/learningLevels';
+export { getQuestionDeepDive } from '../src/data/questionExplanations';
+export { getLesson, getLessonForQuestion, LESSONS } from '../src/data/lessons';
+export { getLessonBlocksWithSections, getLessonSectionForQuestion, QUESTION_SECTION_LINKS } from '../src/data/lessons/lessonSectionLinks';
+export { GLOSSARY, GLOSSARY_TOOLTIPS } from '../src/data/glossary';
+export { splitGlossaryText } from '../src/utils/glossaryText';
+export { IN_DEPTH_PATCHES, IN_DEPTH_LESSON_LINKS, IN_DEPTH_SECTIONS, IN_DEPTH_TERMS, IN_DEPTH_BATCHES, IN_DEPTH_IDS, IN_DEPTH_LESSON_PATCHES } from '../src/data/inDepth';
+export { PRACTICE_DESTINATIONS } from '../src/data/practiceLinks';
+export { restoreSession, prepareAttemptQuestions } from '../src/utils/examProgress';
+export { PREVIOUS_IN_DEPTH_QUESTIONS } from '../src/data/inDepth/previousQuestions';
+export { applyInDepthLesson, applyInDepthExplanation } from '../src/data/inDepth';

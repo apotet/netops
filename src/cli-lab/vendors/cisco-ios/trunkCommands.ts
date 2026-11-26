@@ -136,7 +136,7 @@ export const ciscoTrunkCommands: CommandSpec[] = [
         const allowed = formatAllowedVlans(iface.switchport?.trunkAllowed);
         lines.push(`${iface.name.padEnd(21, ' ')}${allowed}`);
       }
-      return { output: lines.join('\n') + '\n\nCLI Lab: configured trunks are listed even when down; negotiation and STP forwarding are not emulated.' };
+      return { output: lines.join('\n') + '\n\nCLI Lab: configured trunks are listed even when down; negotiation is not emulated; this physical-status table does not display STP forwarding/blocking.' };
     },
   },
 ];

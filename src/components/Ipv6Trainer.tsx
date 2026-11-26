@@ -125,11 +125,11 @@ function makeTask(mode: Mode): Task {
 
 const TOTAL = 10;
 
-export const Ipv6Trainer: React.FC = () => {
-  const [mode, setMode] = useState<Mode>('compress');
+export const Ipv6Trainer: React.FC<{ initialMode?: Mode }> = ({ initialMode = 'compress' }) => {
+  const [mode, setMode] = useState<Mode>(initialMode);
   const [index, setIndex] = useState(0);
   const [correct, setCorrect] = useState(0);
-  const [task, setTask] = useState<Task>(() => makeTask('compress'));
+  const [task, setTask] = useState<Task>(() => makeTask(initialMode));
   const [answer, setAnswer] = useState('');
   const [picked, setPicked] = useState('');
   const [checked, setChecked] = useState(false);
@@ -258,6 +258,7 @@ export const Ipv6Trainer: React.FC = () => {
             key={item.id}
             type="button"
             onClick={() => startMode(item.id)}
+            aria-pressed={mode === item.id}
             className={`px-3 py-1.5 rounded-lg text-xs font-bold ${mode === item.id ? 'bg-cyan-500 text-slate-950' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300'}`}
           >
             {item.label}

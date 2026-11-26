@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { X, ExternalLink, Image as ImageIcon } from 'lucide-react';
+import { SHARED_ASSETS_CREDITS_URL, SHARED_ASSETS_CREDITS_SOURCE_URL } from '../config/sharedAssets';
 
 type Credit = {
   slug: string;
@@ -16,9 +17,6 @@ interface PhotoCreditsProps {
   onClose: () => void;
 }
 
-const CREDITS_URL =
-  'https://raw.githubusercontent.com/apotet/osi-tcpip-exam-public/main/assets/photos/credits.json';
-
 export const PhotoCredits: React.FC<PhotoCreditsProps> = ({ onClose }) => {
   const [credits, setCredits] = useState<Credit[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -28,7 +26,7 @@ export const PhotoCredits: React.FC<PhotoCreditsProps> = ({ onClose }) => {
     let cancelled = false;
     (async () => {
       try {
-        const res = await fetch(CREDITS_URL);
+        const res = await fetch(SHARED_ASSETS_CREDITS_URL);
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
         if (!cancelled) setCredits(Array.isArray(data) ? data : []);
@@ -83,7 +81,7 @@ export const PhotoCredits: React.FC<PhotoCreditsProps> = ({ onClose }) => {
               {error}. Полный список также доступен в{' '}
               <a
                 className="underline text-cyan-600 dark:text-cyan-400"
-                href="https://github.com/apotet/osi-tcpip-exam-public/blob/main/assets/photos/credits.json"
+                href={SHARED_ASSETS_CREDITS_SOURCE_URL}
                 target="_blank"
                 rel="noopener noreferrer"
               >

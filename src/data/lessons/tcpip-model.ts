@@ -47,6 +47,8 @@ export const LESSON_TCPIP_MODEL: Lesson = {
     }
   ],
   "relatedQuestionIds": [
+    "tcp-08",
+    "tcpip-x12",
     "tcp-01",
     "tcp-02",
     "tcp-03",

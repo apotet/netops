@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="860" height="560" viewBox="0 0 860 560" role="img" aria-labelledby="t1 d1">
+<title id="t1">LACP (IEEE 802.3ad / 802.1AX): режимы согласования и распределение потоков</title>
+<desc id="d1">Матрица совместимости Active/Passive/On (LACP) и пример локального flow-aware распределения кадров (Frame Distributor).</desc>
+<defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#020b15"/><stop offset="1" stop-color="#081e2c"/></linearGradient></defs>
+<rect width="860" height="560" rx="18" fill="url(#bg)"/>
+<text x="430" y="38" text-anchor="middle" font-family="Arial,sans-serif" font-size="22" font-weight="800" fill="#f1f8ff">LACP (LAG / EtherChannel): согласование и распределение</text>
+
+<!-- Top: 2 switches + bundled links -->
+<g transform="translate(24,58)" font-family="Arial,sans-serif">
+  <rect x="0" y="0" width="812" height="196" rx="14" fill="#071a2b" stroke="#38bdf8" stroke-width="1.8"/>
+  <text x="20" y="28" font-size="15.5" font-weight="800" fill="#7dd3fc">Один логический Port-Channel (Po1) = несколько физических линков</text>
+
+  <rect x="24" y="48" width="146" height="92" rx="10" fill="#0b2438" stroke="#38bdf8" stroke-width="1.6"/>
+  <text x="97" y="88" text-anchor="middle" font-size="15" font-weight="800" fill="#f1f8ff">Switch A</text>
+  <text x="97" y="109" text-anchor="middle" font-size="12.5" fill="#94a3b8">Po1 (Active)</text>
+
+  <rect x="642" y="48" width="146" height="92" rx="10" fill="#0b2438" stroke="#38bdf8" stroke-width="1.6"/>
+  <text x="715" y="88" text-anchor="middle" font-size="15" font-weight="800" fill="#f1f8ff">Switch B</text>
+  <text x="715" y="109" text-anchor="middle" font-size="12.5" fill="#94a3b8">Po1 (Active / Passive)</text>
+
+  <!-- 2 physical links -->
+  <line x1="170" y1="74" x2="642" y2="74" stroke="#38bdf8" stroke-width="4"/>
+  <rect x="280" y="59" width="252" height="28" rx="6" fill="#0c2f4d" stroke="#38bdf8" stroke-width="1"/>
+  <text x="406" y="78" text-anchor="middle" font-size="12.5" font-weight="700" fill="#e0f2fe">Gi0/1 (1G): Поток 1 (hash #1)</text>
+
+  <line x1="170" y1="116" x2="642" y2="116" stroke="#2dd4bf" stroke-width="4"/>
+  <rect x="280" y="101" width="252" height="28" rx="6" fill="#0d3b3e" stroke="#2dd4bf" stroke-width="1"/>
+  <text x="406" y="120" text-anchor="middle" font-size="12.5" font-weight="700" fill="#ccfbf1">Gi0/2 (1G): Поток 2 (другой hash)</text>
+
+  <text x="24" y="172" font-size="12" font-weight="700" fill="#fdba74">LACP согласует LAG; линк выбирает локальный Frame Distributor (разные потоки могут совпасть по hash).</text>
+</g>
+
+<!-- Bottom Left: Compatibility Matrix -->
+<g transform="translate(24,272)" font-family="Arial,sans-serif">
+  <rect x="0" y="0" width="446" height="264" rx="14" fill="#071e26" stroke="#2dd4bf" stroke-width="1.8"/>
+  <text x="18" y="30" font-size="15.5" font-weight="800" fill="#5eead4">Совместимость режимов LACP</text>
+  <rect x="18" y="44" width="410" height="32" rx="6" fill="#0d3b3e"/>
+  <text x="32" y="65" font-size="13" font-weight="700" fill="#ccfbf1">Сторона A</text>
+  <text x="154" y="65" font-size="13" font-weight="700" fill="#ccfbf1">Сторона B</text>
+  <text x="278" y="65" font-size="13" font-weight="700" fill="#ccfbf1">Результат</text>
+
+  <text x="32" y="102" font-size="13" fill="#e2e8f0">Active</text><text x="154" y="102" font-size="13" fill="#e2e8f0">Active</text><text x="278" y="102" font-size="13" font-weight="700" fill="#4ade80">[OK] LACP поднят</text>
+  <line x1="18" y1="114" x2="428" y2="114" stroke="#1e3a4a"/>
+  <text x="32" y="138" font-size="13" fill="#e2e8f0">Active</text><text x="154" y="138" font-size="13" fill="#e2e8f0">Passive</text><text x="278" y="138" font-size="13" font-weight="700" fill="#4ade80">[OK] LACP поднят</text>
+  <line x1="18" y1="150" x2="428" y2="150" stroke="#1e3a4a"/>
+  <text x="32" y="174" font-size="13" fill="#e2e8f0">Passive</text><text x="154" y="174" font-size="13" fill="#e2e8f0">Passive</text><text x="278" y="174" font-size="13" font-weight="700" fill="#f87171">[NO] Не соберётся</text>
+  <line x1="18" y1="186" x2="428" y2="186" stroke="#1e3a4a"/>
+  <text x="32" y="210" font-size="13" fill="#e2e8f0">Active</text><text x="154" y="210" font-size="13" fill="#e2e8f0">On (static)</text><text x="278" y="210" font-size="13" font-weight="700" fill="#f87171">[NO] Конфликт (susp.)</text>
+  <text x="18" y="246" font-size="12" fill="#94a3b8">Режим On не шлёт LACPDU и не защищает от ошибок кроссировки.</text>
+</g>
+
+<!-- Bottom Right: Must-Match Checklist -->
+<g transform="translate(488,272)" font-family="Arial,sans-serif">
+  <rect x="0" y="0" width="348" height="264" rx="14" fill="#1b1224" stroke="#a78bfa" stroke-width="1.8"/>
+  <text x="18" y="30" font-size="15.5" font-weight="800" fill="#ddd6fe">Что обязано совпасть на портах</text>
+  <text x="18" y="64" font-size="13.5" fill="#e2e8f0">1. Скорость и дуплекс (1G full, 10G)</text>
+  <text x="18" y="96" font-size="13.5" fill="#e2e8f0">2. Режим порта: access или trunk</text>
+  <text x="18" y="128" font-size="13.5" fill="#e2e8f0">3. Access VLAN или Native + Allowed</text>
+  <text x="18" y="160" font-size="13.5" fill="#e2e8f0">4. MTU и параметры STP на порту</text>
+  <rect x="18" y="182" width="312" height="64" rx="8" fill="#2e1065" stroke="#a78bfa" stroke-width="1"/>
+  <text x="30" y="206" font-size="12.5" font-weight="700" fill="#ede9fe">При расхождении порт уйдёт в</text>
+  <text x="30" y="228" font-size="12.5" fill="#c4b5fd">suspended / standalone (не в bundle).</text>
+</g>
+</svg>

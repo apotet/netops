@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 620" width="860" height="620" role="img" aria-labelledby="title desc">
+<title id="title">Как различать IEEE-инжектор, IEEE-сплиттер и пассивную пару</title>
+<desc id="desc">Три карточки сравнивают роль PSE, PD с DC/DC и пассивную кабельную пару. Пример показывает: камера 12 вольт 1,5 ампера требует 18 ватт, а выход сплиттера 12 вольт 1 ампер даёт только 12 ватт.</desc>
+<rect width="860" height="620" fill="#071522" rx="17"/>
+<text x="430" y="38" fill="#f8fafc" font-family="Arial,sans-serif" font-size="24" font-weight="700" text-anchor="middle">IEEE-инжектор, сплиттер и пассивная пара</text>
+<rect x="22" y="63" width="263" height="355" rx="14" fill="#0d2940" stroke="#38bdf8" stroke-width="2"/>
+<rect x="299" y="63" width="263" height="355" rx="14" fill="#0a302f" stroke="#2dd4bf" stroke-width="2"/>
+<rect x="576" y="63" width="263" height="355" rx="14" fill="#351820" stroke="#fb7185" stroke-width="2"/>
+<rect x="23" y="64" width="261" height="53" rx="12" fill="#124467"/><text x="154" y="86" text-anchor="middle" fill="#e0f2fe" font-family="Arial" font-weight="700" font-size="17">IEEE PoE-инжектор</text><text x="154" y="106" text-anchor="middle" fill="#bae6fd" font-family="Arial" font-size="13">Midspan PSE</text>
+<rect x="300" y="64" width="261" height="53" rx="12" fill="#0e5250"/><text x="430" y="86" text-anchor="middle" fill="#ccfbf1" font-family="Arial" font-weight="700" font-size="17">IEEE PoE-сплиттер</text><text x="430" y="106" text-anchor="middle" fill="#99f6e4" font-family="Arial" font-size="13">PD + обычно DC/DC</text>
+<rect x="577" y="64" width="261" height="53" rx="12" fill="#6a1d2e"/><text x="707" y="86" text-anchor="middle" fill="#ffe4e6" font-family="Arial" font-weight="700" font-size="17">Пассивная пара</text><text x="707" y="106" text-anchor="middle" fill="#fecdd3" font-family="Arial" font-size="13">Не IEEE PoE</text>
+<g font-family="Arial" font-size="15" fill="#e2e8f0">
+<text x="39" y="155">Вход: Data IN</text><text x="39" y="181">Выход: Data + PoE</text><text x="39" y="207">Питание: отдельный БП</text><text x="39" y="249" fill="#86efac">IEEE detection / Class</text><text x="39" y="279">802.3af / at / bt</text><text x="39" y="305">Пары A или B,</text><text x="39" y="327">либо обе группы</text><text x="39" y="376" fill="#bae6fd">Не равен CLI свича без PoE</text>
+<text x="316" y="155">Вход: PoE IN</text><text x="316" y="181">Выход: Ethernet + DC</text><text x="316" y="207">DC: 5 / 12 / 24 В*</text><text x="316" y="249" fill="#86efac">Сам проходит IEEE detection</text><text x="316" y="279">Сверь выходные:</text><text x="316" y="305">напряжение, ток, КПД,</text><text x="316" y="327">полярность, разъём</text><text x="316" y="376" fill="#99f6e4">*Зависит от модели</text>
+<text x="593" y="155">От БП — DC напрямую</text><text x="593" y="181">Без обязательного IEEE</text><text x="593" y="207">обнаружения и DC/DC</text><text x="593" y="249" fill="#fda4af">НЕ подключай наугад</text><text x="593" y="279">«9–48V», «LED», «1 Pair»</text><text x="593" y="305">не доказывают IEEE</text><text x="593" y="327">или преобразование DC</text><text x="593" y="376" fill="#fecdd3">«1 Pair» может быть</text><text x="593" y="396" fill="#fecdd3">комплектом из двух частей</text>
+</g>
+<rect x="22" y="438" width="816" height="162" rx="14" fill="#0c2338" stroke="#fb923c" stroke-width="2"/>
+<text x="42" y="473" fill="#fed7aa" font-family="Arial" font-size="19" font-weight="700">Пример: почему одного PoE+ на входе недостаточно</text>
+<rect x="42" y="492" width="234" height="63" rx="9" fill="#15324b" stroke="#38bdf8"/><text x="159" y="517" text-anchor="middle" fill="#f1f5f9" font-family="Arial" font-size="16">Камера: 12 В × 1,5 А</text><text x="159" y="540" text-anchor="middle" fill="#7dd3fc" font-family="Arial" font-size="18" font-weight="700">18 Вт DC</text>
+<text x="301" y="534" fill="#f87171" font-family="Arial" font-size="28" font-weight="700"> &gt; </text>
+<rect x="349" y="492" width="237" height="63" rx="9" fill="#39212d" stroke="#fb7185"/><text x="467" y="517" text-anchor="middle" fill="#f1f5f9" font-family="Arial" font-size="16">Сплиттер: 12 В × 1 А</text><text x="467" y="540" text-anchor="middle" fill="#fda4af" font-family="Arial" font-size="18" font-weight="700">Максимум 12 Вт</text>
+<rect x="603" y="492" width="211" height="63" rx="9" fill="#4c1625" stroke="#f43f5e"/><text x="709" y="520" text-anchor="middle" fill="#ffe4e6" font-family="Arial" font-size="18" font-weight="700">НЕ ПОДХОДИТ</text><text x="709" y="541" text-anchor="middle" fill="#fecdd3" font-family="Arial" font-size="12">даже при входе PoE+</text>
+<text x="43" y="582" fill="#cbd5e1" font-family="Arial" font-size="14">Учитывай потери DC/DC, кабеля и пусковой ток: паспорт выхода важнее слова «PoE+».</text>
+</svg>

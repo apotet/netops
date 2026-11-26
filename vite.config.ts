@@ -2,12 +2,18 @@ import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
 import {defineConfig} from 'vite';
+import { SHARED_ASSETS_OG_IMAGE_URL } from './src/config/sharedAssets.ts';
 
 export default defineConfig(() => {
   return {
-    // Project site: https://apotet.github.io/my-gemini-mirror-site/
-    base: '/my-gemini-mirror-site/',
-    plugins: [react(), tailwindcss()],
+    // Project site: https://apotet.github.io/netops/
+    base: '/netops/',
+    plugins: [react(), tailwindcss(), {
+      name: 'shared-assets-html',
+      transformIndexHtml(html) {
+        return html.replaceAll('__SHARED_ASSETS_OG_IMAGE_URL__', SHARED_ASSETS_OG_IMAGE_URL);
+      },
+    }],
     build: {
       outDir: 'dist',
       rollupOptions: {

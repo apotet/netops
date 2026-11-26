@@ -30,4 +30,28 @@ for(const term of ['Proposal','Agreement','MSTP','MSTI','CIST','UDLD','Root Guar
   assert.ok(GLOSSARY_TOOLTIPS[term],term+': missing inline definition');
   assert.ok(splitGlossaryText('Здесь '+term+' работает.').some(p=>p.term===term),term+': not recognized');
 }
+// Cable-screen notation is not FTP (File Transfer Protocol). Regression from
+// the actual Fundamentals F/UTP photo question where hovering S/FTP showed FTP.
+const cabling = {
+  'U/UTP': /Unscreened \/ Unscreened Twisted Pair/,
+  'F/UTP': /Foiled \/ Unscreened Twisted Pair/,
+  'U/FTP': /Unscreened \/ Foiled Twisted Pair/,
+  'S/FTP': /Screened \/ Foiled Twisted Pair/,
+};
+for (const [term, expansion] of Object.entries(cabling)) {
+  assert.match(GLOSSARY_TOOLTIPS[term]?.english || '', expansion, term + ': wrong cable expansion');
+  assert.match(GLOSSARY_TOOLTIPS[term]?.russian || '', /экран|витая пара|фольг|оплёт/i, term + ': wrong Russian cabling description');
+  assert.ok(GLOSSARY[term]?.lessonId === 'l1-copper-cable', term + ': preserve existing copper lesson');
+  assert.deepEqual(splitGlossaryText(term).filter(part => part.term).map(part => part.term), [term],
+    term + ': do not split cable code into protocol acronym');
+}
+const cableSample = 'Кабели U/UTP, F/UTP, U/FTP, S/FTP. Протоколы FTP, SFTP и TFTP.';
+assert.deepEqual(splitGlossaryText(cableSample).filter(part => part.term).map(part => part.term),
+  ['U/UTP','F/UTP','U/FTP','S/FTP','FTP','SFTP','TFTP'],
+  'cable codes and real file-transfer protocols must be distinguished');
+assert.equal(splitGlossaryText('X/FTP').filter(part => part.term === 'FTP').length, 0,
+  'unknown slash-composite must not get unrelated FTP protocol tooltip');
+assert.equal(GLOSSARY_TOOLTIPS.FTP.english, 'File Transfer Protocol', 'standalone FTP unchanged');
+assert.equal(GLOSSARY_TOOLTIPS.SFTP.english, 'SSH File Transfer Protocol', 'standalone SFTP unchanged');
+console.log('PASS: all 4 IEC cable screen labels vs FTP/SFTP/TFTP tooltip isolation');
 console.log('PASS: '+advanced.length+' advanced lessons; tags and inline terms in both modes');

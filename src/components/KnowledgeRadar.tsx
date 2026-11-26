@@ -26,7 +26,8 @@ interface KnowledgeRadarProps {
   onStartExam: (levelFilter?: string) => void;
   onStartNewExam?: () => void;
   hasActiveSession?: boolean;
-  onReviewMistakes: () => void;
+  onReviewMistakes?: () => void;
+  showTestingControls?: boolean;
   onOpenVisualL1?: () => void;
   mistakesCount: number;
   totalQuestionsCount?: number;
@@ -36,6 +37,7 @@ export const KnowledgeRadar: React.FC<KnowledgeRadarProps> = ({
   onStartExam,
   onStartNewExam,
   hasActiveSession = false,
+  showTestingControls = true,
   onReviewMistakes,
   mistakesCount,
 }) => {
@@ -116,31 +118,11 @@ export const KnowledgeRadar: React.FC<KnowledgeRadarProps> = ({
   };
 
   const handleReset = () => {
-    if (!window.confirm('Сбросить весь прогресс и сохранённую сессию? Удаление необратимо. Банк вопросов сохранится.')) return;
+    if (!window.confirm('Сбросить статистику? Будут удалены ответы, серия дней, список ошибок, незавершённая попытка и последний разбор. Отменить сброс нельзя.')) return;
     triggerHaptic('heavy');
     const reset = resetProgress();
     setProgress(reset);
   };
-
-  const helperLine = hasActiveSession
-    ? 'Продолжи с того места, где остановился'
-    : mistakesCount > 0
-      ? `${mistakesCount} ошибок ждут разбора`
-      : progress.streakDays > 0
-        ? `Серия ${progress.streakDays} дн. · не прерывай`
-        : '10 вопросов — и появится твоя точность';
-
-  const statusTitle = hasAccuracy
-    ? `Точность ${progress.readinessPercent}%`
-    : towardAccuracy > 0
-      ? `${towardAccuracy}/10 до точности`
-      : 'Точность появится после 10 ответов';
-
-  const statusSub = hasAccuracy
-    ? `${progress.answeredCount} ответов · ${progress.correctCount} верных`
-    : towardAccuracy > 0
-      ? `Ещё ${10 - towardAccuracy} подтверждённых ответов`
-      : 'Пройди короткую сессию';
 
   return (
     <div className="space-y-4 w-full">
@@ -154,9 +136,45 @@ export const KnowledgeRadar: React.FC<KnowledgeRadarProps> = ({
       )}
       {progress.storageWarning && <p role="alert" className="text-xs text-rose-600">Хранилище недоступно: изменения доступны в этой вкладке и могут потеряться после перезагрузки.</p>}
 
+      {showTestingControls && (
+        <div className={`grid gap-2.5 ${hasActiveSession && onStartNewExam ? 'sm:grid-cols-[2fr_1fr]' : ''}`}>
+          <button
+            type="button"
+            onClick={() => { triggerHaptic('heavy'); onStartExam(); }}
+            className="w-full min-h-12 px-4 py-3 rounded-2xl bg-gradient-to-r from-cyan-500 via-cyan-400 to-teal-400 text-slate-950 font-black hover:brightness-110 transition-colors flex items-center justify-center gap-2 shadow-[0_0_28px_rgba(34,211,238,0.4)] cursor-pointer"
+          >
+            <Sparkles className="w-4 h-4 fill-slate-950" aria-hidden="true" />
+            {hasActiveSession ? 'Продолжить тестирование' : 'Начать тестирование'}
+          </button>
+          {hasActiveSession && onStartNewExam && (
+            <button
+              type="button"
+              onClick={onStartNewExam}
+              className="w-full min-h-12 rounded-2xl border border-cyan-500/35 px-4 py-2 text-sm font-semibold text-cyan-700 dark:text-cyan-300 hover:bg-cyan-500/10 transition-colors cursor-pointer"
+            >
+              Начать заново
+            </button>
+          )}
+        </div>
+      )}
+
       {/* Compact status strip */}
       <div className="rounded-2xl border border-slate-200 dark:border-cyan-500/25 bg-white dark:bg-gradient-to-br dark:from-[#0c1c2e] dark:via-[#091524] dark:to-[#07111f] p-3.5 sm:p-4 shadow-lg dark:shadow-xl relative overflow-hidden">
         <div className="absolute -top-8 -right-8 w-32 h-32 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
+
+        {showTestingControls && (
+          <div className="relative z-10 mb-2 flex flex-wrap items-center justify-between gap-x-2">
+            <h2 className="text-sm font-bold text-slate-700 dark:text-slate-200">Твой текущий статус</h2>
+            <button
+              type="button"
+              onClick={handleReset}
+              className="inline-flex min-h-11 items-center gap-1.5 rounded-md px-1.5 text-xs font-semibold text-slate-600 hover:text-rose-600 dark:text-slate-400 dark:hover:text-rose-300 cursor-pointer"
+            >
+              <RotateCcw className="h-3.5 w-3.5" aria-hidden="true" />
+              Сбросить статистику
+            </button>
+          </div>
+        )}
 
         <div className="relative z-10 mb-3 flex items-center justify-center sm:justify-start gap-3 sm:gap-2.5">
           {icons.map(({ Icon, color, label }, i) => (
@@ -206,15 +224,28 @@ export const KnowledgeRadar: React.FC<KnowledgeRadarProps> = ({
             </div>
           </div>
 
-          <button
-            type="button"
-            onClick={() => { triggerHaptic('light'); setShowStreakModal((v) => !v); }}
-            className="shrink-0 self-end sm:self-center flex flex-col items-center"
-            title="Непрерывная серия дней"
-          >
-            <Flame className="w-10 h-10 sm:w-8 sm:h-8 text-orange-500 fill-orange-500" />
-            <span className="text-4xl sm:text-3xl font-black text-rose-500 leading-none">{progress.streakDays}</span>
-          </button>
+          <div className="flex items-center justify-between gap-4 sm:shrink-0 sm:gap-5">
+            {showTestingControls && (
+              <div className="min-w-0">
+                <p className="text-xs font-semibold text-slate-600 dark:text-slate-400">Твои ответы</p>
+                <p className="mt-1 text-sm font-bold tabular-nums text-slate-900 dark:text-slate-100">
+                  {progress.answeredCount > 0
+                    ? `Верно ${progress.correctCount.toLocaleString('ru-RU')} из ${progress.answeredCount.toLocaleString('ru-RU')}`
+                    : 'Пока нет ответов'}
+                </p>
+              </div>
+            )}
+            <button
+              type="button"
+              onClick={() => { triggerHaptic('light'); setShowStreakModal((v) => !v); }}
+              className="ml-auto shrink-0 flex flex-col items-center"
+              title="Непрерывная серия дней"
+              aria-expanded={showStreakModal}
+            >
+              <Flame className="w-10 h-10 sm:w-8 sm:h-8 text-orange-500 fill-orange-500" />
+              <span className="text-4xl sm:text-3xl font-black text-rose-500 leading-none">{progress.streakDays}</span>
+            </button>
+          </div>
         </div>
 
         {showStreakModal && (
@@ -236,14 +267,6 @@ export const KnowledgeRadar: React.FC<KnowledgeRadarProps> = ({
                 <Target className="w-3.5 h-3.5 text-cyan-500" />
                 По группам
               </span>
-              <button
-                onClick={handleReset}
-                type="button"
-                className="text-[10px] text-slate-400 hover:text-rose-500 font-mono flex items-center gap-1"
-              >
-                <RotateCcw className="w-3 h-3" />
-                Сброс
-              </button>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               {Object.values(progress.levels).map((lvl) => {
@@ -294,7 +317,7 @@ export const KnowledgeRadar: React.FC<KnowledgeRadarProps> = ({
       </div>
 
       {/* Mistakes — only strong when there is work */}
-      {mistakesCount > 0 ? (
+      {onReviewMistakes && mistakesCount > 0 && (
         <button
           type="button"
           onClick={() => {
@@ -309,40 +332,13 @@ export const KnowledgeRadar: React.FC<KnowledgeRadarProps> = ({
           </div>
           <div className="text-2xl font-black font-mono text-rose-600 dark:text-rose-300">{mistakesCount}</div>
         </button>
-      ) : (
+      )}
+      {mistakesCount === 0 && (
         <div className="px-1 text-[11px] text-slate-500 dark:text-slate-500">
           Ошибок на повтор пока нет
         </div>
       )}
 
-      {/* Dominant CTA */}
-      <div className="space-y-2.5 pt-1">
-        <button
-          onClick={() => {
-            triggerHaptic('heavy');
-            onStartExam();
-          }}
-          type="button"
-          className="w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-cyan-500 via-cyan-400 to-teal-400 text-slate-950 font-black text-base hover:brightness-110 active:scale-[0.99] transition-all flex items-center justify-center gap-2 shadow-[0_0_28px_rgba(34,211,238,0.4)] cursor-pointer tracking-wide"
-        >
-          <Sparkles className="w-4 h-4 fill-slate-950" />
-          <span>{hasActiveSession ? 'Продолжить экзамен' : 'Начать экзамен'}</span>
-        </button>
-
-        {hasActiveSession && onStartNewExam && (
-          <button
-            type="button"
-            onClick={onStartNewExam}
-            className="w-full rounded-2xl border border-cyan-500/35 px-4 py-3 text-sm font-semibold text-cyan-700 dark:text-cyan-300 hover:bg-cyan-500/10 transition-colors"
-          >
-            Начать новый экзамен
-          </button>
-        )}
-
-        <p className="text-center text-[12px] text-slate-500 dark:text-slate-400">
-          {helperLine}
-        </p>
-      </div>
     </div>
   );
 };

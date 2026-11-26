@@ -5,8 +5,9 @@ function configInterfaces(interfaces: Record<string, InterfaceState>): Record<st
 }
 
 /** Lab-only configuration snapshot; runtime, mode/privilege and links are not saved. */
-export function snapshotConfig(device: Pick<DeviceState, 'hostname' | 'interfaces' | 'vlans' | 'routes'>): SavedDeviceConfig {
+export function snapshotConfig(device: Pick<DeviceState, 'hostname' | 'interfaces' | 'vlans' | 'routes' | 'stp'>): SavedDeviceConfig {
   return structuredClone({
+    ...(device.stp !== undefined ? { stp: device.stp } : {}),
     hostname: device.hostname,
     interfaces: configInterfaces(device.interfaces),
     vlans: device.vlans,
@@ -37,6 +38,8 @@ export function reloadFromStartup(device: DeviceState): void {
   if (!device.startupConfig) throw new Error('Startup configuration not initialized');
   const saved = snapshotConfig(device.startupConfig);
   device.startupConfig = saved;
+  if (saved.stp === undefined) delete device.stp;
+  else device.stp = structuredClone(saved.stp);
   device.hostname = saved.hostname;
   device.interfaces = structuredClone(saved.interfaces);
   device.vlans = structuredClone(saved.vlans);

@@ -60,6 +60,8 @@ export const LESSON_L3_NAT: Lesson = {
     }
   ],
   "relatedQuestionIds": [
+    "ts-d06",
+    "ts-d08",
     "l3-15",
     "l3-d05",
     "tcpip-x27"

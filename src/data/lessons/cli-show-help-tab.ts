@@ -40,7 +40,7 @@ export const LESSON_CLI_SHOW_HELP_TAB: Lesson = {
     { title: 'Активная конфигурация', cmd: 'show running-config', note: 'В текущем NetOps требует Privileged EXEC.' },
     { title: 'Диагностика в конфигурационном режиме', cmd: 'do show interfaces FastEthernet0/1', note: 'Выполняется без выхода из config-if.' }
   ],
-  relatedQuestionIds: [],
+  relatedQuestionIds: ['ts-x05'],
   sources: [
     'Cisco IOS Configuration Fundamentals Configuration Guide — Using the Cisco IOS Command-Line Interface',
     'Cisco IOS Fundamentals Command Reference — show, configure terminal and contextual help',

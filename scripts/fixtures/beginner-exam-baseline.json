@@ -1,0 +1,95 @@
+{
+  "baseMain": "7f30426817f9d6839d38d8981fbd9ba6f26e4524",
+  "rng": "LCG 1664525/1013904223, uint32 / 2^32",
+  "mixed10": {
+    "seeds": [
+      1,
+      1000
+    ],
+    "sha256": "6896243117c65c664b8e39b91cce13fb892314468571a8041d88f74f63b897be"
+  },
+  "otherMixedModes": {
+    "seeds": [
+      1,
+      17,
+      173,
+      1000
+    ],
+    "counts": [
+      1,
+      5,
+      10,
+      15,
+      20,
+      30
+    ],
+    "sha256": "da3b6e784753a042c02c5a419c0947ea5195233db718fa86f03cfabbdda3b86a"
+  },
+  "beginnerSingle": {
+    "seeds": [
+      1,
+      1000
+    ],
+    "sha256": "da058270bf772b9daa828d214c8231fb82a2ced0586d4ca5a8615be37ea9252f"
+  },
+  "before": {
+    "runs": 1000,
+    "noPhoto": 43,
+    "repeatedFamily": 89,
+    "pool": 244,
+    "photos": 68,
+    "families": 205
+  },
+  "bankSHA256": "7ca162beff519219abb26757651213a18c7d16bcc1ff93428f43a5c3f42c5eb7",
+  "questionQualityUpdate": {
+    "baseMain": "bb4be1ac117e7f231182d92163d95d925c59b128",
+    "bankSHA256": "4b80ce2890c9d29638f6a98011029778d44128efa68e55cd33af87269ead0607",
+    "families": 203,
+    "mixed10SHA256": "08240640491fefb6a86708801a6ddad271218ed89ec936f647898df82fb4fdc0",
+    "otherMixedModesSHA256": "28961fafd41b41e129f7258920e16d6bb90fb825e490e143c6ded120bb737a95"
+  },
+  "diagnosticPack177": {
+    "bankSHA256": "3e818d56188b05be41bde05ea270a3c7de39d902b15b23db527144c69855c413",
+    "mixed10SHA256": "b6a89bb7306478fcefa2898dfc4b29846d9c2fa81f34d07d45b9acabd69c7810",
+    "otherMixedModesSHA256": "f84c6971fda35edd977c1eb3c5af5fc357851f91f0a1e0d0505fcc50f75e8024"
+  },
+  "monitoringPack": {
+    "bankSHA256": "ba05a4214fb3b5380cc1b218b8339fd5efd24f8a545848f4725298d70521dccd",
+    "beginnerPool": 248,
+    "families": 207,
+    "beginnerSingleSHA256": "dc0f9842d5d2b582f20029cae4e91adb69fd77eb10681fbd5005a8c5f2b3a0ec",
+    "mixed10SHA256": "577ef6856a3491daec70019d4334356887372b3243c7ca0ef207169a439ab727",
+    "otherMixedModesSHA256": "07db9a5cbbf7e2186f8e08b8a97ab24b836d41b684bd08c2319e544137f3be9d"
+  },
+  "wifiPack": {
+    "bankSHA256": "ad005cca3c810130ca0da85cafca9db826154e71ee9775533b5e994e0fa7f797",
+    "beginnerPool": 253,
+    "families": 212,
+    "beginnerSingleSHA256": "70c914488913273fa07fc36c6b0e5489cdf2d1f2b1184b2cd9b6573684d6c8b0",
+    "mixed10SHA256": "c414f3ae656987162179c4622ad80a06aa1279d9ed0741d4839734687032802f",
+    "otherMixedModesSHA256": "b415595b2dd5e1dac6041b73bf26afcf6ea90abeb2ee2e1db3ddb5626c192333"
+  },
+  "expertPack225": {
+    "bankSHA256": "d804ea6013d0d512677c4b14e78850bdd95e09fa9ddef6abf2a40c4075fd8cdb",
+    "beginnerPool": 253,
+    "families": 212,
+    "beginnerSingleSHA256": "70c914488913273fa07fc36c6b0e5489cdf2d1f2b1184b2cd9b6573684d6c8b0",
+    "mixed10SHA256": "2dc8c0ee6b2038c4c19db3416a98f4fdfe5d7a578ed4942bd525f10af6f6bb9d",
+    "otherMixedModesSHA256": "6b4db610aee9c2a2dce0a2cb791ca86c4eced279f0b68d5da982387485401f3f"
+  },
+  "expertPack177": {
+    "bankSHA256": "b17a6f910cf5f80cd452448be01eef3b68143ad02227b96eb49cf571507ad59d",
+    "beginnerPool": 253,
+    "families": 212,
+    "beginnerSingleSHA256": "70c914488913273fa07fc36c6b0e5489cdf2d1f2b1184b2cd9b6573684d6c8b0",
+    "mixed10SHA256": "38cb2e20504146338b1bbdf451a876c694617fe9879b683b7134f7dbaf4edb6b",
+    "otherMixedModesSHA256": "84f8b4561cd4dc28873c59017f9374f1977984432c389660951b56ed0333551f"
+  },
+  "explanationQuality228": {
+    "bankSHA256": "905f48a0ed6f3dd49d1e3236547609d4afc819de6c58c3274931703fc56fc896",
+    "priorExplanations": {
+      "ts-x05": "ip addr (или ifconfig) показывает административный и операционный статус интерфейса, IP-адреса и маски. Позволяет быстро проверить, поднят ли интерфейс и какой адрес назначен.",
+      "ts-x12": "Команды ss -tulpn и netstat -tulpn показывают слушающие (LISTEN) TCP/UDP-сокеты и связанные с ними процессы (PID/имя). Это позволяет проверить, действительно ли сервис открыл нужный порт локально."
+    }
+  }
+}

@@ -65,7 +65,12 @@ export const LESSON_L3_OSPF: Lesson = {
   "relatedQuestionIds": [
     "review-ospf-26",
     "review-ospf-27",
-    "review-ospf-28"
+    "review-ospf-28",
+    "l3-ospf-01",
+    "l3-ospf-02",
+    "l3-ospf-03",
+    "l3-ospf-04",
+    "l3-ospf-05"
   ],
   "sources": [
     "RFC 2328 — OSPF Version 2"

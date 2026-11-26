@@ -11,6 +11,7 @@ await build({ stdin: { contents: `
   export { ALL_QUESTIONS } from './src/data/questionsData';
   export { LESSONS } from './src/data/lessons';
   export { getQuestionDeepDive } from './src/data/questionExplanations';
+  export { DIAGNOSTIC_EXPLANATIONS } from './src/data/diagnosticExplanations';
   export { getStudyTextMode, setStudyTextMode, STUDY_TEXT_MODE_KEY } from './src/utils/studyTextMode';
   export { LessonView } from './src/components/LessonView';
   export { TheoryRazbory } from './src/components/TheoryRazbory';
@@ -19,7 +20,7 @@ await build({ stdin: { contents: `
   bundle: true, platform: 'node', format: 'esm', outfile,
   external: ['react-dom', 'react', 'react-dom/server', 'lucide-react'], logLevel: 'silent' });
 const api = await import(pathToFileURL(outfile).href);
-const { ALL_QUESTIONS, LESSONS, getQuestionDeepDive, getStudyTextMode, setStudyTextMode, STUDY_TEXT_MODE_KEY,
+const { ALL_QUESTIONS, LESSONS, getQuestionDeepDive, DIAGNOSTIC_EXPLANATIONS, getStudyTextMode, setStudyTextMode, STUDY_TEXT_MODE_KEY,
   LessonView, TheoryRazbory, ExamReview } = api;
 const { default: React } = await import('react');
 const { renderToStaticMarkup } = await import('react-dom/server');
@@ -51,19 +52,23 @@ const gapPackIds = ALL_QUESTIONS.filter(q => /^gap-pack[123]-(?:0[1-9]|[12]\d|30
 const stpIds = Array.from({ length: 15 }, (_, i) => `stp-new-${String(i + 1).padStart(2, '0')}`);
 const fourParagraphDualIds = [...newDiagnosticDualIds, ...newL3DualIds, ...newPhotoDualIds, ...gapPackIds, ...stpIds];
 ids.push(...fourParagraphDualIds);
+const issue177Ids = ALL_QUESTIONS.filter(q => /^(?:diag|expert)177-/.test(q.id)).map(q => q.id);
+ids.push(...issue177Ids);
 const diagnosticSkippedIds = ["ts-pack1-01","ts-pack1-02","ts-pack1-03","ts-pack1-07","ts-pack1-08","ts-pack1-09","ts-pack1-10","ts-pack1-11","ts-pack1-12","ts-pack1-13","ts-pack1-14","ts-pack1-15","ts-pack1-16","ts-pack1-17","ts-pack1-18","ts-pack1-19"];
-for (const id of diagnosticSkippedIds) {
+for (const id of diagnosticSkippedIds.filter(id => !Object.hasOwn(DIAGNOSTIC_EXPLANATIONS, id))) {
   const q = ALL_QUESTIONS.find(q => q.id === id);
   assert.ok(q, id);
   assert.equal(getQuestionDeepDive(q).hasIndividualDeep, false, 'no new explanation for skipped question: ' + id);
   assert.equal(getQuestionDeepDive(q).professional, undefined);
 }
-assert.deepEqual(ALL_QUESTIONS.filter(q => getQuestionDeepDive(q).professional).map(q => q.id).sort(), [...ids].sort());
-assert.deepEqual(LESSONS.filter(l => l.professional).map(l => l.id).sort(), ['l2-access-auth', 'l2-access-guard', 'l2-ethernet', 'l2-stp', 'l2-vlan', 'l3-arp', 'l3-ipv6', 'l3-nat', 'l3-ospf', 'l3-rpki', 'l3-vrrp', 'l4-tcp', 'l4-tcp-loss', 'l7-dhcp', 'l7-dns', 'osi-pdu', 'tcpip-model', 'tls-sni', 'ts-copp-storm', 'ts-method']);
+const fundamentalsBatchIds = ['l2-03', 'l2-05', 'l3-01', 'l4-02', 'tcp-02'];
+ids.push(...fundamentalsBatchIds);
+assert.deepEqual(ALL_QUESTIONS.filter(q => getQuestionDeepDive(q).professional).map(q => q.id).sort(), [...ids, ...Object.keys(DIAGNOSTIC_EXPLANATIONS)].sort());
+assert.deepEqual(LESSONS.filter(l => l.professional).map(l => l.id).sort(), ['expert-dnat-reply-policy', 'expert-mrp-vlan-failover', 'expert-optical-reserve-margin', 'l2-access-auth', 'l2-access-guard', 'l2-ethernet', 'l2-stp', 'l2-vlan', 'l3-arp', 'l3-ipv6', 'l3-nat', 'l3-ospf', 'l3-rpki', 'l3-vrrp', 'l4-tcp', 'l4-tcp-loss', 'l7-dhcp', 'l7-dns', 'osi-pdu', 'tcpip-model', 'tls-sni', 'ts-copp-storm', 'ts-method']);
 for (const id of ids) {
   const q = ALL_QUESTIONS.find(q => q.id === id), deep = getQuestionDeepDive(q);
   assert.ok(deep.professional.brief && deep.professional.deep);
-  if (stpIds.includes(id)) assert.equal(deep.professional.sourceCommit, undefined, 'new prose has no historical source revision');
+  if (stpIds.includes(id) || issue177Ids.includes(id) || fundamentalsBatchIds.includes(id)) assert.equal(deep.professional.sourceCommit, undefined, 'new prose has no historical source revision');
   else assert.match(deep.professional.sourceCommit, /^[a-f0-9]{40}$/);
   assert.equal(deep.deepAnalysis.split(/\n\s*\n/).length, fourParagraphDualIds.includes(id) ? 4 : 3, id + ': plain paragraph structure');
   if (fourParagraphDualIds.includes(id)) {
@@ -104,7 +109,7 @@ for (const id of dhcpMeaningOnlyIds) {
   assert.equal(deep.professional, undefined, 'no invented professional DHCP text: ' + id);
 }
 
-const tcpMeaningOnlyIds = ["l4-02", "l4-08", "l4-x01", "l4-x02", "l4-x06", "tcpip-x22"];
+const tcpMeaningOnlyIds = ["l4-08", "l4-x01", "l4-x02", "l4-x06", "tcpip-x22"];
 for (const id of tcpMeaningOnlyIds) {
   const deep = getQuestionDeepDive(ALL_QUESTIONS.find(q => q.id === id));
   assert.ok(deep.hasIndividualDeep, id);
@@ -136,7 +141,7 @@ for (const id of qosMeaningOnlyIds) {
   assert.equal(deep.deepAnalysis.split(/\n\s*\n/).length, 3);
   assert.equal(deep.professional, undefined, 'no invented professional QoS text: ' + id);
 }
-const ethernetMeaningOnlyIds = ["l2-02", "l2-03", "l2-05", "new-l2-full-duplex", "eth-std-8023", "eth-min-frame", "eth-collision"];
+const ethernetMeaningOnlyIds = ["l2-02", "new-l2-full-duplex", "eth-std-8023", "eth-min-frame", "eth-collision"];
 for (const id of ethernetMeaningOnlyIds) {
   const deep = getQuestionDeepDive(ALL_QUESTIONS.find(q => q.id === id));
   assert.ok(deep.hasIndividualDeep, id);
@@ -145,7 +150,7 @@ for (const id of ethernetMeaningOnlyIds) {
 }
 
 // Model questions without an individual explanation remain absent.
-for (const id of ['tcp-01', 'tcp-02', 'tcp-04', 'tcp-08', 'tcpip-x01', 'tcpip-x02', 'tcpip-x03', 'tcpip-x04', 'tcpip-x05', 'tcpip-x13', 'tcpip-x15', 'k-06', 'new-tcpip-payload']) {
+for (const id of ['tcp-01', 'tcp-04', 'tcp-08', 'tcpip-x01', 'tcpip-x02', 'tcpip-x03', 'tcpip-x04', 'tcpip-x05', 'tcpip-x13', 'tcpip-x15', 'k-06', 'new-tcpip-payload']) {
   const deep = getQuestionDeepDive(ALL_QUESTIONS.find(q => q.id === id));
   assert.equal(deep.hasIndividualDeep, false, id);
   assert.equal(deep.professional, undefined, id);

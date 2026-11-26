@@ -41,8 +41,18 @@ export class LabEngine {
 
   /** Switch console target without resetting either device's mode/configuration. */
   selectDevice(deviceId: string): boolean {
-    if (!this.state.devices[deviceId]) return false;
+    if (this.state.devices[deviceId]?.vendor !== this.profile.id) return false;
     this.state = { ...this.state, activeDeviceId: deviceId };
+    return true;
+  }
+
+  /** Physical-layer failure injection; not a config operation and not persisted on reload. */
+  setLinkState(index: number, up: boolean): boolean {
+    if (!Number.isInteger(index) || index < 0 || index >= this.state.links.length) return false;
+    if (this.state.links[index].up === up) return true;
+    const next = cloneState(this.state);
+    next.links[index].up = up;
+    this.state = next;
     return true;
   }
 
@@ -120,6 +130,7 @@ export class LabEngine {
     if (resolved.ambiguous) {
       return { output: '% Ambiguous command: ' + resolved.ambiguous.join(', '), error: true };
     }
+    if (resolved.invalidReason) return { output: resolved.invalidReason, error: true };
     if (resolved.status === 'incomplete') return { output: this.profile.messages.incomplete, error: true };
     const spec = resolved.spec;
     if (!spec) {

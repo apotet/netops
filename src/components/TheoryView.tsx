@@ -9,11 +9,12 @@ import { TheoryRazbory } from './TheoryRazbory';
 import { KnowledgeBase } from './KnowledgeBase';
 
 interface TheoryViewProps {
+  initialLessonId?: string | null;
   onOpenPractice?: (link: PracticeLink) => void;
   initialQuestionId?: string | null;
   fromExam?: boolean;
   onReturnToExam?: () => void;
-  onNavigateToIpv6: () => void;
+  onNavigateToIpv6: (mode: 'concept' | 'type') => void;
   onNavigateToIpv4: (prefix?: number, mode?: 'calc' | 'trainer') => void;
   onClearInitialQuestion?: () => void;
 }
@@ -31,6 +32,7 @@ const SECTIONS: { id: TheorySection; label: string; icon: React.ReactNode }[] = 
 
 export const TheoryView: React.FC<TheoryViewProps> = ({
   onOpenPractice,
+  initialLessonId,
   initialQuestionId,
   fromExam,
   onReturnToExam,
@@ -38,29 +40,40 @@ export const TheoryView: React.FC<TheoryViewProps> = ({
   onNavigateToIpv6,
   onClearInitialQuestion,
 }) => {
-  const [section, setSection] = useState<TheorySection>('razbory');
-  const [lessonId, setLessonId] = useState<string | null>(null);
-  const [returnQuestionId, setReturnQuestionId] = useState<string | null>(null);
+  const [section, setSection] = useState<TheorySection>(initialLessonId ? 'knowledge' : 'razbory');
+  const [lessonId, setLessonId] = useState<string | null>(initialLessonId || null);
+  const [returnQuestionId, setReturnQuestionId] = useState<string | null>(initialLessonId ? initialQuestionId || null : null);
   const [focusQuestionId, setFocusQuestionId] = useState<string | null>(null);
 
   useEffect(() => {
-    if (initialQuestionId) {
+    if (initialLessonId) {
+      setLessonId(initialLessonId);
+      setReturnQuestionId(initialQuestionId || null);
+      setSection('knowledge');
+    } else if (initialQuestionId) {
       setSection('razbory');
       setFocusQuestionId(initialQuestionId);
     }
-  }, [initialQuestionId]);
+  }, [initialQuestionId, initialLessonId]);
 
   const openLesson = (id: string, fromQuestionId?: string) => {
     setLessonId(id);
     setReturnQuestionId(fromQuestionId || focusQuestionId || initialQuestionId || null);
     setSection('knowledge');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: 'auto' });
   };
 
   const openQuestionFromLesson = (questionId: string) => {
     setFocusQuestionId(questionId);
     setSection('razbory');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+  };
+
+  const clearFocusedQuestion = () => {
+    // "К каталогу" must clear the local focus set by "Вернуться к вопросу"
+    // as well as any question supplied by the parent navigation.
+    setFocusQuestionId(null);
+    onClearInitialQuestion?.();
   };
 
   const effectiveQuestionId = focusQuestionId || initialQuestionId;
@@ -115,7 +128,7 @@ export const TheoryView: React.FC<TheoryViewProps> = ({
           onReturnToExam={onReturnToExam}
           onNavigateToIpv4={onNavigateToIpv4}
           onNavigateToIpv6={onNavigateToIpv6}
-          onClearInitialQuestion={onClearInitialQuestion}
+          onClearInitialQuestion={onClearInitialQuestion ? clearFocusedQuestion : undefined}
           onOpenLesson={openLesson}
         />
       )}

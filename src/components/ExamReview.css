@@ -75,8 +75,6 @@
 .review-explanation-text { flex: 1; min-width: 0; }
 .review-explanation h4 { font-size: 14px; font-weight: 750; margin-bottom: 5px; }
 .review-explanation p { font-size: 14px; line-height: 1.65; max-width: 68ch; white-space: pre-line; overflow-wrap: anywhere; }
-.review-lesson { flex-shrink: 0; max-width: 260px; text-align: left; }
-.review-lesson-title { display: block; font-size: 11px; font-weight: 400; color: var(--review-muted); margin-top: 3px; }
 .review-draft { display: flex; gap: 8px; color: var(--review-muted); font-size: 14px; padding-bottom: 16px; }
 .review-draft svg { width: 18px; height: 18px; flex-shrink: 0; }
 .review-empty { text-align: center; padding: 36px 16px; border: 1px dashed var(--review-border); border-radius: 15px; }
@@ -94,7 +92,6 @@
   .review-with-image { grid-template-columns: 1fr; }
   .review-photo { max-height: 270px; }
   .review-explanation { flex-wrap: wrap; }
-  .review-lesson { margin-left: 33px; }
 }
 @media (max-width: 700px) {
   .review-overview { padding: 20px; border-radius: 14px; }
@@ -126,7 +123,6 @@
   .review-explanation { padding: 13px; gap: 9px; margin-top: 16px; }
   .review-explanation p { font-size: 14px; }
   .review-explanation-icon { width: 18px; height: 18px; }
-  .review-lesson { max-width: 100%; width: calc(100% - 27px); margin-left: 27px; }
 }
 @media (prefers-reduced-motion: reduce) { .exam-review *, .exam-review *::before, .exam-review *::after { scroll-behavior: auto; transition: none; } }
 @media (max-width: 400px) {
@@ -189,13 +185,4 @@ main:has(.exam-review) { max-width: 1440px; }
 .review-meme span { font-size: 11px; line-height: 1.35; color: var(--review-muted); }
 @media (max-width: 700px) {
   .review-meme { max-width: none; }
-}
-
-.review-engineering-body { margin-top: 12px; }
-.review-engineering-body p + p { margin-top: 12px; }
-.review-engineering-toggle { display: none; margin-top: 12px; }
-
-@media (max-width: 700px) {
-  .review-engineering-body[data-collapsed="true"] { display: none; }
-  .review-engineering-toggle { display: inline-flex; }
 }

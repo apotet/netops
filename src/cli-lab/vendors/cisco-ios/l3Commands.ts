@@ -1,4 +1,4 @@
-import { isIpv4, isAssignableIpv4, isLayer2Interface, maskToPrefix, ipv4Argument, maskArgument } from './arguments';
+import { isIpv4, isAssignableIpv4, isLayer2Interface, maskToPrefix, ipv4Argument, maskArgument, interfaceMaskArgument } from './arguments';
 import { CommandSpec, DeviceState, NetworkState } from '../../engine/types';
 import { ciscoIosProfile } from './profile';
 import { checkSviIpv4Reachability } from '../../engine/SviIpv4Reachability';
@@ -30,7 +30,7 @@ export const ciscoL3Commands: CommandSpec[] = [
   {
     id: 'cisco.ip_address',
     match: ['ip', 'address'],
-    arguments: [[ipv4Argument, maskArgument]],
+    arguments: [[ipv4Argument, interfaceMaskArgument]],
     modes: ['config-if'],
     minPrivilege: 15,
     handler: (tokens, state, device) => {
@@ -99,6 +99,14 @@ export const ciscoL3Commands: CommandSpec[] = [
       const prefixLen = maskToPrefix(mask);
       if (prefixLen == null) {
         return { output: '% Incomplete or invalid netmask', error: true };
+      }
+      const ipInt = (value: string) => value.split('.').reduce((n, octet) => ((n << 8) | Number(octet)) >>> 0, 0);
+      const maskBits = prefixLen === 0 ? 0 : (0xffffffff << (32 - prefixLen)) >>> 0;
+      if ((ipInt(dest) & maskBits) !== ipInt(dest) || (prefixLen === 0 && dest !== '0.0.0.0')) {
+        return { output: '% Invalid route network address: host bits must be zero', error: true };
+      }
+      if (!isAssignableIpv4(nh, 32) || nh === '255.255.255.255') {
+        return { output: '% Invalid route next-hop address', error: true };
       }
       const entry = { prefix: dest, prefixLen, nextHop: nh, metric: 1 };
       const routes = device.routes.filter((r) => !(r.prefix === dest && r.prefixLen === prefixLen));

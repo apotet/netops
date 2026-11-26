@@ -1,25 +1,19 @@
-import { PracticeLinkButton } from './PracticeLinkButton';
-import type { PracticeLink } from '../data/practiceLinks';
-import React, { useEffect, useId, useRef, useState } from 'react';
-import { BookOpen, CalendarDays, Check, CheckCircle2, ChevronDown, Circle, Diamond, Info, RotateCcw, XCircle } from 'lucide-react';
-import { GlossaryText } from './GlossaryText';
-import { StudyTextToggle } from './StudyTextToggle';
-import { useStudyTextMode } from '../utils/studyTextMode';
-import type { Question } from '../types/quiz';
-import { getQuestionDeepDive } from '../data/questionExplanations';
+import { EngineeringReview, type ExplanationNavigation } from './EngineeringReview';
+import React, { useEffect, useRef, useState } from 'react';
+import { ArrowLeft, CalendarDays, Check, CheckCircle2, ChevronDown, Circle, Diamond, Info, XCircle } from 'lucide-react';
 import type { ProgressSession } from '../utils/examProgress';
 import { filteredReview, reviewTotals, type ReviewFilter } from '../utils/examReview';
+import { TRIAL_EXAM_OPTIONS } from '../data/learningLevelExam';
 import { resolveImageUrl } from '../data/questionsData';
+import { ZoomableImage } from './ZoomableImage';
 import { getOrAssignMemeTitle } from '../data/memeTitles';
 import './ExamReview.css';
 
-interface Props {
-  onOpenPractice?: (link: PracticeLink) => void;
+interface Props extends ExplanationNavigation {
   session: ProgressSession;
   onExit: () => void;
   onRetry?: () => void;
   onLearning?: () => void;
-  onNavigateToTheory?: (questionId: string) => void;
 }
 
 function readView(key: string, preferred: ReviewFilter = 'all'): { filter: ReviewFilter; open: string[] } {
@@ -43,39 +37,7 @@ function scoreLabel(percent: number): { text: string; tone: string } {
   return { text: 'Слабо', tone: 'weak' };
 }
 
-function EngineeringReview({ question, onOpenPractice }: { question: Question; onOpenPractice?: (link: PracticeLink) => void }) {
-  const [textMode, setTextMode] = useStudyTextMode();
-  const [expanded, setExpanded] = useState(false);
-  const contentId = useId();
-  const deepDive = getQuestionDeepDive(question);
-  if (!deepDive.hasIndividualDeep) return null;
-
-  const professional = textMode === 'professional' ? deepDive.professional : undefined;
-  const brief = professional?.brief ?? deepDive.briefAnswer;
-  const analysis = professional?.deep ?? deepDive.deepAnalysis;
-  const isLong = analysis.length > 600;
-  return (
-    <div className="review-explanation">
-      <BookOpen className="review-explanation-icon" aria-hidden="true" />
-      <div className="review-explanation-text">
-        <h4>Инженерный разбор</h4>
-        {deepDive.professional && <StudyTextToggle value={textMode} onChange={setTextMode} />}
-        {professional?.notice && <p className="text-xs text-amber-700 dark:text-amber-300">{professional.notice}</p>}
-        <p><GlossaryText key={textMode} enabled={!professional}>{brief}</GlossaryText></p>
-        <div id={contentId} className="review-engineering-body" data-collapsed={isLong && !expanded}>
-          {analysis.split(/\n\s*\n/).map((paragraph, index) => <p key={index}><GlossaryText key={textMode} enabled={!professional}>{paragraph}</GlossaryText></p>)}
-        </div>
-        <PracticeLinkButton link={deepDive.practiceLink} onOpenPractice={onOpenPractice} className="review-button mt-3" />
-        {isLong && <button type="button" className="review-button review-engineering-toggle"
-          aria-expanded={expanded} aria-controls={contentId} onClick={() => setExpanded(current => !current)}>
-          {expanded ? 'Свернуть разбор' : 'Читать полный разбор'}
-        </button>}
-      </div>
-    </div>
-  );
-}
-
-export function ExamReview({ session, onExit, onRetry, onLearning, onNavigateToTheory, onOpenPractice }: Props) {
+export function ExamReview({ session, onExit, onRetry, onLearning, ...navigation }: Props) {
   const viewKey = `osi_review_view:${session.attemptId || session.startTime}`;
   const totals = session.isCompleted ? reviewTotals(session) : { total: 0, correct: 0, wrong: 0, unanswered: 0, percentage: 0 };
   const preferred: ReviewFilter = totals.wrong > 0 ? 'wrong' : 'all';
@@ -86,7 +48,9 @@ export function ExamReview({ session, onExit, onRetry, onLearning, onNavigateToT
   }, [view, viewKey]);
   if (!session.isCompleted) return null;
   const grade = scoreLabel(totals.percentage);
-  const meme = getOrAssignMemeTitle(session.attemptId || String(session.startTime), totals.percentage);
+  const meme = session.trialDeadline === undefined
+    ? getOrAssignMemeTitle(session.attemptId || String(session.startTime), totals.percentage)
+    : null;
   const radius = 36;
   const circumference = 2 * Math.PI * radius;
   const dash = circumference - (totals.percentage / 100) * circumference;
@@ -111,7 +75,11 @@ export function ExamReview({ session, onExit, onRetry, onLearning, onNavigateToT
   return (
     <section aria-label="Разбор завершённого экзамена" className="exam-review">
       <header className="review-overview">
-        <h2 className="text-2xl sm:text-3xl font-sans font-bold">Итоги экзамена</h2>
+        <h2 className="text-2xl sm:text-3xl font-sans font-bold">{session.trialDeadline === undefined ? 'Итоги экзамена' : 'Итоги пробного экзамена'}</h2>
+        {session.trialDifficulty && <p className="text-sm text-slate-600 dark:text-slate-300">{TRIAL_EXAM_OPTIONS[session.trialDifficulty].title}</p>}
+        {session.trialDeadline !== undefined && session.endTime === session.trialDeadline && (
+          <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">Время вышло. Учтены подтверждённые ответы.</p>
+        )}
         <div className="review-overview-body">
           <div className="review-score-wrap">
             <div className="review-score-ring" aria-hidden="true">
@@ -121,11 +89,15 @@ export function ExamReview({ session, onExit, onRetry, onLearning, onNavigateToT
               </svg>
               <p className="review-score" aria-label={`Результат: ${totals.percentage} процентов`}>{totals.percentage}<span>%</span></p>
             </div>
-            <span className={`review-grade review-grade-${grade.tone}`}>{grade.text}</span>
-            <div className="review-meme" title={meme.setName}>
-              <strong>{meme.title}</strong>
-              <span>{meme.comment}</span>
-            </div>
+            {meme && (
+              <>
+                <span className={`review-grade review-grade-${grade.tone}`}>{grade.text}</span>
+                <div className="review-meme" title={meme.setName}>
+                  <strong>{meme.title}</strong>
+                  <span>{meme.comment}</span>
+                </div>
+              </>
+            )}
           </div>
           <ul className="review-totals" aria-label="Результат попытки">
             <li><CheckCircle2 aria-hidden="true" /><strong>{totals.correct} из {totals.total} верно</strong></li>
@@ -141,7 +113,8 @@ export function ExamReview({ session, onExit, onRetry, onLearning, onNavigateToT
               {totals.wrong ? 'Разобрать ошибки' : totals.unanswered ? 'Разобрать без ответа' : 'Посмотреть ответы'}
             </button>
             <button type="button" onClick={onLearning || onExit} className="review-button">К обучению</button>
-            {onRetry && <button type="button" onClick={onRetry} className="review-button">Новый тест</button>}
+            <button type="button" onClick={onExit} className="review-button">Вернуться к тестам</button>
+            {onRetry && <button type="button" onClick={onRetry} className="review-button">{session.trialDeadline === undefined ? 'Новый тест' : 'Повторить пробный экзамен'}</button>}
           </div>
         </div>
       </header>
@@ -189,7 +162,7 @@ export function ExamReview({ session, onExit, onRetry, onLearning, onNavigateToT
               )}
               {!row.confirmed && <p className="review-draft"><Info aria-hidden="true" />{row.chosen.length ? 'Выбор не был подтверждён и не засчитан.' : 'Ответ не был выбран.'}</p>}
               <div className={`review-answer-layout${row.question.image ? ' review-with-image' : ''}`}>
-                {row.question.image && <img src={resolveImageUrl(row.question.image)} alt={row.question.imageAlt || 'Иллюстрация к вопросу'} loading="lazy" className="review-photo" />}
+                {row.question.image && <ZoomableImage src={resolveImageUrl(row.question.image)} alt={row.question.imageAlt || 'Иллюстрация к вопросу'} className="min-w-0" imgClassName="review-photo" />}
                 <ul className="review-answers" aria-label={row.question.correct.length > 1 ? 'Варианты: правильных ответов несколько' : 'Варианты ответа'}>
                   {row.question.answers.map((answer, i) => {
                     const chosen = row.chosen.includes(i);
@@ -206,17 +179,14 @@ export function ExamReview({ session, onExit, onRetry, onLearning, onNavigateToT
                 </ul>
               </div>
               <div className="review-explanation">
-                <Info className="review-explanation-icon" aria-hidden="true" />
-                <div className="review-explanation-text"><h4>Почему так</h4><p>{row.explanation || 'Индивидуальное объяснение в сохранённом вопросе отсутствует.'}</p></div>
-                {row.lesson && onNavigateToTheory && <button type="button" onClick={() => onNavigateToTheory(row.question.id)} className="review-button review-lesson" aria-label={`Разобрать подробнее: ${row.lesson.title}`}><BookOpen aria-hidden="true" /><span>Разобрать подробнее<span className="review-lesson-title">{row.lesson.title}</span></span></button>}
+                <div className="review-explanation-text"><EngineeringReview key={row.question.id} question={row.question} {...navigation} /></div>
               </div>
-              <EngineeringReview question={row.question} onOpenPractice={onOpenPractice} />
             </div>
           </details>
         ))}
       </div>
       {!rows.length && <div className="review-empty"><CheckCircle2 aria-hidden="true" /><h4>{view.filter === 'wrong' ? 'Ошибок в этой попытке нет' : 'В этом фильтре вопросов нет'}</h4><button type="button" className="review-button" onClick={() => setView(current => ({ ...current, filter: 'all' }))}>Показать все ответы</button></div>}
-      <button type="button" className="review-back" onClick={onExit}><RotateCcw aria-hidden="true" />К параметрам экзамена</button>
+      <button type="button" className="review-back" onClick={onExit}><ArrowLeft aria-hidden="true" />Вернуться к тестам</button>
     </section>
   );
 }

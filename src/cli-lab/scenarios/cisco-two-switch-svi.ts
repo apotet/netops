@@ -55,7 +55,7 @@ const sw2Goals = switchGoals('sw2', '192.168.10.3');
 export const ciscoTwoSwitchSviScenario: Scenario = {
   id: 'cisco-two-switch-management-svi',
   title: 'С нуля: два Cisco, VLAN и IP управления',
-  description: 'Два L2-коммутатора SW1 и SW2 соединены через Fa0/24. Настройте VLAN 10, клиентские Fa0/1, trunk и IP управления на interface Vlan10: SW1 — 192.168.10.2/24, SW2 — 192.168.10.3/24. Проверьте конфигурационный L2-путь и сохраните настройки на обоих устройствах. Команда ping проверяет ограниченную модель IP-связности SVI; ARP и настоящие ICMP-пакеты не эмулируются, локальный autostate SVI оценивается по поднятому порту его VLAN; сквозной путь проверяется отдельно (STP не моделируется).',
+  description: 'Два L2-коммутатора SW1 и SW2 соединены через Fa0/24. Настройте VLAN 10, клиентские Fa0/1, trunk и IP управления на interface Vlan10: SW1 — 192.168.10.2/24, SW2 — 192.168.10.3/24. Проверьте конфигурационный L2-путь и сохраните настройки на обоих устройствах. Команда ping проверяет ограниченную модель IP-связности SVI; ARP и настоящие ICMP-пакеты не эмулируются, локальный autostate SVI оценивается по поднятому порту его VLAN; сквозной путь проверяется отдельно (учитывается устойчивое состояние CST).',
   vendor: 'cisco-ios',
   concepts: ['cisco-ios-modes', 'vlan', 'trunk', 'access-port', 'svi', 'ipv4', 'multi-device', 'l2-path', 'config-persistence'],
   difficulty: 2,
@@ -117,5 +117,5 @@ export const ciscoTwoSwitchSviScenario: Scenario = {
     { type: 'config.saved', device: 'sw1' },
     { type: 'config.saved', device: 'sw2' },
   ],
-  successMessage: 'SW1 и SW2 настроены: VLAN 10, trunk и оба SVI IP записаны; конфигурационный L2-путь проверен, startup-config обоих сохранены. Ping подтверждён моделью конфигурации SVI/IPv4; реальный ICMP не эмулируется, а локальный SVI autostate моделируется без STP.',
+  successMessage: 'SW1 и SW2 настроены: VLAN 10, trunk и оба SVI IP записаны; конфигурационный L2-путь проверен, startup-config обоих сохранены. Ping подтверждён моделью конфигурации SVI/IPv4; реальный ICMP не эмулируется, а локальный SVI autostate учитывает CST forwarding.',
 };

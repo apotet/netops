@@ -50,7 +50,9 @@ const check = (mode, line, outcome, cr = outcome === 'complete') => {
 // IPv4 lexical acceptance and interface-assignment policy are separate.
 for (const ip of ['192.0.2.1', '0.0.0.0', '255.255.255.255']) {
   check('config-if', `ip address ${ip} 255.255.255.0`, ip === '192.0.2.1' ? 'complete' : 'invalid', true);
-  check('config', `ip route ${ip} 0.0.0.0 ${ip}`, 'complete');
+  // IPv4 grammar accepts these literals; route semantics must reject invalid
+  // destinations or next-hops without changing the running state.
+  check('config', `ip route ${ip} 0.0.0.0 ${ip}`, 'invalid', true);
 }
 for (let prefix = 0; prefix <= 32; prefix++) {
   const mask = Array.from({ length: 4 }, (_, i) => {
@@ -72,6 +74,14 @@ for (const addr of ['192.0.2.0', '192.0.2.255']) {
   assert.deepEqual(routed.getState(), before);
 }
 
+
+// Strict route semantics must reject host bits and unsafe next hops.
+for (const cmd of [
+  'ip route 10.0.0.5 255.255.255.0 192.0.2.254',
+  'ip route 0.0.0.0 0.0.0.0 0.0.0.0',
+  'ip route 0.0.0.0 0.0.0.0 255.255.255.255',
+]) check('config', cmd, 'invalid', true);
+
 const invalidIps = ['192..1.1', '1.2.3.', '.1.2.3', '1.2.3.256', '1.2.x.4', '-1.2.3.4', '1.2.3.4.5',
   '01.2.3.4', '+1.2.3.4', '1e1.2.3.4', '0x1.2.3.4', '1.2.3', '1.2.3.-1', '1.2.3.+4', '000.0.0.0'];
 for (const ip of invalidIps) {
@@ -88,9 +98,14 @@ for (const line of ['ip route', 'ip route 192.0.2.0', 'ip route 192.0.2.0 255.25
 
 // Every registered command gets an explicit valid witness and a tail-rejection test.
 const samples = {
+  'cisco.stp_bridge_priority': 'spanning-tree vlan 1 priority 4096',
+  'cisco.no_stp_bridge_priority': 'no spanning-tree vlan 1 priority',
+  'cisco.stp_cost': 'spanning-tree cost 10',
+  'cisco.stp_port_priority': 'spanning-tree port-priority 16',
   'cisco.hostname': 'hostname NETOPS', 'cisco.vlan': 'vlan 20', 'cisco.vlan_name': 'name Users',
   'cisco.interface': 'interface Fa0/1', 'cisco.switchport_access_vlan': 'switchport access vlan 20',
   'cisco.ip_address': 'ip address 192.0.2.1 255.255.255.0', 'cisco.ip_route': 'ip route 0.0.0.0 0.0.0.0 192.0.2.254',
+  'cisco.show_ip_interface': 'show ip interface FastEthernet0/1',
   'cisco.ping': 'ping 192.0.2.1',
   'cisco.do': 'do show ip interface brief',
   'cisco.switchport_trunk_allowed_vlan': 'switchport trunk allowed vlan 10,20',

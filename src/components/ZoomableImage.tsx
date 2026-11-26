@@ -9,9 +9,12 @@ interface ZoomableImageProps {
   imgClassName?: string;
   /** Open fullscreen viewer on click (default true) */
   fullscreenOnClick?: boolean;
+  /** Keep tall lesson cheat sheets fully visible before opening the viewer. */
+  previewFullHeight?: boolean;
 }
 
-const MIN_SCALE = 1;
+// 100% means that the entire photo fits in the viewport.
+const MIN_SCALE = 0.5;
 const MAX_SCALE = 6;
 
 export const ZoomableImage: React.FC<ZoomableImageProps> = ({
@@ -21,9 +24,11 @@ export const ZoomableImage: React.FC<ZoomableImageProps> = ({
   className = '',
   imgClassName = '',
   fullscreenOnClick = true,
+  previewFullHeight = false,
 }) => {
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const imageRef = useRef<HTMLImageElement | null>(null);
   const [scale, setScale] = useState(1);
   const [offset, setOffset] = useState({ x: 0, y: 0 });
   const scaleRef = useRef(1);
@@ -37,6 +42,25 @@ export const ZoomableImage: React.FC<ZoomableImageProps> = ({
   useEffect(() => {
     offsetRef.current = offset;
   }, [offset]);
+
+  // Allow panning only within the scaled image's actual overflow in each axis.
+  const clampOffset = useCallback((point: { x: number; y: number }, atScale: number) => {
+    const container = containerRef.current;
+    const img = imageRef.current;
+    if (!container || !img) return { x: 0, y: 0 };
+    const maxX = Math.max(0, (img.offsetWidth * atScale - container.clientWidth) / 2);
+    const maxY = Math.max(0, (img.offsetHeight * atScale - container.clientHeight) / 2);
+    return {
+      x: Math.max(-maxX, Math.min(maxX, point.x)),
+      y: Math.max(-maxY, Math.min(maxY, point.y)),
+    };
+  }, []);
+
+  const updateOffset = useCallback((point: { x: number; y: number }) => {
+    const next = clampOffset(point, scaleRef.current);
+    offsetRef.current = next;
+    setOffset(next);
+  }, [clampOffset]);
 
   const resetTransform = useCallback(() => {
     setScale(1);
@@ -71,31 +95,43 @@ export const ZoomableImage: React.FC<ZoomableImageProps> = ({
 
   const clampScale = (s: number) => Math.min(MAX_SCALE, Math.max(MIN_SCALE, s));
 
-  const applyScaleAt = useCallback((nextScale: number, clientX: number, clientY: number) => {
-    const el = containerRef.current;
-    if (!el) return;
-    const rect = el.getBoundingClientRect();
-    const cx = clientX - rect.left - rect.width / 2;
-    const cy = clientY - rect.top - rect.height / 2;
-    const prev = scaleRef.current;
+  const applyScaleAt = useCallback((nextScale: number, clientX?: number, clientY?: number) => {
     const s = clampScale(nextScale);
-    if (s === prev) return;
-
-    const ratio = s / prev;
-    const ox = offsetRef.current.x;
-    const oy = offsetRef.current.y;
-    const nx = cx - (cx - ox) * ratio;
-    const ny = cy - (cy - oy) * ratio;
-
-    if (s === 1) {
-      resetTransform();
-    } else {
-      setScale(s);
-      setOffset({ x: nx, y: ny });
-      scaleRef.current = s;
-      offsetRef.current = { x: nx, y: ny };
+    const prev = scaleRef.current;
+    if (Math.abs(s - prev) < 0.0001) return;
+    let next = { ...offsetRef.current };
+    const container = containerRef.current;
+    if (container) {
+      const rect = container.getBoundingClientRect();
+      const cx = (clientX ?? rect.left + rect.width / 2) - rect.left - rect.width / 2;
+      const cy = (clientY ?? rect.top + rect.height / 2) - rect.top - rect.height / 2;
+      const ratio = s / prev;
+      next = { x: cx - (cx - next.x) * ratio, y: cy - (cy - next.y) * ratio };
     }
-  }, [resetTransform]);
+    next = clampOffset(next, s);
+    scaleRef.current = s;
+    offsetRef.current = next;
+    setScale(s);
+    setOffset(next);
+  }, [clampOffset]);
+
+  const moveBy = useCallback((dx: number, dy: number) => {
+    updateOffset({ x: offsetRef.current.x + dx, y: offsetRef.current.y + dy });
+  }, [updateOffset]);
+
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowUp') { e.preventDefault(); moveBy(0, 64); }
+      if (e.key === 'ArrowDown') { e.preventDefault(); moveBy(0, -64); }
+      if (e.key === 'ArrowLeft') { e.preventDefault(); moveBy(64, 0); }
+      if (e.key === 'ArrowRight') { e.preventDefault(); moveBy(-64, 0); }
+      if (e.key === '+' || e.key === '=') applyScaleAt(scaleRef.current * 1.25);
+      if (e.key === '-' || e.key === '_') applyScaleAt(scaleRef.current / 1.25);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [open, moveBy, applyScaleAt]);
 
   useEffect(() => {
     if (!open) return;
@@ -147,16 +183,14 @@ export const ZoomableImage: React.FC<ZoomableImageProps> = ({
       e.preventDefault();
       const dx = e.touches[0].clientX - dragRef.current.x;
       const dy = e.touches[0].clientY - dragRef.current.y;
-      const next = { x: dragRef.current.ox + dx, y: dragRef.current.oy + dy };
-      setOffset(next);
-      offsetRef.current = next;
+      updateOffset({ x: dragRef.current.ox + dx, y: dragRef.current.oy + dy });
     }
   };
 
   const onTouchEnd = () => {
     pinchRef.current = null;
     dragRef.current = null;
-    if (scaleRef.current <= 1.02) resetTransform();
+    // Do not snap 50% / 75% pinch-zoom back to 100%.
   };
 
   const onDoubleClick = (e: React.MouseEvent) => {
@@ -187,7 +221,7 @@ export const ZoomableImage: React.FC<ZoomableImageProps> = ({
             alt={alt}
             draggable={false}
             loading="lazy"
-            className={`max-h-80 w-full object-contain rounded-xl mx-auto pointer-events-none ${imgClassName}`}
+            className={`${previewFullHeight ? 'max-h-none' : 'max-h-80'} w-full object-contain rounded-xl mx-auto pointer-events-none ${imgClassName}`}
             onError={(e) => {
               (e.target as HTMLElement).style.display = 'none';
             }}
@@ -239,6 +273,7 @@ export const ZoomableImage: React.FC<ZoomableImageProps> = ({
 
           <div
             ref={containerRef}
+            data-photo-viewer-pan
             className="relative flex-1 overflow-hidden touch-none select-none cursor-grab active:cursor-grabbing"
             style={{ touchAction: 'none' }}
             onTouchStart={onTouchStart}
@@ -247,7 +282,8 @@ export const ZoomableImage: React.FC<ZoomableImageProps> = ({
             onTouchCancel={onTouchEnd}
             onDoubleClick={onDoubleClick}
             onMouseDown={(e) => {
-              if (scaleRef.current <= 1) return;
+              if (e.button !== 0 || scaleRef.current <= 1) return;
+              e.preventDefault();
               dragRef.current = {
                 x: e.clientX,
                 y: e.clientY,
@@ -256,12 +292,10 @@ export const ZoomableImage: React.FC<ZoomableImageProps> = ({
               };
               const onMove = (ev: MouseEvent) => {
                 if (!dragRef.current) return;
-                const next = {
+                updateOffset({
                   x: dragRef.current.ox + (ev.clientX - dragRef.current.x),
                   y: dragRef.current.oy + (ev.clientY - dragRef.current.y),
-                };
-                setOffset(next);
-                offsetRef.current = next;
+                });
               };
               const onUp = () => {
                 dragRef.current = null;
@@ -273,22 +307,43 @@ export const ZoomableImage: React.FC<ZoomableImageProps> = ({
             }}
           >
             <img
+              ref={imageRef}
+              data-photo-viewer-image
               src={src}
               alt={alt}
               draggable={false}
-              className="absolute top-1/2 left-1/2 max-w-none pointer-events-none"
+              className="absolute top-1/2 left-1/2 block object-contain pointer-events-none"
               style={{
-                width: 'min(100vw, 1200px)',
+                // Fit BOTH dimensions. The old fixed width overflowed tall
+                // photos vertically even at the nominal 100% zoom.
+                width: 'auto',
                 height: 'auto',
-                maxHeight: 'none',
+                maxWidth: '100%',
+                maxHeight: '100%',
                 transform: `translate(-50%, -50%) translate(${offset.x}px, ${offset.y}px) scale(${scale})`,
                 transformOrigin: 'center center',
               }}
             />
           </div>
 
-          <div className="px-3 py-2 text-[10px] sm:text-[11px] text-white/50 font-mono text-center border-t border-white/10 shrink-0">
-            Колесо / щипок — зум · перетаскивание — сдвиг · двойной клик — 250% / сброс · Esc — закрыть
+          <div className="flex flex-wrap items-center justify-center gap-1.5 px-2 pt-2 border-t border-white/10 shrink-0" aria-label="Масштаб фотографии">
+            <button type="button" onClick={() => applyScaleAt(scaleRef.current / 1.25)}
+              disabled={scale <= MIN_SCALE} aria-label="Уменьшить фото"
+              className="min-h-9 min-w-9 rounded-lg bg-white/10 text-white disabled:opacity-30">−</button>
+            {([0.5, 0.75, 1] as const).map(value => (
+              <button key={value} type="button" onClick={() => applyScaleAt(value)}
+                aria-label={`Масштаб ${Math.round(value * 100)}%`}
+                aria-pressed={Math.abs(scale - value) < 0.01}
+                className={`min-h-9 rounded-lg border px-2.5 text-[12px] font-mono ${Math.abs(scale - value) < 0.01 ? 'border-cyan-400 text-cyan-300' : 'border-white/20 text-white/80'}`}>
+                {Math.round(value * 100)}%
+              </button>
+            ))}
+            <button type="button" onClick={() => applyScaleAt(scaleRef.current * 1.25)}
+              disabled={scale >= MAX_SCALE} aria-label="Увеличить фото"
+              className="min-h-9 min-w-9 rounded-lg bg-white/10 text-white disabled:opacity-30">+</button>
+          </div>
+          <div className="px-3 pb-2 pt-1.5 text-[10px] sm:text-[11px] text-white/50 font-mono text-center shrink-0">
+            100% — фото целиком · колесо / щипок — масштаб · перетаскивание — сдвиг · Esc — закрыть
           </div>
         </div>
       )}

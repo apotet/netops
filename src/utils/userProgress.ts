@@ -2,7 +2,10 @@ import { ALL_QUESTIONS } from '../data/questionsData';
 import type { Question } from '../types/quiz';
 
 export const PROGRESS_KEY = 'osi_user_progress_v4';
-const LEGACY_KEYS = ['osi_user_progress_v3', 'osi_last_mistakes', 'osi_exam_history', 'osi_active_session'];
+export const LEGACY_ACTIVE_ATTEMPT_KEY = 'osi_active_session';
+export const N5_ACTIVE_ATTEMPT_KEY = 'osi_active_session_netops_n5';
+const LEGACY_KEYS = ['osi_user_progress_v3', 'osi_last_mistakes', 'osi_exam_history', LEGACY_ACTIVE_ATTEMPT_KEY];
+const RESET_KEYS = [...LEGACY_KEYS, N5_ACTIVE_ATTEMPT_KEY];
 const GROUP_NAMES: Record<string, string> = {
   'visual-l1': 'Фото L1', 'l1-l2': 'L1–L2', l3: 'L3', l4: 'L4', 'l5-l7': 'L5–L7',
   tcpip: 'TCP/IP', troubleshooting: 'Диагностика',
@@ -129,8 +132,7 @@ export function createProgressStore(bank: readonly Question[], storage: () => St
       return model;
     } catch { readBlocked = true; storageWarning = true; return memory ||= emptyProgress(); }
   }
-  function record(id: string, correct: boolean, receipt: string, expectedEpoch: string, timestamp = now()): boolean {
-    const model = load();
+  function addResult(model: ProgressModel, id: string, correct: boolean, receipt: string, expectedEpoch: string, timestamp: number): boolean {
     if (!byId.has(id) || !receipt || model.epoch !== expectedEpoch || Object.hasOwn(model.receipts, receipt) ||
         !count(timestamp) || timestamp > now()) return false;
     const q = model.questions[id] ||= emptyQuestion();
@@ -138,7 +140,35 @@ export function createProgressStore(bank: readonly Question[], storage: () => St
     if (correct) { q.correct++; q.streak++; } else { q.wrong++; q.streak = 0; q.lastWrong = timestamp; }
     model.receipts[receipt] = true;
     model.dates = [...new Set([...model.dates, localDate(timestamp)])].sort();
+    return true;
+  }
+  function record(id: string, correct: boolean, receipt: string, expectedEpoch: string, timestamp = now()): boolean {
+    const model = load();
+    if (!addResult(model, id, correct, receipt, expectedEpoch, timestamp)) return false;
     persist(model); notify(); return true;
+  }
+  function updateDurably(update: (model: ProgressModel) => boolean): boolean {
+    try {
+      // The active slot is the retry log. Never keep a failed derived update
+      // as a dirty model that could later overwrite another tab's receipts.
+      const target = storage();
+      if (!target || dirty) throw Error('Progress storage unavailable');
+      const raw = target.getItem(PROGRESS_KEY);
+      const model = parse(raw);
+      if (!validModel(model)) throw Error('No durable progress model');
+      if (!update(model)) return false;
+      const next = JSON.stringify(model);
+      if (target.getItem(PROGRESS_KEY) !== raw) throw Error('Progress storage changed');
+      if (next !== raw) {
+        target.setItem(PROGRESS_KEY, next);
+        if (target.getItem(PROGRESS_KEY) !== next) throw Error('Progress update could not be verified');
+      }
+      memory = model; storageWarning = false;
+    } catch { storageWarning = true; notify(); return false; }
+    notify(); return true;
+  }
+  function recordDurably(id: string, correct: boolean, receipt: string, expectedEpoch: string, timestamp = now()): boolean {
+    return updateDurably(model => addResult(model, id, correct, receipt, expectedEpoch, timestamp));
   }
   function mistakes(limit = bank.length): Question[] {
     const model = load();
@@ -170,18 +200,27 @@ export function createProgressStore(bank: readonly Question[], storage: () => St
   function reset() {
     // The caller confirms irreversible deletion or exports first. Write the new epoch before cleanup.
     persist(emptyProgress());
-    if (!dirty) for (const key of LEGACY_KEYS) {
+    if (!dirty) for (const key of RESET_KEYS) {
       try { storage()?.removeItem(key); } catch { storageWarning = true; }
     }
     notify(); return summary();
   }
   function retainBackup(key: string, raw: string) {
-    const model = load();
-    const name = model.backup[key] && model.backup[key] !== raw ? `${key}:${epoch()}` : key;
-    model.backup[name] = raw; model.migrationNotice = true;
-    persist(model); notify();
+    // Preserve existing callers' migration-on-first-use, but archive only
+    // against the actual current durable model.
+    load();
+    return updateDurably(model => {
+      const alreadyStored = Object.entries(model.backup).some(([name, value]) =>
+        (name === key || name.startsWith(key + ':')) && value === raw);
+      if (!alreadyStored) {
+        const name = model.backup[key] !== undefined ? `${key}:${epoch()}` : key;
+        model.backup[name] = raw;
+      }
+      model.migrationNotice = true;
+      return true;
+    });
   }
-  return { load, record, mistakes, summary, reset, retainBackup, subscribe(listener: () => void) {
+  return { load, record, recordDurably, mistakes, summary, reset, retainBackup, subscribe(listener: () => void) {
     listeners.add(listener); return () => { listeners.delete(listener); };
   }, refresh: notify, export: () => JSON.stringify(load(), null, 2) };
 }
@@ -191,8 +230,11 @@ if (typeof window !== 'undefined') window.addEventListener('storage', event => {
 });
 export const getInitialProgress = store.summary;
 export const getProgressEpoch = () => store.load().epoch;
+export const getLegacyAttemptBackups = () => Object.entries(store.load().backup)
+  .filter(([key]) => key === LEGACY_ACTIVE_ATTEMPT_KEY || key.startsWith(LEGACY_ACTIVE_ATTEMPT_KEY + ':'))
+  .map(([, raw]) => raw);
 export const getMistakeQuestions = store.mistakes;
-export const recordQuestionResult = store.record;
+export const recordQuestionResult = store.recordDurably;
 export const subscribeProgress = store.subscribe;
 export const resetProgress = store.reset;
 export const exportProgress = store.export;

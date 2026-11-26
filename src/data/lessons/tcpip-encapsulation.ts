@@ -7,8 +7,12 @@ export const LESSON_TCPIP_ENCAPSULATION: Lesson = {
   osiLayers: ['L2', 'L3', 'L4'],
   difficulty: 'applied',
   summary: 'Как читать вложенные заголовки и границы данных: Protocol в IPv4, фрагментация, PPP после IPCP, внешний IP в GRE и область проверки FCS и checksum.',
-  terms: ['TCP/IP', 'инкапсуляция', 'IPv4', 'TCP', 'UDP', 'MTU', 'padding', 'FCS'],
+  terms: ['TCP/IP', 'инкапсуляция', 'IPv4', 'TCP', 'UDP', 'Ethernet', 'TTL', '802.1Q', 'MTU', 'padding', 'FCS'],
   blocks: [
+    {
+      heading: 'Порты и адреса на разных участках пути',
+      body: "При передаче HTTP/1.1 по TCP транспортный заголовок содержит порты источника и назначения. При обычной пересылке IPv4 без NAT маршрутизатор сохраняет IP-адреса, уменьшает TTL и обновляет контрольную сумму заголовка. Между двумя Ethernet-участками он формирует новый кадр: Source MAC выходного интерфейса и Destination MAC следующего узла.",
+    },
     {
       heading: 'Что происходит при передаче пакета',
       body: 'Чтобы доставить сообщение, компьютер добавляет к нему сведения для разных этапов пути: какой программе передать данные, к какому узлу их направить и как отправить ближайшему соседу. Получатель читает эти сведения снаружи внутрь, пока не доберётся до данных программы.\n\nТакое вложение называется инкапсуляцией. Например, данные программы находятся внутри UDP-датаграммы, та — внутри IP-пакета, а пакет — внутри Ethernet-кадра. На следующем канале внешняя оболочка может быть другой, например PPP. Маршрутизатор завершает передачу по входному каналу и готовит пакет к выходному; ему не обязательно разбирать сообщение до приложения.',
@@ -43,6 +47,12 @@ export const LESSON_TCPIP_ENCAPSULATION: Lesson = {
     },
   ],
   relatedQuestionIds: [
+    'tcp-07',
+    'tcp-09',
+    'new-tcpip-payload',
+    'tcpip-x04',
+    'tcpip-x03',
+    'tcpip-d01',
     'gap-pack2-01',
     'gap-pack2-03',
     'gap-pack2-05',
@@ -59,4 +69,16 @@ export const LESSON_TCPIP_ENCAPSULATION: Lesson = {
     'RFC 2784 — Generic Routing Encapsulation (GRE)',
     'IEEE 802.3 — Ethernet MAC frame и Frame Check Sequence',
   ],
+  professional: {
+    summary: "Инженерное чтение вложенных PDU: IPv4 Protocol, MTU и MSS, Fragment Offset, GRE/PPP и границы контрольных сумм.",
+    terms: ["IPv4","TCP","UDP","ICMP","MTU","MSS","FCS","TTL","GRE","PPP","ARP","инкапсуляция"],
+    blocks: [
+      { heading: "Иерархия полей: от Ethernet до приложения", body: "Разделяй заголовки по принадлежности. Ethernet EtherType 0x0800 указывает IPv4, поле IPv4 Protocol=6/17/1 — TCP/UDP/ICMP соответственно; порт появляется только после выбора транспорта. В модели TCP/IP Internet Layer работает с IP-пакетом, а не с Ethernet-кадром и не с TCP-сегментом.\n\nВ Wireshark раскрывай иерархию Ethernet → IPv4 → TCP/UDP/ICMP. При маршрутизации без NAT IP-адреса обычно остаются прежними, TTL уменьшается и пересчитывается IPv4 Header Checksum, а Ethernet Src/Dst MAC назначаются для нового участка. Не переносить MAC-поля сквозь маршрутизатор." },
+      { heading: "Проверка MTU, TCP MSS и длины UDP", body: "MTU Ethernet 1500 ограничивает весь IP-пакет (IPv4 header + payload), исключая Ethernet header и FCS. Если IPv4 IHL=5 (5×4=20 B), TCP Data Offset=5 (5×4=20 B) и опций нет, максимально подходящий TCP payload 1500−20−20=1460 B. MSS option в SYN описывает приёмную способность отправителя этого SYN, и направление важно. PMTU, опции и реальный advertised MSS могут ограничивать передачу сильнее.\n\nUDP Length включает восьмибайтовый заголовок. Например, UDP Length=20 означает 12 байт UDP payload; IPv4 Total Length дополнительно включает IP header. Ethernet padding не прибавляют к IP Total Length и не передают программе. При анализе не смешивай packet capture size и длины разных PDU." },
+      { heading: "Фрагменты IPv4 и ограничения транспорта", body: "Фрагментация IPv4 по RFC 791 использует Identification, Fragment Offset в блоках по 8 байт и флаг MF. Для payload 3000 B, IPv4 header=20 B и MTU=1500 подходящее разбиение без опций: 1480+1480+40 B, смещения 0/185/370, MF=1/1/0. Транспортные порты находятся в начале первоначальной IP-полезной нагрузки и отсутствуют как заголовок в последующих фрагментах.\n\nДля диагноза сопоставляй IPv4 source/destination, Protocol, Identification, Offset и MF. Один нефрагментный захват не доказывает, что реассамблирование завершилось; IP-фрагменты нельзя классифицировать по байтам на месте несуществующего отдельного TCP/UDP header." },
+      { heading: "Туннель и PPP: какой адрес реально маршрутизируют", body: "При GRE over IPv4 внешний IP header помечает Protocol=47, далее GRE и внутренний пакет. Транзитная маршрутизация выполняет поиск по внешнему Destination IP туннельного endpoint; внутренний адрес начинает играть роль после декапсуляции. При PPP после IPCP IPv4 передаётся с PPP Protocol=0x0021, ARP Ethernet не является обязательным шагом.\n\nНе путать PPP Protocol с IPv4 Protocol. Достижимость GRE endpoint должна существовать по underlay-маршруту, иначе возможна рекурсия через собственный туннель. Проверяй сначала фактический внешний маршрут и его next hop." },
+      { heading: "FCS, IPv4 checksum и диагностика повреждений", body: "Ethernet FCS проверяет CRC кадра соответствующего участка и может быть пересчитана устройством на выходе. IPv4 Header Checksum охватывает только IP-заголовок; на каждом IPv4-маршрутизаторе он изменяется вслед за TTL. TCP/UDP контрольные суммы (с IP pseudo-header) охватывают иную область данных, а криптографическая аутентификация решает отдельную задачу.\n\nЕсли узел изменил payload и сформировал новую корректную Ethernet FCS, исправная FCS вместе с Header Checksum не доказывают, что данные приложения не изменились. Для локализации сравни захваты на двух сторонах изменения, охват проверок и возможный checksum offload сетевой карты." },
+    ],
+    sources: ["RFC 791 — Internet Protocol","RFC 9293 — Transmission Control Protocol","RFC 768 — User Datagram Protocol","RFC 2784 — Generic Routing Encapsulation","RFC 1661 — Point-to-Point Protocol","RFC 1332 — PPP Internet Protocol Control Protocol","IEEE 802.3 — Ethernet MAC/FCS"],
+  },
 };

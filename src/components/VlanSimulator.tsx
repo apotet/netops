@@ -376,7 +376,7 @@ export const VlanSimulator: React.FC = () => {
     <div className="space-y-3 max-w-6xl mx-auto pb-4">
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2">
         <div>
-          <div className="text-[10px] font-mono uppercase tracking-wider text-cyan-700 dark:text-cyan-300">Макет · VLAN</div>
+          <div className="text-[10px] font-mono uppercase tracking-wider text-cyan-700 dark:text-cyan-300">Симулятор VLAN</div>
           <h2 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white">VLAN & Trunk</h2>
           <p className="text-xs text-slate-500 dark:text-slate-400">
             {HOSTS.find((h) => h.id === source)?.name} VLAN {vlans[source]} → {HOSTS.find((h) => h.id === target)?.name} VLAN {vlans[target]}

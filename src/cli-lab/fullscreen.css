@@ -1,0 +1,228 @@
+/* One persistent terminal/topology tree; only its grid placement changes. */
+.cli-fullscreen {
+  position: fixed;
+  top: var(--cli-top, 0);
+  left: var(--cli-left, 0);
+  width: var(--cli-width, 100vw);
+  height: var(--cli-height, 100dvh);
+  padding: 8px;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr);
+  gap: 8px;
+  overflow: hidden;
+  --cli-side-width: clamp(180px, 40vw, 480px);
+}
+.cli-fullscreen[data-panel='task'], .cli-fullscreen[data-panel='topology'] {
+  grid-template-columns: minmax(0, 1fr) var(--cli-side-width);
+}
+.cli-fullscreen-toolbar {
+  grid-row: 1;
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  padding: 4px;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  background: #0f172a;
+  color: #e2e8f0;
+  font-size: 12px;
+}
+.cli-fullscreen-toolbar button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-height: 36px;
+  padding: 4px 8px;
+  border: 1px solid #475569;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.cli-fullscreen-toolbar button[aria-pressed='true'], .cli-fullscreen-toolbar button[aria-expanded='true'] {
+  border-color: #06b6d4;
+  background: #164e63;
+}
+.cli-fullscreen-devices { display: flex; gap: 4px; overflow-x: auto; max-width: 100%; }
+.cli-fullscreen-toolbar .cli-fullscreen-exit { margin-left: auto; }
+.cli-fullscreen-terminal { grid-row: 2; grid-column: 1; }
+.cli-fullscreen [aria-label='История CLI'] { overflow-wrap: anywhere; overscroll-behavior: contain; }
+.cli-fullscreen-side {
+  grid-row: 2;
+  grid-column: 2;
+  min-width: 0;
+  min-height: 0;
+  padding: 8px;
+  overflow: auto;
+  overscroll-behavior: contain;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  background: #0f172a;
+  color: #e2e8f0;
+  overflow-wrap: anywhere;
+}
+.cli-fullscreen-side[hidden] { display: none; }
+@media (max-width: 600px) {
+  .cli-fullscreen { padding: 4px; gap: 4px; --cli-side-width: 50%; }
+  .cli-fullscreen-toolbar { font-size: 11px; }
+  .cli-fullscreen-toolbar button { min-height: 40px; padding: 4px 6px; }
+  .cli-fullscreen-side { padding: 4px; }
+  .cli-fullscreen-side > div { min-width: 0; }
+}
+.cli-fullscreen-side input[type='search'] { min-width: 0; max-width: 100%; }
+
+/* Mobile fullscreen: one working surface at a time. Desktop grid is unchanged. */
+.cli-fullscreen .cli-mobile-tab,
+.cli-fullscreen .cli-mobile-label { display: none; }
+@media (max-width: 600px) {
+  .cli-fullscreen {
+    grid-template-columns: minmax(0, 1fr) !important;
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+  .cli-fullscreen-toolbar {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) auto;
+    align-items: stretch;
+    gap: 4px;
+  }
+  .cli-fullscreen-devices {
+    grid-column: 1 / -1;
+    min-width: 0;
+    overflow-x: auto;
+  }
+  .cli-fullscreen .cli-mobile-tab,
+  .cli-fullscreen .cli-mobile-label { display: inline; }
+  .cli-fullscreen .cli-desktop-label { display: none; }
+  .cli-fullscreen-toolbar > .cli-mobile-tab { grid-column: 1; }
+  .cli-fullscreen-toolbar > .cli-task-toggle { grid-column: 2; }
+  .cli-fullscreen-toolbar > .cli-topology-toggle { grid-column: 3; }
+  .cli-fullscreen-toolbar > .cli-fullscreen-exit {
+    grid-column: 4;
+    margin: 0;
+    padding: 4px 6px;
+  }
+  .cli-fullscreen-toolbar > button {
+    min-width: 0;
+    padding: 4px;
+    font-size: 12px;
+    white-space: nowrap;
+  }
+  .cli-fullscreen-terminal { grid-column: 1; grid-row: 2; }
+  .cli-fullscreen[data-panel='task'] .cli-fullscreen-terminal,
+  .cli-fullscreen[data-panel='topology'] .cli-fullscreen-terminal { display: none; }
+  .cli-fullscreen-side {
+    grid-column: 1;
+    grid-row: 2;
+    width: 100%;
+    min-width: 0;
+    min-height: 0;
+    overflow: auto;
+  }
+  .cli-fullscreen .cli-fullscreen-topology [data-topology-scroll] {
+    max-width: 100%;
+    touch-action: pan-x pan-y;
+  }
+}
+
+/* Fullscreen desktop now uses the same exclusive views as mobile.
+   Keep terminal, task and topology mounted; only visibility changes. */
+@media (min-width: 601px) {
+  .cli-fullscreen[data-panel='task'],
+  .cli-fullscreen[data-panel='topology'] {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .cli-fullscreen .cli-mobile-tab,
+  .cli-fullscreen .cli-mobile-label { display: inline; }
+  .cli-fullscreen .cli-desktop-label { display: none; }
+  .cli-fullscreen-terminal,
+  .cli-fullscreen-side {
+    grid-column: 1;
+    grid-row: 2;
+    min-width: 0;
+    width: 100%;
+  }
+  .cli-fullscreen[data-panel='task'] .cli-fullscreen-terminal,
+  .cli-fullscreen[data-panel='topology'] .cli-fullscreen-terminal { display: none; }
+  .cli-fullscreen-toolbar .cli-mobile-tab,
+  .cli-fullscreen-toolbar .cli-task-toggle,
+  .cli-fullscreen-toolbar .cli-topology-toggle { min-width: 112px; }
+  .cli-fullscreen-topology [data-topology-scroll] {
+    max-width: 100%;
+    overflow-x: auto;
+  }
+}
+
+/* Desktop task is a sidebar; topology remains a separate full-width view. */
+@media (min-width: 601px) {
+  .cli-fullscreen[data-panel='task'] {
+    grid-template-columns: minmax(0, 1fr) var(--cli-side-width);
+  }
+  .cli-fullscreen[data-panel='task'] .cli-fullscreen-terminal {
+    display: flex;
+    grid-column: 1;
+  }
+  .cli-fullscreen[data-panel='task'] .cli-fullscreen-side {
+    grid-column: 2;
+    width: 100%;
+  }
+  .cli-fullscreen[data-panel='topology'] .cli-fullscreen-terminal { display: none; }
+  .cli-fullscreen[data-panel='topology'] .cli-fullscreen-side { grid-column: 1; }
+}
+
+/* Desktop: center topology in the entire dedicated tab, not a 640px rail. */
+@media (min-width: 601px) {
+  .cli-fullscreen-topology [data-topology-scroll] {
+    width: 100%;
+    overflow-x: hidden;
+  }
+  .cli-fullscreen-topology [data-topology-scroll] > div {
+    width: 100% !important;
+    height: max(480px, 65dvh) !important;
+    cursor: zoom-in;
+  }
+}
+
+.cli-topology-view-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; padding: 6px 4px; }
+.cli-topology-view-controls button { border: 1px solid #64748b; border-radius: 7px; padding: 6px 12px; color: #e2e8f0; background: #1e293b; cursor: pointer; }
+@media (min-width: 601px) {
+  .cli-fullscreen-topology [data-topology-scroll] { overscroll-behavior: none; }
+  .cli-fullscreen-topology [data-topology-scroll] > div { touch-action: none; cursor: grab; }
+  .cli-fullscreen-topology [data-topology-scroll] > div:active { cursor: grabbing; }
+}
+
+/* Mobile fullscreen topology: gestures on the canvas, one always-visible Fit button. */
+@media (max-width: 600px) {
+  .cli-fullscreen-topology [data-topology-scroll] {
+    width: 100%;
+    overflow: hidden;
+    overscroll-behavior: none;
+  }
+  .cli-fullscreen-topology [data-topology-scroll] > div {
+    width: 100% !important;
+    height: max(340px, 55dvh) !important;
+    touch-action: none;
+  }
+  .cli-fullscreen-topology .cli-topology-view-controls {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    padding: 8px 4px;
+    background: #0f172a;
+  }
+  .cli-fullscreen-topology .cli-topology-view-controls button {
+    min-height: 44px;
+    font-size: 14px;
+    font-weight: 700;
+  }
+  .cli-topology-desktop-help { display: none; }
+}
+
+/* Keep mobile topology compact; inspector follows immediately below the canvas. */
+@media (max-width: 600px) {
+  .cli-fullscreen-topology [data-topology-scroll] > div {
+    height: 280px !important;
+    min-height: 0 !important;
+  }
+}

@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="860" height="520" viewBox="0 0 860 520" role="img" aria-labelledby="t2 d2">
+<title id="t2">LLDP (IEEE 802.1AB) и LLDP-MED: одношаговый обмен TLV с ближайшим соседом</title>
+<desc id="d2">Кадры LLDP используют EtherType 0x88CC и адрес 01:80:C2:00:00:0E, не пересылаются через коммутатор дальше одного хопа и передают TLV (Chassis ID, Port ID, TTL, Voice VLAN, PoE).</desc>
+<defs><linearGradient id="bg2" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#020b15"/><stop offset="1" stop-color="#081e2c"/></linearGradient></defs>
+<rect width="860" height="520" rx="18" fill="url(#bg2)"/>
+<text x="430" y="38" text-anchor="middle" font-family="Arial,sans-serif" font-size="22" font-weight="800" fill="#f1f8ff">LLDP (IEEE 802.1AB) и LLDP-MED: Nearest Bridge (1 хоп)</text>
+
+<!-- Top: Topology -->
+<g transform="translate(24,58)" font-family="Arial,sans-serif">
+  <rect x="0" y="0" width="812" height="206" rx="14" fill="#071a2b" stroke="#38bdf8" stroke-width="1.8"/>
+  <rect x="22" y="42" width="176" height="92" rx="10" fill="#0b2438" stroke="#38bdf8" stroke-width="1.6"/>
+  <text x="110" y="76" text-anchor="middle" font-size="15" font-weight="800" fill="#f1f8ff">Коммутатор доступа</text>
+  <text x="110" y="98" text-anchor="middle" font-size="12.5" fill="#7dd3fc">Порт Gi1/0/12</text>
+  <text x="110" y="118" text-anchor="middle" font-size="12" fill="#94a3b8">TX/RX LLDPDU</text>
+
+  <!-- Arrow Switch <-> Phone -->
+  <line x1="198" y1="74" x2="366" y2="74" stroke="#38bdf8" stroke-width="3.5"/>
+  <text x="282" y="64" text-anchor="middle" font-size="11" font-weight="700" fill="#7dd3fc">Voice VLAN + PoE (MED)</text>
+  <line x1="366" y1="102" x2="198" y2="102" stroke="#2dd4bf" stroke-width="3.5"/>
+  <text x="282" y="122" text-anchor="middle" font-size="11" font-weight="700" fill="#5eead4">Chassis / Port ID + PD</text>
+
+  <rect x="366" y="42" width="186" height="92" rx="10" fill="#0d3b3e" stroke="#2dd4bf" stroke-width="1.6"/>
+  <text x="459" y="76" text-anchor="middle" font-size="15" font-weight="800" fill="#ccfbf1">IP-телефон (LLDP-MED)</text>
+  <text x="459" y="98" text-anchor="middle" font-size="12.5" fill="#5eead4">Получил Voice VLAN</text>
+  <text x="459" y="118" text-anchor="middle" font-size="12" fill="#94a3b8">и класс/мощность PoE</text>
+
+  <!-- Blocked forward arrow -->
+  <line x1="552" y1="88" x2="636" y2="88" stroke="#f87171" stroke-width="3" stroke-dasharray="6,4"/>
+  <text x="594" y="76" text-anchor="middle" font-size="12" font-weight="800" fill="#fca5a5">НЕ дальше!</text>
+
+  <rect x="636" y="42" width="154" height="92" rx="10" fill="#1e0b10" stroke="#ef4444" stroke-width="1.6"/>
+  <text x="713" y="80" text-anchor="middle" font-size="14.5" font-weight="800" fill="#fee2e2">ПК за телефоном</text>
+  <text x="713" y="104" text-anchor="middle" font-size="12" fill="#fca5a5">LLDP-кадр соседа</text>
+  <text x="713" y="120" text-anchor="middle" font-size="12" fill="#fca5a5">не транзитится</text>
+
+  <text x="22" y="176" font-size="12" fill="#cbd5e1">Nearest Bridge MAC <tspan font-weight="800" fill="#7dd3fc">01:80:C2:00:00:0E</tspan> (<tspan font-weight="800" fill="#7dd3fc">0x88CC</tspan>): стандартный мост не пересылает кадр дальше.</text>
+</g>
+
+<!-- Bottom: TLV structure -->
+<g transform="translate(24,282)" font-family="Arial,sans-serif">
+  <rect x="0" y="0" width="812" height="214" rx="14" fill="#091d2e" stroke="#fb923c" stroke-width="1.8"/>
+  <text x="20" y="30" font-size="15.5" font-weight="800" fill="#fdba74">Из чего состоит LLDPDU (обязательные и расширенные TLV)</text>
+
+  <rect x="20" y="48" width="174" height="72" rx="8" fill="#0c2f4d" stroke="#38bdf8"/>
+  <text x="107" y="76" text-anchor="middle" font-size="13.5" font-weight="800" fill="#e0f2fe">Chassis ID TLV</text>
+  <text x="107" y="98" text-anchor="middle" font-size="12" fill="#94a3b8">Обязательный (MAC/ID)</text>
+
+  <rect x="210" y="48" width="166" height="72" rx="8" fill="#0c2f4d" stroke="#38bdf8"/>
+  <text x="293" y="76" text-anchor="middle" font-size="13.5" font-weight="800" fill="#e0f2fe">Port ID TLV</text>
+  <text x="293" y="98" text-anchor="middle" font-size="12" fill="#94a3b8">Обязательный (порт)</text>
+
+  <rect x="392" y="48" width="144" height="72" rx="8" fill="#0c2f4d" stroke="#38bdf8"/>
+  <text x="464" y="76" text-anchor="middle" font-size="13.5" font-weight="800" fill="#e0f2fe">TTL TLV</text>
+  <text x="464" y="98" text-anchor="middle" font-size="12" fill="#94a3b8">Обязательный (срок)</text>
+
+  <rect x="552" y="48" width="240" height="72" rx="8" fill="#1f160c" stroke="#fb923c"/>
+  <text x="672" y="74" text-anchor="middle" font-size="13.5" font-weight="800" fill="#ffedd5">Опциональные + MED TLV</text>
+  <text x="672" y="96" text-anchor="middle" font-size="12" fill="#fdba74">System Name, Mgmt IP, Voice VLAN, PoE</text>
+
+  <text x="20" y="156" font-size="13" fill="#e2e8f0">• <tspan font-weight="700" fill="#7dd3fc">LLDP</tspan> — открытый мультивендорный стандарт (IEEE 802.1AB), в отличие от проприетарного Cisco CDP.</text>
+  <text x="20" y="182" font-size="13" fill="#e2e8f0">• <tspan font-weight="700" fill="#fdba74">Типовая проблема:</tspan> если LLDP выключен на порту (или отключён TX/RX), сосед не виден, а телефон не получает Voice VLAN.</text>
+</g>
+</svg>

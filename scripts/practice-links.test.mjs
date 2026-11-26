@@ -24,7 +24,7 @@ const expected = {
   'cli-vlan': ['new-ts-vlan', 'ts-x07'],
   'cli-trunk': ['gen-diag-10', 'l2-07'],
   'cli-gateway': ['tr-10', 'l3-16'],
-  packet: ['l3-03', 'tcp-05', 'tcpip-d01', 'tcpip-x26', 'new-tcpip-router', 'new-l3-arp-scope', 'new-l3-next-hop', 'tcpip-x10'],
+  packet: ['l2-03', 'l2-05', 'l3-01', 'l3-03', 'tcp-05', 'tcpip-d01', 'tcpip-x26', 'new-tcpip-router', 'new-l3-arp-scope', 'new-l3-next-hop', 'tcpip-x10'],
   dhcp: ['gen-transport-7', 'l7-03'],
   nat: ['l3-15', 'l3-d05', 'tcpip-x27'],
   tcp: ['l4-02', 'l4-x06'],

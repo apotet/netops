@@ -1,0 +1,948 @@
+{
+  "baseMain": "3efc3702966b5c14f501a646e22e7c224744ef48",
+  "auditSnapshot": "1a56fdd284dc57959345f9c795356d209cfb94a3",
+  "auditComments": [
+    "6877137083",
+    "6877139540",
+    "6877141640"
+  ],
+  "auditProjectionSHA256": "8360edd644a2c9f39a4ed5124e69c701d2d0c8335a31a4b5233e567b93f28fd7",
+  "bankSHA256": "c7cc71535f4b06adcaf55c4e60f4fa6e5c4d275f9cf895883d759073ce11c00f",
+  "auditDrift": [
+    {
+      "id": "photo-cable-colors",
+      "fields": [
+        "text",
+        "answers",
+        "explanation"
+      ]
+    },
+    {
+      "id": "l1v2-b-cleave-sequence",
+      "fields": [
+        "text",
+        "answers",
+        "explanation"
+      ]
+    },
+    {
+      "id": "l1v2-c-closure-service",
+      "fields": [
+        "text",
+        "answers",
+        "explanation"
+      ]
+    },
+    {
+      "id": "gap-pack2-29",
+      "fields": [
+        "text",
+        "explanation"
+      ]
+    },
+    {
+      "id": "tcpip-x03",
+      "fields": [
+        "text",
+        "explanation"
+      ]
+    },
+    {
+      "id": "ts-x02",
+      "fields": [
+        "text",
+        "explanation"
+      ]
+    },
+    {
+      "id": "ts-x09",
+      "fields": [
+        "text",
+        "explanation"
+      ]
+    },
+    {
+      "id": "l4-x05",
+      "fields": [
+        "text",
+        "explanation"
+      ]
+    },
+    {
+      "id": "l4-d04",
+      "fields": [
+        "text",
+        "answers",
+        "explanation"
+      ]
+    },
+    {
+      "id": "tcpip-d01",
+      "fields": [
+        "text",
+        "explanation"
+      ]
+    },
+    {
+      "id": "ts-d05",
+      "fields": [
+        "text",
+        "explanation"
+      ]
+    },
+    {
+      "id": "l3-vrrp02",
+      "fields": [
+        "text",
+        "explanation"
+      ]
+    },
+    {
+      "id": "l1v2-a-contact-solid",
+      "fields": [
+        "imageAlt"
+      ]
+    },
+    {
+      "id": "l1v2-b-strip-hole",
+      "fields": [
+        "text",
+        "imageAlt",
+        "answers",
+        "correct",
+        "explanation"
+      ]
+    }
+  ],
+  "protectedFiles": {
+    "src/App.tsx": "5f8571b0c1c07f1cec57ec53dec56cb73c2e38c38734ad6f0b35bec1a5c7f3bf",
+    "src/cli-lab/CliLabShell.tsx": "8edcb2e60b1cb66515d338601de2bcd0b4d33846495111920c083076d5ef4208",
+    "src/cli-lab/ExperimentalCliUxV2Shell.tsx": "97c49290a81fba1bb37a2400071f04074604e3a2f11badc544d38e27a963d07d",
+    "src/cli-lab/ExperimentalMockCliLabShell.tsx": "47b0efb3ea28fdab383c4f7ae280681f823c0b59ee0c7da8ec97278baff64071",
+    "src/cli-lab/MockCliLabShell.tsx": "efc041f93b962b76dc86fafb19d960a393439884754ab5bf7cea524b5a5b8aff",
+    "src/cli-lab/components/ExperimentalTopology.tsx": "d2598a96d6efba2d81d8e84676a03b21df8c932c2afb3a1e0d9f294fa0abe944",
+    "src/cli-lab/components/ExperimentalTopologyV2.tsx": "35d862a970e6d7c26807c5f3109119603074fd004f5122723a71867bf51c8b15",
+    "src/cli-lab/components/HostPingPanel.tsx": "5bd9fe338b86fb6f3a33819a85a0bad27df5ddf538fdc1d18e70d74962a95888",
+    "src/cli-lab/components/TopologyPanel.tsx": "ebaa243681f3e526c467afb87830ad9c2c53022cd257bc6d17e76fd7ce56a8dd",
+    "src/cli-lab/components/topologyLayout.ts": "cdea20e9c4db75d5cbb1abd319b9cdd92d86d6b2c0e249bc86dc119b57744c71",
+    "src/cli-lab/engine/CommandResolution.ts": "eb1fb1e37fb65c23282a417ccea5561e45be5ab1b69452cb2769ec9122f4b3b5",
+    "src/cli-lab/engine/ConfigPersistence.ts": "758d0c3a4827019ea4ce9e8cc1c8e955da98de2a89557ae361495aadbd4283b4",
+    "src/cli-lab/engine/ContextualHelp.ts": "041b5089f59fd5620ca350218060e783cc35d059d4e173faa8fc3181edaab8eb",
+    "src/cli-lab/engine/GoalEvaluator.ts": "735e3f7cfe017de3ab045e2e328ae48e1a05c4767e9fc6ed1f9604fc21a34a05",
+    "src/cli-lab/engine/HostIpv4Reachability.ts": "62ce78c035e1f9299c131cc48dc40dfd51df8ccde82cd72ace7264ab1b728434",
+    "src/cli-lab/engine/LabEngine.ts": "80b9d4d205363231262d0c762d9b5ccd5672e2df111d41a5e102502bb265206d",
+    "src/cli-lab/engine/OperationalState.ts": "2aafb38a9ee8fed56d2272d812bcbfa948b388c5ff14e99f14db46e51e15bf03",
+    "src/cli-lab/engine/SpanningTree.ts": "45bdcc7c9e521bb21f40c0d9b91c178ed9de7089b02d723320c13916513dd6d3",
+    "src/cli-lab/engine/SviIpv4Reachability.ts": "31cb98e1b2111b01ed9d309b7539968af9df8d90ccd5bff052619e361abb27d1",
+    "src/cli-lab/engine/VlanForwarding.ts": "c9f8299d1e1daada7cd53e65f12403cbf05f699c14589222c57645aeb0a6f37b",
+    "src/cli-lab/engine/VlanMembership.ts": "85367b8f7197b6b949e41ddb89e18dd82d519c46c1cb1872dea5ec325eb4992e",
+    "src/cli-lab/engine/VlanPath.ts": "0f43edf400dc60b2933892db7f6a20f7c99cce7206fcbb38f8c5455534dbc9a8",
+    "src/cli-lab/engine/completionStatus.ts": "f7512de2f6642888677c2981320fba8cd9043ebbf4cd2d3f9e039c2004a17c1d",
+    "src/cli-lab/engine/types.ts": "258edfc23e9b709526234f678ff3f8560d7200522017cd944ca7e54d9efff63a",
+    "src/cli-lab/fullscreen.css": "cb9c6c5c7484b425e7b2a0922642e2174e2b8efb9a1ee51dad963e4cdad7e2b2",
+    "src/cli-lab/hostPing.ts": "4e900a0817c8bec2651f2e7e7eea07751205447ee91f0de1cfda416c8fae8d61",
+    "src/cli-lab/portDetails.ts": "5d4d1cfdbc5cd12d183bc85a0aca1ba380b9f78f287975cd0f81c163c156eb5d",
+    "src/cli-lab/scenarioTheory.ts": "52b287bebd4c206c273ee117be3616e550b4d34f93e42676f295e7b4ab7c8bca",
+    "src/cli-lab/scenarios/cisco-access-svi-followup.ts": "b0506565d4b7347e9f326aa8a741e9cd43382549a65b6dcfd2dcf0a3302667e8",
+    "src/cli-lab/scenarios/cisco-four-switch-host-ring.ts": "01faa4e1cf70ada9528c6182f210e2f9388b2298f6a8c0e7cb0dd5aba40b3754",
+    "src/cli-lab/scenarios/cisco-ios-modes.ts": "bd92f30dd5be1f5c39b78d6264141f36091661a989313874e470caa779690d3d",
+    "src/cli-lab/scenarios/cisco-l3-gateway.ts": "7047e00f80fba4ab6babcf8ec890e466afd1e1bc4d1d0fd9758cdc5dee75e885",
+    "src/cli-lab/scenarios/cisco-show-diagnostic.ts": "19e82aabf1292731f0f4a8a46cfd560553ad7029655955a5bed89f2c8e68d054",
+    "src/cli-lab/scenarios/cisco-three-switch-missing-vlan.ts": "e5e28438915767098f73423424d107f1497c5420f93009120a6acbb6fc7319b3",
+    "src/cli-lab/scenarios/cisco-trunk.ts": "005773bdf0d23764becfd38682731d243490423df45c3a1ccd92cfaa82d7c46a",
+    "src/cli-lab/scenarios/cisco-two-switch-svi.ts": "89c0b0845aeed2bb3256e780c9925d67dfa45f9ddd659d48e9481681fd5277d7",
+    "src/cli-lab/scenarios/cisco-two-switch-trunk-diagnostics.ts": "eff6f50c6e3962dce40e874b087149c2e7c28961be69d9de7640861163220af1",
+    "src/cli-lab/scenarios/cisco-two-switch-vlan.ts": "8250778f5785adad750b196527d452951bb5b27f42a0aafd2dc0a1ccebc578b3",
+    "src/cli-lab/scenarios/cisco-vlan-access.ts": "f158fe68f464668847a1be2982fa63e257b54c289b731394584313c51e2917c2",
+    "src/cli-lab/topologyLayers.ts": "ad200f8b4934631e4079e2555b4e8dffe1f1a0d24ffe27e5efaf3703060c46e6",
+    "src/cli-lab/vendors/cisco-ios/arguments.ts": "465d47d852d140d1c533f1adc3d0645ba8b2fa915038d505e9ee90ce2b94b9d9",
+    "src/cli-lab/vendors/cisco-ios/commandCatalog.ts": "999bf665de324f1521958bd7db3a5cdba338c1f8038c03ff200495055ac4346c",
+    "src/cli-lab/vendors/cisco-ios/commands.ts": "41cd1cd0a82c60b53c72487a57afa3800b3e921584f0e3ed3fd33810359f7983",
+    "src/cli-lab/vendors/cisco-ios/configFormatter.ts": "4ced28a73956726862928adade89ba3874e446ddf2497dea8e6280bba5920fb1",
+    "src/cli-lab/vendors/cisco-ios/l3Commands.ts": "6417b588620ba9bbc43d2081c04944a2acdd0a9153a31e4dd5b4c4a90e4866d7",
+    "src/cli-lab/vendors/cisco-ios/persistenceCommands.ts": "46924cc84ba7384a27e4b0b833ba96d7a37bb2fdbcf3f2bf61b6975fe036cd42",
+    "src/cli-lab/vendors/cisco-ios/profile.ts": "6fbb91af0f9c2db77a90a6ac6ee80a2d20da76b0e6ff433a3dd6bc38b758546f",
+    "src/cli-lab/vendors/cisco-ios/showInterfaceCommands.ts": "0f7c0176baf3df6ee8531cdd474931ce12f058ca166e1f3a6d716bf003f43235",
+    "src/cli-lab/vendors/cisco-ios/spanningTreeCommands.ts": "ac472d471787249656936c229df171f476a3f0d972fc04b99ffa8a56b82ad5d8",
+    "src/cli-lab/vendors/cisco-ios/spanningTreeConfigCommands.ts": "dccf9cd6cfef3f1617b5a6e745a6683cf650cacc754d28c1f1931cad70fecebe",
+    "src/cli-lab/vendors/cisco-ios/trunkCommands.ts": "8dfe94eeafce1a9ae30d0850fc3441a85f4b57c34cea3f7128953c94ca079aa4",
+    "src/components/CliReference.tsx": "efcaf6b699f7499fd3503f7beedd43a7fb618f353d90058c2127335a048404ac",
+    "src/components/CliSimulator.tsx": "2a2cff1b32146c12ca635f2a7362974adfee9fe2d47f841ffaf4006e139bd503",
+    "src/components/CommandPalette.tsx": "8010587c9dd5a6b2f72b0e3e36bc9b0a472b5c7a60a5a33400f2f5deb05881c0",
+    "src/components/DeployModal.tsx": "6bbe48fef9185ba1d25f98b34e1d7ec1879fdfef53ffe6a3869970113a85aae4",
+    "src/components/DetectiveTopology.tsx": "316aaa1b43d66c6f4154f91750e62dadecb25de78cd3d14fce352ef679fe1c0f",
+    "src/components/ExamReview.css": "29f81a498f1c90485eb55024118bbd353a16b549ee82e3f9077b068e00785a9e",
+    "src/components/ExamReview.tsx": "218dd3f8190741350a60479106d889f382355f53af7c3aa7aeda7ce1021b15d6",
+    "src/components/ExamView.tsx": "7dbc33b2bab71b4eb921652c0bb21be627145f8d3d0ef271478f0553c669dc3d",
+    "src/components/GlossaryText.css": "eec97a669c42f43cf17c739fee731be3a1ac1b5d8ece0b5e7abd12f908a29f6a",
+    "src/components/GlossaryText.tsx": "e986d114a47ee2716f4f6a3214ba049c4a8348c7b5d4ffcf1ca3c02288f9ca84",
+    "src/components/HomeOsiStack.tsx": "4bd31111870c332a676648f8a34a152797afdc6e0528f996d521ebf0a931d010",
+    "src/components/Ipv4Trainer.tsx": "f34f1dfdd54e1ed54a38578b2c38d27e2d9cf660bedd34329f60142f26ffd0e3",
+    "src/components/Ipv6Trainer.tsx": "2e92e289122de1e5caf9ef572f170898f67f8bdc3b5d8f1c20365477586278fc",
+    "src/components/KnowledgeBase.tsx": "8d2ac6036ec8821434ea2eaf7a84d5dfb95bb0ba24120103930c0cd716c415fb",
+    "src/components/KnowledgeRadar.tsx": "97de56f166ec05d6fbe7a94c61e2f5a834fe6f2eabdf1acca1b73d31acdc5206",
+    "src/components/LessonTermTags.tsx": "0f040cf9c22c750e32aff080bc94fceb563444d8dbeefec2796e97e19fdae2a1",
+    "src/components/LessonView.tsx": "91a994d98be76d365c7a6735c7f81a054fb8bbb8098200211a71095dd6e81e55",
+    "src/components/LivingOsiStack.tsx": "81ff1b6e8d0b771aca7d0f91a6dc37b9eb625aef8c0b6c70dedda73341775dba",
+    "src/components/MobileTabBar.tsx": "8d743b889e2dcad0ab98b8d2f28558cc4fedaeaf99554fd833a945ff323d9d54",
+    "src/components/MockDetectiveTopology.tsx": "316aaa1b43d66c6f4154f91750e62dadecb25de78cd3d14fce352ef679fe1c0f",
+    "src/components/MockPacketJourney.tsx": "a9630696a129548973d8456a4866f4010cd1504189cf493ab7cf91105ce7789f",
+    "src/components/MockPracticeHub.tsx": "7fa2840e7713c4ba6ab7545d93682f4260dab6637ea028fd0b5070e6a888b829",
+    "src/components/MockProtocolSimulators.tsx": "3dbf4e12827960936be5d2b91bfdef068d0fb258b03f33dd0e4f45b8abc5b885",
+    "src/components/MockVlanSimulator.tsx": "90c9be6e5fb3e683eaabeedd42a62603da8c357dc1fad005456fde28faa5d53e",
+    "src/components/Navbar.tsx": "bedcc1a043967bf9c4264a8ccee56a4640d7deffc71827bda3683649f63748e4",
+    "src/components/NetOpsLogo.tsx": "6dfca54fa40a483e86f80bb6a9381c0ef926b3165dc1a0a72db94e637d85a828",
+    "src/components/OsiExplorer.tsx": "dedeefc4610a56c60a16b0d1288da248aefc745291d58d42f8997a75bf4b41e2",
+    "src/components/PacketJourney.tsx": "5f9894548833fb4e21a93ccb020cd6ba46f65121c1a0a686f59e671435822941",
+    "src/components/PhotoCredits.tsx": "256043bf58be39ed783ccdc2299e5a01fbfbb43be0feb4ac3f0fc1c2ff6ab9a5",
+    "src/components/PracticeHub.tsx": "80ac6b0eecf20b00bde2a1d6ef8968470a7e492af2dda6f355a6c5de1d65f7da",
+    "src/components/PracticeLinkButton.tsx": "467f369da88f66ef743a43457351c60d9740735302e2d972102605a0dbcd5f2c",
+    "src/components/ProtocolSimulators.tsx": "d20573ff14823ba5be107b9cfd23bc2d43e56e6f08f55bcdce9f7cfa2d035dad",
+    "src/components/SniDiagram.tsx": "d49242b91806e9f50f1151185e7fcf892d2ff44c33c2a7a6f9fc32f860383914",
+    "src/components/StudyTextToggle.tsx": "711e374df9d8c6fb218e32b8814d0459ae62c7eb1422ef75099680e0e5fcad5d",
+    "src/components/TheoryCheatsheets.tsx": "74f4c32eb59e4baa72a9d96ebd72c6376b298552621b21eb6c81fb35ba5b3d6f",
+    "src/components/TheoryModels.tsx": "a1005ca6f9b8be38c40564a665d133b30682903c1edbdad6e5112a4805bb5f37",
+    "src/components/TheoryPorts.tsx": "fed1c566940c57bc0731b4a47eb01d96f5be184febb7fbb3fd0d5948cc61e352",
+    "src/components/TheoryRazbory.tsx": "7db94b8e84732c008f62837a826b94a5f303c4536015887bbef05f1080e92d08",
+    "src/components/TheoryScenarios.tsx": "3545f0c64adadd5ed3f97ca725cfca8d1040ba04f642fc70c08c523c12136992",
+    "src/components/TheoryView.tsx": "49662515fdefb04562c8fd654bda31353bad1b9226c4d254a515f5036c36d98d",
+    "src/components/VlanSimulator.tsx": "4a90e39aa05b8abd408c2b41300097e55ddd053330d89869ee52150ec758d525",
+    "src/components/ZoomableImage.tsx": "9684873946babef69db32323259035a15103195afc5a1bbd010f657821255b5e",
+    "src/data/diagnosticCases177.ts": "6d85730d9912154002c037702c95dad63739406fd6fa3d4eb8f744d2aa33d5de",
+    "src/data/expertCases177.ts": "dea438970efdf30aeaa5efb4226eb99682be8f83ed226f0ceab04565a60766c8",
+    "src/data/expertCases225.ts": "d714ba4489a10e5ed3dde244e2f0fc807b8923777fed6510384352b70e7d1d8d",
+    "src/data/lessons/cli-console-ssh-telnet.ts": "ff4c74ed5c75fda57fa4321d28cfa20abc4adb5a015eb38df16df73e9925c240",
+    "src/data/lessons/cli-ios-modes.ts": "87f996ce1a6b2944674be34ca9340094e77c00e40cfbb3b29e880cf373b6fc6d",
+    "src/data/lessons/cli-ip-static-route.ts": "3892d93bb8c269e49a395e1986c3b0f0c72729371906b06be3db9af00be31001",
+    "src/data/lessons/cli-save-config.ts": "9cf2e11b6aa5ac9c30da97112ce50e8ce634a2b4b713bab8e2a6fd2dce489498",
+    "src/data/lessons/cli-show-help-tab.ts": "87d68822e17bf17810671ec3d9dcd413dee612c47141ed4f74f1d306607f4397",
+    "src/data/lessons/cli-trunk-vlan-diagnostics.ts": "2b0e4114dda46c90571938d07902bae4367ea54709d3eb16fca998ec9ba6adb0",
+    "src/data/lessons/cli-vlan-trunk.ts": "e8f401b9cfdf6ba3ac0ab9fcbb1da13e9c1d00e0ef8da9200e160bb2a590bddf",
+    "src/data/lessons/index.ts": "fa60a9a1d0d19cbacb13e926112f0bd900ab5a11d54a08460c66b4affa687a6d",
+    "src/data/lessons/l12-wifi-standards-roaming.ts": "5164ea0f1f79046119fdd8f642ad64220af06c3d3b3927683ca15144cb6d5c2e",
+    "src/data/lessons/l2-access-auth.ts": "f3a47a29b2697cf25bb0926a86db1d68b327829ca97e2ee9d6670f5cf3a10eb8",
+    "src/data/lessons/l2-access-guard.ts": "44473c35d4f59b94bbb287939aa80831596e622710170c09a0f7565c53ee1163",
+    "src/data/lessons/l2-bpdu-guard.ts": "4c3a64acf6a61da12bfc86e9017d8c8bcf66c2be7e4f270ba55cd870b231df30",
+    "src/data/lessons/l2-dai.ts": "e43760bd588c9428df6a2b29fdf48c8ae3788560dc4bab947444287b2cc24856",
+    "src/data/lessons/l2-ethernet.ts": "d73c2bc4871b64d3112809c5153fdcb1133d680c2b7674dd852f0b077ce75261",
+    "src/data/lessons/l2-igmp-snooping.ts": "9459d03c9140d370ca1b698182cd1cd1f03fb4d115e66cbbaca61c65d2e33fdf",
+    "src/data/lessons/l2-ipsg.ts": "9ab6fca98bd0bdf6fb0cca98bf2a7a8310e2c94ba4bf1c0db82d2a69e18e24a1",
+    "src/data/lessons/l2-mstp-advanced.ts": "9b828c946072ebc17ea17421ffe0674a5f3eca259a5fba1f287865dcd8e8edc8",
+    "src/data/lessons/l2-rstp-convergence.ts": "1b0a96141a2d5af32232078470e1a9ba9fbffe790c5f5257f0e21861c0a5a578",
+    "src/data/lessons/l2-stp-election.ts": "35b3b86ac48bf9c1968efec1a7897ad64c12ceda14be862b73cc0618e380222d",
+    "src/data/lessons/l2-stp-guard-design.ts": "da207adbf40c9a32cdcd7782dbaccd2e8fcba1309e0e288ce401d764cc64e2fc",
+    "src/data/lessons/l2-stp-protection.ts": "b5ef281e4f0ec4d7a87fbc599cfc910b1424ef05ec62287d10ffa48866748f49",
+    "src/data/lessons/l2-stp.ts": "c07401f821ce9ad1a4ca5ddf130c422ac536e5a7883e8edb1bcc5699a1fee2e4",
+    "src/data/lessons/l2-svi.ts": "9855dc17ff3915b05403d613f8240541b006215ccbfb238b24aade7e120e8c9a",
+    "src/data/lessons/l2-vlan-security.ts": "6370cb24158b69d1700079a9e6178b6d263159aba6e09769a10be24dbef9aa9d",
+    "src/data/lessons/l2-vlan.ts": "03133cf22c3a5b7d3b62b7af70d717e696196f42c7dd467ba365211d8bcee7c0",
+    "src/data/lessons/l2-wifi-security-diagnostics.ts": "361c726a5e3cefb2861d92292c322ee2ab9ffa6bd42d5f845250507dcb2e784b",
+    "src/data/lessons/l3-arp.ts": "71c23b755e551406b9c3f22adcb63a06bce219da7bfd10ae64344ecc9f890467",
+    "src/data/lessons/l3-bgp.ts": "055869352ce40d59f72c3d0739b16c7a3a684e5caf03935404258c822d86b384",
+    "src/data/lessons/l3-eigrp.ts": "f0d5163f740f9af51dc3755bcc2e2e2bef012e519126f3f55cea86554b51b956",
+    "src/data/lessons/l3-ipv6.ts": "28d99fb49d03d170bc3e99c94a09add138b11672ce7044652a94294ca1f2c72f",
+    "src/data/lessons/l3-masks.ts": "52e141901b602851e6d1c42c1ec6c4218fea0594b35e10f3964337c678c0b168",
+    "src/data/lessons/l3-nat.ts": "1a23c100377c3257c91e7534de8a3fb941685dbb9d69cbdedf8118ee309d49ee",
+    "src/data/lessons/l3-ospf.ts": "2b9932fbd92b79874ce864cb08abf87b20bad07be95959665dd8750ab6e45fdc",
+    "src/data/lessons/l3-rpki.ts": "1b107139f1b92764c96f78cf78ae34c234a4636e2807aee71bc4bde565a674b9",
+    "src/data/lessons/l3-subnets.ts": "aab62261bc268190a8bdd76910c02f01108b9c264fb91d1553d77227bcf3547e",
+    "src/data/lessons/l3-vrrp.ts": "ddfc79b2102cd84637fae9a747a5bebc15143145212e813083be5fb0668b54f3",
+    "src/data/lessons/l4-load-balancing.ts": "f5be1e60d67705018207cb1a95bd714dbf02f7e6a668361b603aa46ef6340f5d",
+    "src/data/lessons/l4-tcp-loss.ts": "c9a3655622be69621a48c431af5ab459762acd2b1af5f64045e4ddd7d18429a3",
+    "src/data/lessons/l4-tcp.ts": "50d040dc333d599204e6d17e84e018ed21b84979640f256e851a2e32565143cf",
+    "src/data/lessons/l7-dhcp.ts": "a4456bb8517808f8162565337c16c6ea151ce62b1ae1e759ce740da3dd1c056c",
+    "src/data/lessons/l7-dns-dhcp.ts": "a483fa591ef32cf1ff0b4edfd33baf42c2d55a26896e95861527a16364b9c61c",
+    "src/data/lessons/l7-dns-ttl.ts": "876889fc7f6f7b0e075a882706cb8bf1589172659b177970cd201a55d91454c7",
+    "src/data/lessons/l7-dns.ts": "f5b6bc49669d36ad22a3cbd0519cc93005750856fad589a0fc1aa4110d592b37",
+    "src/data/lessons/l7-monitoring-snmp-syslog.ts": "ba03bb47be8c215773c3b23aed263c73c2b58ff3f171e1487534a8313e4c8d8e",
+    "src/data/lessons/l7-services.ts": "6f943343156a700fb95584f4c83779155692da9ef7e50dcd1fef2e03a412670f",
+    "src/data/lessons/osi-pdu.ts": "f067dfa54e3e6cacdb5def9fbe62242f06abf0c397e70b30cafbffde50909b07",
+    "src/data/lessons/qos-basics.ts": "caffbeb029aca75ceafef41773e5cf7e8f8f7803a3b325a941e2670b58aafe3b",
+    "src/data/lessons/tcp-window-retransmit.ts": "a50b905c5d793053a891963e1f626286eaf52bb3a29116bfdd7d16892f26f12c",
+    "src/data/lessons/tcpip-encapsulation.ts": "6979929b206caee418440d868a072037be874327c84d05e22d009fdc755f2f32",
+    "src/data/lessons/tcpip-model.ts": "d5140cd8fba4118d716b5a7571006e4fe05de17bbb29bb0357644944d56f7de3",
+    "src/data/lessons/tls-sni.ts": "03d2f9559a811481419b3961a1c88422b43886c1cada713fd7b94b8f23add7e4",
+    "src/data/lessons/ts-copp-storm.ts": "087e603deb5389c7e532e5981e1efe81c5b6108a88e202ea888dc65524300fb4",
+    "src/data/lessons/ts-method.ts": "664cc28802ab3021dbfab317576f8486e72927faa852e552332d714938fdf2c2",
+    "src/data/lessons/ts-optics.ts": "47ea3bef9078b0bc43c6e667f8eac678d57f1569dc9f91735f6e6c8bac1f84ca",
+    "src/data/lessons/ts-zabbix-monitoring.ts": "2ab8d93a7cf739bfa3b5505023dc8d4d2119c647389aae915e1d4f59e90b4e78",
+    "src/data/lessons/types.ts": "59794825a182070889252b0873b159c69b6abf132838801f7b0714d1bf238877",
+    "src/data/levelNotes.ts": "842ff5d1674e4fa9f4805ef79aa2981eacb04367264e001d5cad31717a474fc5",
+    "src/data/memeTitles.ts": "80422ac2e70fb87a699718b8526c73217f4c33a429e7bf0566543ea6fbc67014",
+    "src/data/mixedExam.ts": "b14eb9c8ba34f1293312fc263972486ce3a3573cbbdeff173271ff0464136384",
+    "src/data/monitoringCases.ts": "325649898219baeaeb7cd7569d29174dc7b3938509f0225a2ddebf610beb2b68",
+    "src/data/practiceLinks.ts": "b0e3ce45c2b5353007c360134b003661244fb6084c8e561aa4cc5d765cfd11f8",
+    "src/data/previousDiagnosticQuestions.ts": "faca1ed9e6d4a5b0a5f59a8428e2ca24833d0210329e1e397367cdf92c4f2dad",
+    "src/data/questionExplanations.ts": "9d9df9a5c0f640ec7e45432991ee1821a8200ac439b7facfb967a67362b105f9",
+    "src/data/questionExplanationsApplied.ts": "636ac5c410156c16b558dd35ae83c163c172bbb9629c4ee2833cde83097362b1",
+    "src/data/questions.json": "d4f5f8fb91a3d7f5442999756a0e46519b806afac7537f704aef2e66e94501f4",
+    "src/data/questionsData.ts": "9c5494e3dbbfdc9c97f04028fca59594d11d80d92b835c343c1976a6c9c8d189",
+    "src/data/questionsExtra.ts": "da6eca48df860cb966f98bdd2ee28fe4178866c73a2a63f64e3fb580d8b4ca6c",
+    "src/data/questionsExtraDifficulty.ts": "ede81ffb6135bb9d3aef5809f278de33a7cbb4c3cd867e8b148dbe3f2a7e56b0",
+    "src/data/wellKnownPorts.ts": "9c67f47da6628ee68d7f3d2ff510e787dc81943dbbb0e52d339c1311c8a9abeb",
+    "src/data/wifiCases.ts": "9bc77a454e2e5ab8f5d52e031a4083c2385c685bc3aca0054e983b81dedee1cf",
+    "src/index.css": "0c2c3e4808a5f5b8aa6ae11e3cae5a9bdd1fc603a0e31cf30146562ea9ba65dc",
+    "src/main.tsx": "30d02ee59cb6576973dea4368093b2dcae692a40668f288fdbc66a114873fcd3",
+    "src/projectExporter.ts": "21e5efb52f4fc855ee3ab14b8ba9923c563b25791b304b4a767c3f69472f4f6c",
+    "src/types/quiz.ts": "cd539016e98143bab6af89e0138f97e8fa8064b175c12e0c27ee649422ff09a6",
+    "src/utils/examProgress.ts": "5afdbfbb11456fbf69f5eff43de2021ed9ec52e2966c2bcf492884f59ff3fec5",
+    "src/utils/examReview.ts": "7af2f70b2e846501a6f106454a174dd7ff41e29b6480040ec5180c323dc093f7",
+    "src/utils/glossaryText.ts": "2d83677466e93067532b48491dbe79c55d2c72d4ee953864f20cef2428b99b9e",
+    "src/utils/haptics.ts": "dc5df04ba21b0720dde9d6d4907a8216b40772564b2dd0870bcf0f54115903a1",
+    "src/utils/sound.ts": "5f206e7e33c24865202b548148e1484256611605f9659865c968a1761d5a9744",
+    "src/utils/studyTextMode.ts": "f3f445edb541a99643aa7bc817ede0b919f9692154f880552586a1b013d8a27c",
+    "src/utils/userProgress.ts": "4c35511876028017d566aac4cd53a976a56771c03db3024633a9602b8dd230ce"
+  },
+  "technicalReviewClosure": {
+    "baseMain": "0ac7cd6f85b785d70b51ac1ddfa508b611995697",
+    "previousRegistryEntries": {
+      "gap-pack2-29": {
+        "status": "REVIEW",
+        "auditAction": "REVIEW",
+        "auditProposedLevel": 3,
+        "confidence": "medium",
+        "auditRationale": "Применить правило (L4 · Сокет): Как одно соединение с двумя направлениями между той же парой конечных точек",
+        "followUp": "PR #168: technical fix merged",
+        "reviewReason": "Техническая неточность устранена; предварительный учебный уровень из REVIEW не был отдельно утверждён. Требуется решение по классификации, без повторного открытия принятой технической правки."
+      },
+      "tcpip-x03": {
+        "status": "REVIEW",
+        "auditAction": "REVIEW",
+        "auditProposedLevel": 1,
+        "confidence": "medium",
+        "auditRationale": "Распознать (TCP/IP · Инкапсуляция): Заголовок TCP с портами",
+        "followUp": "PR #168: technical fix merged",
+        "reviewReason": "Техническая неточность устранена; предварительный учебный уровень из REVIEW не был отдельно утверждён. Требуется решение по классификации, без повторного открытия принятой технической правки."
+      },
+      "ts-x02": {
+        "status": "REVIEW",
+        "auditAction": "REVIEW",
+        "auditProposedLevel": 2,
+        "confidence": "medium",
+        "auditRationale": "Одна простая связь симптома с подсистемой; нет проверки конкурирующих гипотез",
+        "followUp": "PR #168: technical fix merged",
+        "reviewReason": "Техническая неточность устранена; предварительный учебный уровень из REVIEW не был отдельно утверждён. Требуется решение по классификации, без повторного открытия принятой технической правки."
+      },
+      "ts-x09": {
+        "status": "REVIEW",
+        "auditAction": "REVIEW",
+        "auditProposedLevel": 2,
+        "confidence": "medium",
+        "auditRationale": "Объяснить связь (Диагностика · ARP): Шлюз не отвечает в этом L2-сегменте (не тот VLAN/кабель/IP)",
+        "followUp": "PR #168: technical fix merged",
+        "reviewReason": "Техническая неточность устранена; предварительный учебный уровень из REVIEW не был отдельно утверждён. Требуется решение по классификации, без повторного открытия принятой технической правки."
+      },
+      "l4-x05": {
+        "status": "REVIEW",
+        "auditAction": "REVIEW",
+        "auditProposedLevel": 1,
+        "confidence": "medium",
+        "auditRationale": "Распознать (L4 · Порты): Высоких портов (часто ≥49152 по IANA)",
+        "followUp": "PR #168: technical fix merged",
+        "reviewReason": "Техническая неточность устранена; предварительный учебный уровень из REVIEW не был отдельно утверждён. Требуется решение по классификации, без повторного открытия принятой технической правки."
+      },
+      "l4-d04": {
+        "status": "REVIEW",
+        "auditAction": "REVIEW",
+        "auditProposedLevel": 2,
+        "confidence": "medium",
+        "auditRationale": "Объяснить связь (L4 · UDP): Большой ответ / truncated (TC) или zone transfer",
+        "followUp": "PR #168: technical fix; PR #170: answer/pro explanation clarified",
+        "reviewReason": "Техническая неточность устранена; предварительный учебный уровень из REVIEW не был отдельно утверждён. Требуется решение по классификации, без повторного открытия принятой технической правки."
+      },
+      "tcpip-d01": {
+        "status": "REVIEW",
+        "auditAction": "REVIEW",
+        "auditProposedLevel": 2,
+        "confidence": "medium",
+        "auditRationale": "Объяснить связь (TCP/IP · Инкапсуляция): IP src/dst (обычно) · L2 MAC под следующий hop",
+        "followUp": "PR #168: technical fix merged",
+        "reviewReason": "Техническая неточность устранена; предварительный учебный уровень из REVIEW не был отдельно утверждён. Требуется решение по классификации, без повторного открытия принятой технической правки."
+      },
+      "ts-d05": {
+        "status": "REVIEW",
+        "auditAction": "REVIEW",
+        "auditProposedLevel": 2,
+        "confidence": "medium",
+        "auditRationale": "Объяснить связь (Диагностика · Сценарий): Асимметричная маршрутизация: ответный/входящий path не совпадает с ожиданием uRPF",
+        "followUp": "PR #168: technical fix merged",
+        "reviewReason": "Техническая неточность устранена; предварительный учебный уровень из REVIEW не был отдельно утверждён. Требуется решение по классификации, без повторного открытия принятой технической правки."
+      },
+      "l3-vrrp02": {
+        "status": "REVIEW",
+        "auditAction": "REVIEW",
+        "auditProposedLevel": 2,
+        "confidence": "medium",
+        "auditRationale": "Объяснить связь (L3 · VRRP): Маршрутизатор с более высоким Priority",
+        "followUp": "PR #168: technical fix merged",
+        "reviewReason": "Техническая неточность устранена; предварительный учебный уровень из REVIEW не был отдельно утверждён. Требуется решение по классификации, без повторного открытия принятой технической правки."
+      }
+    }
+  },
+  "authorizedSourceUpdates": [
+    {
+      "issue": 173,
+      "baseMain": "7f30426817f9d6839d38d8981fbd9ba6f26e4524",
+      "path": "src/data/questionsData.ts",
+      "previousSHA256": "a71a6a30445cd23181d981cd30ad196decf40e032d9dbf53e058f25b0c2e7800",
+      "reason": "Beginner-only selection and shared new-attempt call site, including bounded custom pools; all-level behavior and UI rendering unchanged."
+    },
+    {
+      "issue": 173,
+      "baseMain": "7f30426817f9d6839d38d8981fbd9ba6f26e4524",
+      "path": "src/components/ExamView.tsx",
+      "previousSHA256": "02f1af94074fa8ab0891c3396593a94535cd97e97107fe4b37ed2d162edfbd6a",
+      "reason": "Beginner-only selection and shared new-attempt call site, including bounded custom pools; all-level behavior and UI rendering unchanged."
+    },
+    {
+      "task": "reconcile already merged testing rename",
+      "baseMain": "d9f036f10517661d810de70c1f25158d5a7e5dd6",
+      "path": "src/components/CommandPalette.tsx",
+      "previousSHA256": "84e3c7ebec4b975dfede52afc98e381486b0564af6d0cc9306e84278c861ec58",
+      "acceptedMainSHA256": "8010587c9dd5a6b2f72b0e3e36bc9b0a472b5c7a60a5a33400f2f5deb05881c0",
+      "reason": "Snapshot was stale on untouched main before this task; source file is not changed by this reconciliation."
+    },
+    {
+      "task": "reconcile already merged testing rename",
+      "baseMain": "d9f036f10517661d810de70c1f25158d5a7e5dd6",
+      "path": "src/components/ExamView.tsx",
+      "previousSHA256": "b56aff0e035e6ee8b0cc0eaed7c55c5c4817dbf926fae06f58c78d972493b1fd",
+      "acceptedMainSHA256": "8dd41c967d6afb711b00f299777c456d9e0648471841a1df65d87e4482e0d1e6",
+      "reason": "Snapshot was stale on untouched main before this task; source file is not changed by this reconciliation."
+    },
+    {
+      "task": "reconcile already merged testing rename",
+      "baseMain": "d9f036f10517661d810de70c1f25158d5a7e5dd6",
+      "path": "src/components/MobileTabBar.tsx",
+      "previousSHA256": "ae9c48ff1ad1769d2cc71d63ca7125cb917dbead52b9cf6f11b9548966c0b6b9",
+      "acceptedMainSHA256": "8d743b889e2dcad0ab98b8d2f28558cc4fedaeaf99554fd833a945ff323d9d54",
+      "reason": "Snapshot was stale on untouched main before this task; source file is not changed by this reconciliation."
+    },
+    {
+      "task": "reconcile already merged testing rename",
+      "baseMain": "d9f036f10517661d810de70c1f25158d5a7e5dd6",
+      "path": "src/components/Navbar.tsx",
+      "previousSHA256": "a79a5ddd939426a51b919fc9d560f908f3ffde11c792c38cee020269071a584e",
+      "acceptedMainSHA256": "fed810e029d49b48b83225cc577aebc4f7e06ab3961f6ffcd47597303d88cca3",
+      "reason": "Snapshot was stale on untouched main before this task; source file is not changed by this reconciliation."
+    },
+    {
+      "task": "reconcile already merged testing rename",
+      "baseMain": "d9f036f10517661d810de70c1f25158d5a7e5dd6",
+      "path": "src/data/questionsData.ts",
+      "previousSHA256": "b3050f92978bba43c695900b83a1aac120798346f9d0470bfddd3626475453aa",
+      "acceptedMainSHA256": "c7eb215389afacf7dba9249841761994284be1e7b06f15113e9383100642f655",
+      "reason": "Snapshot was stale on untouched main before this task; source file is not changed by this reconciliation."
+    },
+    {
+      "task": "five-level testing UI",
+      "baseMain": "d9f036f10517661d810de70c1f25158d5a7e5dd6",
+      "path": "src/components/ExamView.tsx",
+      "previousSHA256": "8dd41c967d6afb711b00f299777c456d9e0648471841a1df65d87e4482e0d1e6",
+      "reason": "Independent registry-based testing with additive session learningLevel; legacy restoration retained."
+    },
+    {
+      "task": "five-level testing UI",
+      "baseMain": "d9f036f10517661d810de70c1f25158d5a7e5dd6",
+      "path": "src/types/quiz.ts",
+      "previousSHA256": "95756d9d97993b56c22bc6156c1bfcf0b2b7724f9c6ca5a0290501122dfccd57",
+      "reason": "Independent registry-based testing with additive session learningLevel; legacy restoration retained."
+    },
+    {
+      "task": "five-level testing UI",
+      "baseMain": "d9f036f10517661d810de70c1f25158d5a7e5dd6",
+      "path": "src/utils/examProgress.ts",
+      "previousSHA256": "b1611f61fdd63bb5ef7da3766472f378c5d4a5b0720e4e52ca8b82e40a6a6a7a",
+      "reason": "Independent registry-based testing with additive session learningLevel; legacy restoration retained."
+    },
+    {
+      "task": "five-level testing UI",
+      "baseMain": "d9f036f10517661d810de70c1f25158d5a7e5dd6",
+      "path": "src/utils/examReview.ts",
+      "previousSHA256": "8ea265f145e9a65e5661f91022eea8602a1a78727c482c54e6b0b3a997a8533e",
+      "reason": "Independent registry-based testing with additive session learningLevel; legacy restoration retained."
+    },
+    {
+      "task": "PR 239 fundamentals batch and accepted glossary distinction",
+      "path": "src/data/glossary.ts",
+      "previousSHA256": "3bc4fac6ff50f3964d2cd83ac6abfa51882b27a2d533269aac0f5302592e2f20",
+      "newSHA256": "e2f6822c37b13dd2315f5097fbbae9ab5fde64a586f40596f15d42bc365ac8fe",
+      "reason": "glossary.ts: accepted 1d5ce95 distinction of IPv4 TTL, DNS TTL, ICMP Echo Request/Reply; baseline was not refreshed. lessons and applied explanations: related IDs and professional layers for l2-03, l2-05, l3-01, l4-02, tcp-02. Question keys unchanged."
+    },
+    {
+      "task": "PR 239 fundamentals batch and accepted glossary distinction",
+      "path": "src/data/lessons/l2-ethernet.ts",
+      "previousSHA256": "843442e80619c9b18197e33dd282bf3b45ab9c47f1048e3bc8ece5ed9edf6958",
+      "newSHA256": "d73c2bc4871b64d3112809c5153fdcb1133d680c2b7674dd852f0b077ce75261",
+      "reason": "Intentional content coverage update for the fundamentals batch. Question keys, IDs and saved attempts unchanged."
+    },
+    {
+      "task": "PR 239 fundamentals batch and accepted glossary distinction",
+      "path": "src/data/lessons/osi-pdu.ts",
+      "previousSHA256": "9499cd40c27b9bf78d6bbf7a89a37ba233598b1740822cf9da1b6029b28f2e82",
+      "newSHA256": "1783fa2b2e24529ac5468398bdb21fa4e1c55098203f21c76ee3a6e23f7246df",
+      "reason": "Intentional content coverage update for the fundamentals batch. Question keys, IDs and saved attempts unchanged."
+    },
+    {
+      "task": "PR 239 fundamentals batch and accepted glossary distinction",
+      "path": "src/data/questionExplanationsApplied.ts",
+      "previousSHA256": "e96bf253bee771b8862a96c9962b2eb4217d58e088beae4b952fcc191c92fc2e",
+      "newSHA256": "636ac5c410156c16b558dd35ae83c163c172bbb9629c4ee2833cde83097362b1",
+      "reason": "Intentional content coverage update for the fundamentals batch. Question keys, IDs and saved attempts unchanged."
+    }
+  ],
+  "photoReviewUpdate": {
+    "baseMain": "2354386570ddaf310fcb79f01c6125a6456ec09f",
+    "assetsRevision": "1c52fa81222167dc4377fe4788de86f3e36ad444",
+    "previousBankSHA256": "1077beb02460ce624ee68a94e9e2f3bbbcc7d02308266da3010de4e709d0c079",
+    "previousAuditProjectionSHA256": "b01ce6bf26613a54160f741902229bff6ddea85dccb97d94ebff004552dd6c96",
+    "levels": {
+      "photo-cable-colors": 3,
+      "l1v2-a-contact-solid": 1,
+      "l1v2-b-strip-hole": 1,
+      "l1v2-b-cleave-sequence": 3,
+      "l1v2-c-closure-service": 2
+    }
+  },
+  "questionQualityUpdate": {
+    "baseMain": "bb4be1ac117e7f231182d92163d95d925c59b128",
+    "previousBankSHA256": "4fafaab1511a6b9a7f3a067499d7f97ba59b11c712defc885ecc9364254a05d8",
+    "rewritten": [
+      "l4-d02",
+      "ts-d04",
+      "ts-d06",
+      "ts-d08"
+    ],
+    "families": {
+      "tcp-rst-meaning": [
+        "l4-08",
+        "l4-x01"
+      ],
+      "tcpip-application-mapping": [
+        "tcp-02",
+        "tcpip-x02"
+      ]
+    },
+    "previousProtectedSHA256": {
+      "src/data/questionExplanations.ts": "850db95effd7378b8bc6a8a2fb8d5bbe35473c02ab7561efdc4cef6d8d674b0f",
+      "src/data/questions.json": "17f7894b79856b7c4b2e3b075f6aaed2d5c860db38d8da0c1685c78f5a7cb1a1",
+      "src/data/questionsData.ts": "5b1a4fb41debeedcea7e7da28407d4fbae9d4ef3a5ea045eb641522c606a1332",
+      "src/data/questionsExtra.ts": "9102f0a04a6cb39231c005e4cfa2bd25f5947b1ad029308a3cca8ffb49f5196b",
+      "src/data/questionsExtraDifficulty.ts": "dbfb9839d94723fcc365f23345c48e1a55ebd7fe73ba34000aee0c02fc0be8dc",
+      "src/utils/examProgress.ts": "886c403df5e3ece91b86941655f2826e148de6489aaf387c25591e3bde218c40",
+      "src/data/glossary.ts": "4c0e60d5973ebd1ee813fa17880fd94969882166ab9627909df6e0ffe6c6e67a",
+      "src/data/lessons/l3-nat.ts": "18ff5d9f2334b94f86045c7610a409352f93a433db6c17c9595e1ff749140965",
+      "src/data/lessons/l4-tcp-loss.ts": "c65ea69c1299ffe5ac0178144fd39c565a09ab63fab07fa3cc4e2f7c96e96f61",
+      "src/data/lessons/tcp-window-retransmit.ts": "2450d7a50a188c33bef9f00191e70550effeb8a5ef19c25d06c057d3628c7a66"
+    }
+  },
+  "diagnosticPack177": {
+    "baseMain": "37bd5d5da7527f90088335b3b932c0916763b0ec",
+    "previousBankSHA256": "eee9af51f6694ef5c1fb6ab6014428e9f40d9524db1acc218e2c80285f801720",
+    "previousAuditProjectionSHA256": "6aeba18c2185261db1b672aa7cc604b41caeafb82ca093f95e7b45b99cf2dfce",
+    "added": [
+      "diag177-optical-direction",
+      "diag177-otdr-bidirectional",
+      "diag177-mrp-domain",
+      "diag177-lag-hash",
+      "diag177-igmp-querier",
+      "diag177-ipv4-onlink-return",
+      "diag177-ra-default-lifetime",
+      "diag177-dhcp-renew-rebind",
+      "diag177-dns-secondary-serial",
+      "diag177-tcp-checksum-offload",
+      "diag177-nat-return-path",
+      "diag177-qos-marking"
+    ],
+    "previousProtectedSHA256": {
+      "src/data/glossary.ts": "8faed8915ca664653bf4799005d99f557912eb32c74917f75821a69e30e5d6f0",
+      "src/data/lessons/index.ts": "a508f3a1be5e83f9e7b4e2b6230242f6b9d353490100019170295a8bbf304409",
+      "src/data/lessons/l2-stp-guard-design.ts": "5c736d6007920e7b735db7dff36349d80829a9ab2693988e79f79b0b9f2ece71",
+      "src/data/lessons/ts-method.ts": "5958b253309a147ebc7ced27d6b29f8fef02ad3400a1cdd425dc00ee4564100a",
+      "src/data/questionExplanations.ts": "7c16d5be8947ddd34835eb6a228f2970edf406c8f46981e98171decaa2794fb7",
+      "src/data/questionsData.ts": "04e025c80e89b90bcf424a49936400957cf9e605519ab586379e9806f6b2e05e",
+      "src/data/lessons/ts-optics.ts": "ca621ade75d5dd6a6d9f65513ce30f0e23fff8ad757775a76678a57787360fcb"
+    }
+  },
+  "monitoringPack": {
+    "baseMain": "eef028cf38e534fbeb16a43e12f1fb6fb20e17b0",
+    "previousBankSHA256": "3e818d56188b05be41bde05ea270a3c7de39d902b15b23db527144c69855c413",
+    "previousAuditProjectionSHA256": "8d12e0856c779982a2c363f1a70ab3c877db2074177610afd4466dc3828feac8",
+    "added": [
+      "mon-snmp-01",
+      "mon-snmp-02",
+      "mon-snmp-03",
+      "mon-snmp-04",
+      "mon-snmp-05",
+      "mon-syslog-01",
+      "mon-syslog-02",
+      "mon-syslog-03",
+      "mon-syslog-04",
+      "mon-syslog-05",
+      "mon-zabbix-01",
+      "mon-zabbix-02",
+      "mon-zabbix-03",
+      "mon-zabbix-04",
+      "mon-zabbix-05",
+      "mon-diag-01",
+      "mon-diag-02",
+      "mon-diag-03",
+      "mon-diag-04",
+      "mon-diag-05"
+    ],
+    "previousProtectedSHA256": {
+      "src/data/glossary.ts": "ef51605e35648322f8d4459ac93504faa745209bc8ce9992866df519a85699bb",
+      "src/data/lessons/index.ts": "89e3073e4204992558b3d53b9f93b852528326fe95f852a4c1b1bc445b690212",
+      "src/data/questionExplanations.ts": "7f465a35f0fe8955356011b8d1905e040b0b0964b5b92db337ef431e175267f7",
+      "src/data/questionsData.ts": "400d535eded21604bcfd4324822509b9d99511f562747662256faa88671ccbe1"
+    }
+  },
+  "wifiPack": {
+    "baseMain": "861e988a40e4d9b401e316e2f2ae0cce9b9f7645",
+    "previousBankSHA256": "ba05a4214fb3b5380cc1b218b8339fd5efd24f8a545848f4725298d70521dccd",
+    "previousAuditProjectionSHA256": "9efce456503b52c7c9bc8273509adaf851eccd133d610f0b70e795da8395bdec",
+    "added": [
+      "wifi-std-01",
+      "wifi-std-02",
+      "wifi-std-03",
+      "wifi-std-04",
+      "wifi-std-05",
+      "wifi-roam-01",
+      "wifi-roam-02",
+      "wifi-roam-03",
+      "wifi-roam-04",
+      "wifi-roam-05",
+      "wifi-sec-01",
+      "wifi-sec-02",
+      "wifi-sec-03",
+      "wifi-sec-04",
+      "wifi-sec-05",
+      "wifi-diag-01",
+      "wifi-diag-02",
+      "wifi-diag-03",
+      "wifi-diag-04",
+      "wifi-diag-05"
+    ],
+    "previousProtectedSHA256": {
+      "src/data/glossary.ts": "932f59e85ec7d6ac446273e97aecb7508f4b057a85069a4f0baac20e1b0456fe",
+      "src/data/lessons/index.ts": "3ccf4edff866169a7d54c333180662027e46adcb3d0cf9b5dff2e529e6b3026b",
+      "src/data/questionExplanations.ts": "40797cef6afb636d3691b2dae8f88d5951e0703685ebaaf8848e8a616cd6b496",
+      "src/data/questionsData.ts": "cd90c1b67ceb532648180515a85039b376e4a81914a166d004216f6fc520f2b5"
+    }
+  },
+  "expertPack225": {
+    "baseMain": "79dfedcbb0553c24e14721b1dbc10801a62463a0",
+    "previousBankSHA256": "ad005cca3c810130ca0da85cafca9db826154e71ee9775533b5e994e0fa7f797",
+    "previousAuditProjectionSHA256": "35246bbaa8ca10c196093cf7653c44c630871ae375214b2fd0ecdf9b13c8505d",
+    "added": [
+      "exp225-l2-macflap-01",
+      "exp225-l2-trunk-pruning-02",
+      "exp225-l2-stp-udld-loop-03",
+      "exp225-l2-mstp-digest-04",
+      "exp225-l2-storm-copp-vs-stp-05",
+      "exp225-l3-lpm-summary-06",
+      "exp225-l3-vrrp-split-07",
+      "exp225-l3-asym-ecmp-nat-08",
+      "exp225-l3-arp-garp-proxy-09",
+      "exp225-l3-acl-urpf-order-10",
+      "exp225-mon-ifindex-shift-11",
+      "exp225-mon-counter-12",
+      "exp225-mon-poller-saturation-13",
+      "exp225-mon-syslog-clock-correlation-14",
+      "exp225-mon-snmp-rootcause-15",
+      "exp225-wifi-roam-pmf-ft-16",
+      "exp225-wifi-dfs-channel-plan-17",
+      "exp225-wifi-interference-snr-18",
+      "exp225-wifi-radius-roaming-mixed-19",
+      "exp225-wifi-mixed-switch-ap-20"
+    ],
+    "previousProtectedSHA256": {
+      "src/data/glossary.ts": "ed954b381f32a5f512a0af1503677cd4defaaeee736da8b55358e4dbc941b300",
+      "src/data/lessons/index.ts": "06f9b4189aa582910f4185ad01e0bb2d8667dae95ffe3df1ed0c97faad691ccb",
+      "src/data/questionExplanations.ts": "4c5b7fc5125c7e5805439b35d46555588556879dd65532acd4df92caa54cb414",
+      "src/data/questionsData.ts": "4ab931538f4af4b5dcd6e3b46a2fa68491bdedb198e3c112062b16287426bd66"
+    }
+  },
+  "expertPack177": {
+    "baseMain": "ef67450db5a5dcdbb4dc87bf6b4e3591f34fb09e",
+    "previousBankSHA256": "0665cdcca6c55259af02342a3c1064690e7bf1ac65364a95de8a1ce3c8aef602",
+    "previousAuditProjectionSHA256": "beb12f82814f14640caf591bdb1028b5f3162fa42f187e018bd027e14873ec95",
+    "added": [
+      "expert177-mrp-vlan-failover",
+      "expert177-dnat-reply-policy",
+      "expert177-optical-reserve-margin"
+    ],
+    "previousProtectedSHA256": {
+      "src/data/glossary.ts": "cd8155c9f847b5872018b7e9533e9d2ea6437a08a7d62cfa2b56d8b6dd909833",
+      "src/data/lessons/index.ts": "0924a2b65a0025a9c935cc986bd2254f5199c63dc351ff16f4e4a0b52b313f20",
+      "src/data/lessons/types.ts": "c9d7e59d330a04c5a4eaaefc28379c0132c3a72307cef6ef6c42b333473976d3",
+      "src/data/questionExplanations.ts": "64f9b3fdf56023aa6a2136bcb6623eed74d18eaf15d449f81efca85f8158d474",
+      "src/data/questionsData.ts": "05f3d495e3e36fa2c1756b395bb9bca1ea71df0bd1cc888a6c79b95dad3700da"
+    }
+  },
+  "contentMigrations": [
+    {
+      "date": "2026-11-17",
+      "branch": "feat/base-foundations-batch2",
+      "sourceMain": "88ca8a896ead46901dca16f57d985c9d49f77b66",
+      "reason": "Base fundamental content batch #2; explicit content-only migration, bank and learning-level projection unchanged.",
+      "files": [
+        {
+          "path": "src/data/glossary.ts",
+          "previousSHA256": "e2f6822c37b13dd2315f5097fbbae9ab5fde64a586f40596f15d42bc365ac8fe",
+          "newSHA256": "44b4f4922dbe4b29cccbd9fa1a9d2ee65f11409a437b1c091b6b4eb1d778124f"
+        },
+        {
+          "path": "src/data/lessons/osi-pdu.ts",
+          "previousSHA256": "1783fa2b2e24529ac5468398bdb21fa4e1c55098203f21c76ee3a6e23f7246df",
+          "newSHA256": "f067dfa54e3e6cacdb5def9fbe62242f06abf0c397e70b30cafbffde50909b07"
+        },
+        {
+          "path": "src/data/lessons/tcpip-model.ts",
+          "previousSHA256": "afd77246f1ff78ec781c5723a49e8f61d9c4016b3a2c87b7663212da374a97a5",
+          "newSHA256": "d5140cd8fba4118d716b5a7571006e4fe05de17bbb29bb0357644944d56f7de3"
+        },
+        {
+          "path": "src/data/lessons/tcpip-encapsulation.ts",
+          "previousSHA256": "252b0c32fcab03df3dd3b27a7523394f27db987e59e168dc421073d6dde7c843",
+          "newSHA256": "433abaf666c4066e7bfebfcca5f67b83ea6b9fc48561620ee3f84b283721b8a3"
+        },
+        {
+          "path": "src/data/questionExplanations.ts",
+          "previousSHA256": "3a771d2ff5aae4dd0e41aeb11afaa1f004b75eeceddcc3bb0fc62df1e7252487",
+          "newSHA256": "1d85568dd6ef33483bcb43a737f2c04b68516def3fe92448c167ecb33c9ec482"
+        }
+      ]
+    },
+    {
+      "date": "2026-11-19",
+      "branch": "integrate/in-depth-164-codex-gemini-20261119",
+      "sourceMain": "ddd8682cd7db71e994ae2ac29e08f4b1bc8c6f6f",
+      "status": "DRAFT / independent semantic review and CI pending",
+      "reason": "Understanding 164 curated double-style explanations, exact lesson anchors, glossary, limited answer wording and distractor clarifications. Pre-edit bank content must match old 905f48... fingerprint by reconstructing exact five historical option sets. Preserve #258/#262 and old attempts; update protected SHA only for enumerated edited files, not broader allowlist. Browser acceptance uncovered a real TheoryView regression: returning lesson→question left local focusQuestionId set and 'К каталогу' could not restore the catalogue; clear both parent and local focus. Browser regression checks the full return chain. Browser shard 1 exposed anchor moving outside viewport on plain-style switch in a late lesson; LessonView now rechecks exact anchor after layout settles without guessing or redirecting to another section.",
+      "previousBankSHA256": "905f48a0ed6f3dd49d1e3236547609d4afc819de6c58c3274931703fc56fc896",
+      "newBankSHA256": "c7cc71535f4b06adcaf55c4e60f4fa6e5c4d275f9cf895883d759073ce11c00f",
+      "files": [
+        {
+          "path": "src/components/LessonView.tsx",
+          "previousSHA256": "754db1dcc4666c3757ba24ee940dfd368b87c71332ffbbb3696c758b96ea66d1",
+          "newSHA256": "55f2096a1bc19b7b015d096b9ea888dcad6f9d19c94541d1ddb84e11527ae784"
+        },
+        {
+          "path": "src/data/glossary.ts",
+          "previousSHA256": "2d5cb3cd2e8c244e66a912f21f42e845e7703f2db0d31de94e848c3148671824",
+          "newSHA256": "d14da07af7c1613e3fddd8ea9125175d10002a8c6b9907c8865ce5b7845b96eb"
+        },
+        {
+          "path": "src/data/lessons/index.ts",
+          "previousSHA256": "d03130e3f8d9025e8c84e0d4b2d53b18e9f4dcda2f6a284f2ac4b08de4a9d8d0",
+          "newSHA256": "268bfd1743ac7a4ffc475833f193ab74fcd75fd071d0f34c0c1b9cce746fcf1d"
+        },
+        {
+          "path": "src/data/lessons/l12-wifi-standards-roaming.ts",
+          "previousSHA256": "23b355e2ce1c3cc42c33c13da1af7917140cc678b0fc6a37002a32975cc4c9d2",
+          "newSHA256": "5164ea0f1f79046119fdd8f642ad64220af06c3d3b3927683ca15144cb6d5c2e"
+        },
+        {
+          "path": "src/data/lessons/l2-vlan-security.ts",
+          "previousSHA256": "d79d23c1f279baa2b91ef579193c093a1c163e5ac39702f8c6bc07114611c713",
+          "newSHA256": "6370cb24158b69d1700079a9e6178b6d263159aba6e09769a10be24dbef9aa9d"
+        },
+        {
+          "path": "src/data/lessons/ts-zabbix-monitoring.ts",
+          "previousSHA256": "7fab26efa6a7e7af8e289ada8c241302712135e452686d2446867c4d1ca288aa",
+          "newSHA256": "2ab8d93a7cf739bfa3b5505023dc8d4d2119c647389aae915e1d4f59e90b4e78"
+        },
+        {
+          "path": "src/data/questionExplanations.ts",
+          "previousSHA256": "6e218ed527bc6a363035fe27f14acc5f6e58d6fdf8af59578cf8c2eb8913cad7",
+          "newSHA256": "9d9df9a5c0f640ec7e45432991ee1821a8200ac439b7facfb967a67362b105f9"
+        },
+        {
+          "path": "src/data/questions.json",
+          "previousSHA256": "cd10f9a74bf58e68721378bd55b07b47e338e052c20ef147c4e0fe4d15c9fa62",
+          "newSHA256": "d4f5f8fb91a3d7f5442999756a0e46519b806afac7537f704aef2e66e94501f4"
+        },
+        {
+          "path": "src/data/questionsExtra.ts",
+          "previousSHA256": "5c769473b18e143f3f9f31dd9662fcc36eb3aca904406465db07c3b2bf9fb197",
+          "newSHA256": "da6eca48df860cb966f98bdd2ee28fe4178866c73a2a63f64e3fb580d8b4ca6c"
+        },
+        {
+          "path": "src/data/wifiCases.ts",
+          "previousSHA256": "47ea9c62898a4bc0e57fec250c10fb6d3df151c269974b97bfe78bdc7a79996b",
+          "newSHA256": "9bc77a454e2e5ab8f5d52e031a4083c2385c685bc3aca0054e983b81dedee1cf"
+        },
+        {
+          "path": "src/utils/examProgress.ts",
+          "previousSHA256": "4778b5ba1c7e869c751b94e32fe70a1206133245bd1942fcf307650f61200c43",
+          "newSHA256": "5afdbfbb11456fbf69f5eff43de2021ed9ec52e2966c2bcf492884f59ff3fec5"
+        },
+        {
+          "path": "src/data/lessons/l2-stp-protection.ts",
+          "previousSHA256": "ce6780e4c9dcf47768724ba0b37a9b6e5bd8ddb5c7d8c4ca4c61255ef530a35b",
+          "newSHA256": "b5ef281e4f0ec4d7a87fbc599cfc910b1424ef05ec62287d10ffa48866748f49"
+        },
+        {
+          "path": "src/data/lessons/l4-tcp-loss.ts",
+          "previousSHA256": "a4a883aaf2956ac71e5fbc434f616d67643fc8097fab0fa48e3c1362dffa12b0",
+          "newSHA256": "c9a3655622be69621a48c431af5ab459762acd2b1af5f64045e4ddd7d18429a3"
+        },
+        {
+          "path": "src/data/lessons/l7-dns-dhcp.ts",
+          "previousSHA256": "996d355244c374dc320b139c20bb147ec65d4a25af2cb18509a8f2bc6df61e99",
+          "newSHA256": "a483fa591ef32cf1ff0b4edfd33baf42c2d55a26896e95861527a16364b9c61c"
+        },
+        {
+          "path": "src/data/lessons/l7-services.ts",
+          "previousSHA256": "7ba5672de9c923ca430a29922f7b2662b9b55b09c0105cd55498bd52baa3bc44",
+          "newSHA256": "6f943343156a700fb95584f4c83779155692da9ef7e50dcd1fef2e03a412670f"
+        },
+        {
+          "path": "src/data/lessons/tcp-window-retransmit.ts",
+          "previousSHA256": "f90e3447f0cc2343b096a0f128c432e14f17104b21855c5e3b21a56fdc333fc2",
+          "newSHA256": "a50b905c5d793053a891963e1f626286eaf52bb3a29116bfdd7d16892f26f12c"
+        },
+        {
+          "path": "src/components/TheoryView.tsx",
+          "previousSHA256": "d1e52afc314db35e98229a1a363ff4f6506079c081fc56d1e40db3651f4de532",
+          "newSHA256": "49662515fdefb04562c8fd654bda31353bad1b9226c4d254a515f5036c36d98d"
+        },
+        {
+          "path": "src/components/LessonView.tsx",
+          "previousSHA256": "55f2096a1bc19b7b015d096b9ea888dcad6f9d19c94541d1ddb84e11527ae784",
+          "newSHA256": "cf382b6c54d4fc0bcf09fc80803d773ff540cbcdc8de7153f4b9fd2d4ed9a1e3"
+        }
+      ]
+    },
+    {
+      "date": "2026-11-23",
+      "branch": "audit/reconcile-protected-stage2-20261123",
+      "sourceMain": "5d0763401d75db68aa01468441b12439b1e0df8a",
+      "status": "PROVENANCE_RECONCILIATION — awaiting CI/independent acceptance; no source edits",
+      "reason": "10 already-merged content/UI changes after the stage-2 protected-file snapshot; origins checked against main commit histories, current hashes confirmed read-only by GitHub Actions #45100507104. This changes expected file hashes only; learning-level projection, questions, answers, and bank fingerprint unchanged.",
+      "files": [
+        {
+          "path": "src/components/GlossaryText.tsx",
+          "previousSHA256": "fa07e0d7b05e5066f98978adc69cb7ddd8b348bddf6bcc520a23cfae5e4a825a",
+          "newSHA256": "6972068b3a98eb6b8226f5fa7d83eabae5d861de080cb9b95dfef636cc222f1c",
+          "reason": "#318 and related scoped glossary changes for PoE"
+        },
+        {
+          "path": "src/components/KnowledgeBase.tsx",
+          "previousSHA256": "7321f9839dc72eb3a391a98b4fd57d34f5efbc09c9c25824261e1e2a58edbc75",
+          "newSHA256": "8d2ac6036ec8821434ea2eaf7a84d5dfb95bb0ba24120103930c0cd716c415fb",
+          "reason": "a7ae5e6 lesson category and review state adjustment"
+        },
+        {
+          "path": "src/components/LessonTermTags.tsx",
+          "previousSHA256": "d6c05781fec1c0a47ace7cac96d3f5efc8b2fdb29dcb0ea0e5b936afaf39a015",
+          "newSHA256": "0f040cf9c22c750e32aff080bc94fceb563444d8dbeefec2796e97e19fdae2a1",
+          "reason": "PR #298 remove unnecessary glossary drill-down link"
+        },
+        {
+          "path": "src/components/LessonView.tsx",
+          "previousSHA256": "cf382b6c54d4fc0bcf09fc80803d773ff540cbcdc8de7153f4b9fd2d4ed9a1e3",
+          "newSHA256": "afeb0e3fa7cd53de7483335738e8c6d36833a6df57cfb4a4afc6753bfe8c4484",
+          "reason": "PoE cheat sheet, responsive styling and self-check PRs #314, #319, #321"
+        },
+        {
+          "path": "src/components/ZoomableImage.tsx",
+          "previousSHA256": "915eb1df7e58e5a124982da66f254aa36e76051bc3e97944aed3e395977ead53",
+          "newSHA256": "9684873946babef69db32323259035a15103195afc5a1bbd010f657821255b5e",
+          "reason": "PR #304 photo zoom wheel/pinch"
+        },
+        {
+          "path": "src/data/glossary.ts",
+          "previousSHA256": "d14da07af7c1613e3fddd8ea9125175d10002a8c6b9907c8865ce5b7845b96eb",
+          "newSHA256": "4aa086a8739aaf0e8b492961c18e5085fe400a3f579506c5700b726f05020a41",
+          "reason": "PoE glossary, DC imbalance, A/B scope PRs #314, #318, #320"
+        },
+        {
+          "path": "src/data/lessons/index.ts",
+          "previousSHA256": "268bfd1743ac7a4ffc475833f193ab74fcd75fd071d0f34c0c1b9cce746fcf1d",
+          "newSHA256": "fa60a9a1d0d19cbacb13e926112f0bd900ab5a11d54a08460c66b4affa687a6d",
+          "reason": "register PoE budget, CLI diagnostics, injector/splitter lessons"
+        },
+        {
+          "path": "src/data/lessons/ts-method.ts",
+          "previousSHA256": "3f831c4783d1ae64ba9ec33105c79bf2dc890e6c7e79b4608996f923f67bcc0a",
+          "newSHA256": "664cc28802ab3021dbfab317576f8486e72927faa852e552332d714938fdf2c2",
+          "reason": "a7ae5e6 lesson category adjustments"
+        },
+        {
+          "path": "src/data/lessons/types.ts",
+          "previousSHA256": "c4492a6ff3b6883fd68917e7cfc8053fee610768696fd402b934b5b5b06d401e",
+          "newSHA256": "59794825a182070889252b0873b159c69b6abf132838801f7b0714d1bf238877",
+          "reason": "PoE lesson case and mode-synchronized checks"
+        },
+        {
+          "path": "src/utils/glossaryText.ts",
+          "previousSHA256": "ac534593ba4adb89c1c924c474b7ee2b48767076fef25e1e4760253ff6e77dfb",
+          "newSHA256": "ff05944ffdd226245040390d8d73f41c317f74f3aa3966f75fd4c237c89edf69",
+          "reason": "context-scoped glossary matching and DNS-vs-PoE A/B PRs #318, #320"
+        }
+      ]
+    },
+    {
+      "date": "2026-11-23",
+      "branch": "fix/understanding-closeout-poe-20261123",
+      "sourceMain": "298a68f6ac5c11facbc77732625f7dd26918b63e",
+      "status": "EXPLICIT_IPV6_SCOPED_TOOLTIP_FIX — awaiting CI and browser acceptance",
+      "reason": "Understanding review-slaac-4 source audit found a DNS A tooltip on SLAAC RA flag A=1. Four narrowly scoped file changes; exact proposed SHA-256 validated by read-only Actions #45101995578 before updating baseline. No question keys, learning levels, accepted lesson badges or saved attempts changed.",
+      "files": [
+        {
+          "path": "src/components/GlossaryText.tsx",
+          "previousSHA256": "6972068b3a98eb6b8226f5fa7d83eabae5d861de080cb9b95dfef636cc222f1c",
+          "newSHA256": "e986d114a47ee2716f4f6a3214ba049c4a8348c7b5d4ffcf1ca3c02288f9ca84",
+          "reason": "Typed IPv6 glossary scope for context-specific RA flags only"
+        },
+        {
+          "path": "src/components/LessonView.tsx",
+          "previousSHA256": "afeb0e3fa7cd53de7483335738e8c6d36833a6df57cfb4a4afc6753bfe8c4484",
+          "newSHA256": "91a994d98be76d365c7a6735c7f81a054fb8bbb8098200211a71095dd6e81e55",
+          "reason": "Apply IPv6 RA scope solely to l3-ipv6, preserving existing PoE scope"
+        },
+        {
+          "path": "src/data/glossary.ts",
+          "previousSHA256": "4aa086a8739aaf0e8b492961c18e5085fe400a3f579506c5700b726f05020a41",
+          "newSHA256": "d8690172d61dc611d26f5a0567d8e689c527a105edff8dcea56b211efc67fe18",
+          "reason": "Exact A=1 A=0 L=1 L=0 A/L explanations in IPv6 RA"
+        },
+        {
+          "path": "src/utils/glossaryText.ts",
+          "previousSHA256": "ff05944ffdd226245040390d8d73f41c317f74f3aa3966f75fd4c237c89edf69",
+          "newSHA256": "bd1124a8b6ed8a78ca494d20452edbb8453440c2ac0b918bb8dcf44ccae001e9",
+          "reason": "Contextual IPv6 A flag versus DNS A record with no cross-domain leak"
+        }
+      ]
+    },
+    {
+      "branch": "kimi/fix-poe-injectors-splitters",
+      "date": "2026-11-24",
+      "sourceMain": "fd5130ad07549328533574f925f41a7744b286d6",
+      "reason": "Post-merge pin repair for two owner-approved PoE injector lesson PRs merged after the last baseline pin update (PR #335): PR #337 (PoE injector glossary hygiene) changed glossary.ts and glossaryText.ts; PR #340 (PoE injector lesson headings/summary without glossary tooltips) changed LessonView.tsx. No question keys, learning levels, accepted lesson content or saved attempts changed. Guard test:learning-levels must pass on the actually merged owner-approved state.",
+      "status": "PENDING OWNER ACCEPTANCE — Draft PR, no merge/deploy",
+      "files": [
+        {
+          "path": "src/data/glossary.ts",
+          "previousSHA256": "d8690172d61dc611d26f5a0567d8e689c527a105edff8dcea56b211efc67fe18",
+          "newSHA256": "e85b1d7be615fb785411954031c79eecfae9001892c3f0d26b10d8bbf378239d",
+          "reason": "PR #337 merged: scoped PoE glossary + DC/DC clarification (+2 lines)"
+        },
+        {
+          "path": "src/utils/glossaryText.ts",
+          "previousSHA256": "bd1124a8b6ed8a78ca494d20452edbb8453440c2ac0b918bb8dcf44ccae001e9",
+          "newSHA256": "2d83677466e93067532b48491dbe79c55d2c72d4ee953864f20cef2428b99b9e",
+          "reason": "PR #337 merged: PoE glossary scope handling (+7/-1)"
+        },
+        {
+          "path": "src/components/LessonView.tsx",
+          "previousGitBlobSHA1": "0f4d6f6f57485b68524a2e170543c0de965351fe",
+          "newGitBlobSHA1": "a909fd805752cf5c1c7ef51a351405f5d5db3dff",
+          "reason": "PR #340 merged: headings/summary of l1-poe-injectors-splitters render without glossary tooltips; pin lives in scripts/validate-learning-levels.mjs gate06ProtectedBlobs"
+        }
+      ]
+    }
+  ]
+}

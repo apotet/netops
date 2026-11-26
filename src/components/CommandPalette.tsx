@@ -50,7 +50,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
   const commands: CommandItem[] = [
     {
       id: 'tab-exam',
-      title: 'Экзамен — Режим тестирования',
+      title: 'Тестирование — Проверка знаний',
       category: 'Навигация',
       shortcut: '1',
       icon: <Layers className="w-4 h-4 text-cyan-400" />,

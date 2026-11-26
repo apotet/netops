@@ -51,4 +51,32 @@ export const LESSON_L7_DNS_DHCP: Lesson = {
     'RFC 1035 — Domain Names — Implementation and Specification: записи A, SOA и MX',
     'RFC 5321 — Simple Mail Transfer Protocol: выбор MX и порядок попыток доставки',
   ],
+  professional: {
+    summary: 'Инженерный разбор DNS RCODE (NOERROR/NODATA против NXDOMAIN), выбора DHCP-пула через giaddr, таймеров аренды T1/T2 (RENEWING/REBINDING) и приоритетов MX.',
+    terms: ['DNS', 'DHCP', 'DHCPv4', 'IPv4', 'A', 'AAAA', 'MX', 'SOA', 'TTL'],
+    blocks: [
+      {
+        heading: 'DNS NOERROR/NODATA против NXDOMAIN (RFC 2308)',
+        body: 'Ответ авторитетного DNS-сервера с RCODE=0 (NOERROR), ANCOUNT=0 и записью SOA в секции Authority (при отсутствии NS referral) классифицируется как NODATA: доменное имя в зоне существует, но для запрошенного QTYPE (например, AAAA) ресурсных записей нет. Это не влияет на валидность записей других типов (например, A) для того же владельца имени.\n\nНапротив, RCODE=3 (NXDOMAIN) означает отсутствие самого имени в зоне для всех типов записей. При диагностике dual-stack клиентов проверяйте ответы на A и AAAA раздельно: NODATA по AAAA при наличии A — штатный сценарий IPv4-only узла, а не сбой резолвера и не усечение ответа (TC=0).',
+      },
+      {
+        heading: 'DHCP Relay Agent и выбор подсети по giaddr (RFC 2131)',
+        body: 'Когда DHCP-клиент отправляет широковещательный DHCPDISCOVER с ciaddr=0.0.0.0, релей (ip helper-address) принимает пакет на интерфейсе клиентского VLAN, записывает IP-адрес этого интерфейса в поле giaddr (Gateway IP Address) и пересылает пакет unicast-сообщением на центральный DHCP-сервер.\n\nDHCP-сервер выбирает адресный пул по значению giaddr (в примере giaddr=192.0.2.1 → пул 192.0.2.0/24), а не по source IP внешнего пакета релея (203.0.113.1), не по собственной подсети сервера и не по устаревшему адресу в Option 50 (Requested IP Address) из другой сети.',
+      },
+      {
+        heading: 'Жизненный цикл аренды: T1 (RENEWING) и T2 (REBINDING)',
+        body: 'Таймеры T1 (обычно 0.5 × lease) и T2 (обычно 0.875 × lease) отсчитываются от момента выдачи аренды. По достижении T1 клиент переходит в состояние RENEWING и отправляет unicast DHCPREQUEST выдавшему серверу. Если до момента T2 ответ DHCPACK не получен, клиент переходит в состояние REBINDING.\n\nВ состоянии REBINDING (например, на 3200-й секунде при lease=3600 с и T2=3150 с) аренда ещё действительна: клиент продолжает использовать свой IP, заполняет ciaddr текущим адресом и отправляет широковещательный DHCPREQUEST без опции Server Identifier (Option 54), ожидая продления от любого доступного сервера. Сброс IP и переход в INIT с отправкой DHCPDISCOVER выполняются только после полного истечения lease time или получения DHCPNAK.',
+      },
+      {
+        heading: 'Маршрутизация почты по MX preference (RFC 5321)',
+        body: 'Запись MX задаёт числовое значение preference и имя целевого почтового шлюза. Меньшее число означает более высокий приоритет. При наличии MX 10 mx-a.example.test (192.0.2.10) и MX 20 mx-b.example.test (192.0.2.20) отправитель (MTA) обязан сначала попытаться установить соединение с mx-a.\n\nПри транспортной недоступности mx-a (таймаут TCP/отказ в соединении) MTA переходит к следующему по порядку приоритету — mx-b (192.0.2.20). Fallback на A-запись самого домена (192.0.2.99) при явно опубликованных записях MX стандартом RFC 5321 не выполняется.',
+      },
+    ],
+    sources: [
+      'RFC 2308 — Negative Caching of DNS Queries (DNS NC): NXDOMAIN и NODATA',
+      'RFC 2131 — Dynamic Host Configuration Protocol: relay, giaddr, RENEWING и REBINDING',
+      'RFC 2132 — DHCP Options and BOOTP Vendor Extensions: параметры аренды, T1 и T2',
+      'RFC 5321 — Simple Mail Transfer Protocol: выбор MX и порядок попыток доставки',
+    ],
+  },
 };

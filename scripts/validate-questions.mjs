@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { loadBank, writeText } from './load-bank.mjs';
 
-const ALLOWED_DIFF = new Set(['basic', 'beginner', 'applied', 'advanced']);
+const ALLOWED_DIFF = new Set(['basic', 'beginner', 'intermediate', 'applied', 'advanced']);
 const ALLOWED_GROUPS = new Set([
   'l1-l2',
   'l3',
@@ -30,7 +30,7 @@ if (!Array.isArray(ALL_QUESTIONS) || ALL_QUESTIONS.length === 0) {
 }
 
 const seen = new Map();
-const byDiff = { beginner: 0, basic: 0, applied: 0, advanced: 0, unset: 0, other: 0 };
+const byDiff = { beginner: 0, basic: 0, intermediate: 0, applied: 0, advanced: 0, unset: 0, other: 0 };
 
 for (const q of ALL_QUESTIONS) {
   if (!q?.id) {
@@ -87,7 +87,7 @@ lines.push('=== Question bank validation (esbuild real modules) ===');
 lines.push(`Unique IDs: ${seen.size}`);
 lines.push(`Total objects: ${ALL_QUESTIONS.length}`);
 lines.push(
-  `Difficulty: beginner=${byDiff.beginner} basic=${byDiff.basic} applied=${byDiff.applied} advanced=${byDiff.advanced} unset=${byDiff.unset} other=${byDiff.other}`
+  `Difficulty: beginner=${byDiff.beginner} basic=${byDiff.basic} intermediate=${byDiff.intermediate} applied=${byDiff.applied} advanced=${byDiff.advanced} unset=${byDiff.unset} other=${byDiff.other}`
 );
 if (textDups.length) {
   lines.push('Exact-text dups (sample):');

@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 750" width="980" height="750" role="img" aria-labelledby="poe-instrument-title poe-instrument-desc">
+  <title id="poe-instrument-title">Какой прибор что докажет</title>
+  <desc id="poe-instrument-desc">Учебная таблица из четырёх строк: светодиод на порту, базовый PoE-тестер, тестер с имитацией нагрузки PD и диагностика на коммутаторе. Для каждого прибора указано, что он измеряет и чего из его показаний вывести нельзя.</desc>
+  <rect width="980" height="750" rx="24" fill="#0f172a"/>
+  <text x="40" y="48" fill="#e2e8f0" font-family="system-ui,sans-serif" font-size="28" font-weight="700">Какой прибор что докажет</text>
+  <text x="40" y="78" fill="#94a3b8" font-family="system-ui,sans-serif" font-size="16">Учебная схема, не фото конкретного прибора</text>
+  <defs>
+    <clipPath id="poe-instrument-table"><rect x="40" y="104" width="900" height="536" rx="14"/></clipPath>
+  </defs>
+  <g clip-path="url(#poe-instrument-table)">
+    <rect x="40" y="104" width="900" height="48" fill="#1e293b"/>
+    <rect x="40" y="152" width="900" height="104" fill="#111827"/>
+    <rect x="40" y="256" width="900" height="104" fill="#0b1220"/>
+    <rect x="40" y="360" width="900" height="128" fill="#111827"/>
+    <rect x="40" y="488" width="900" height="152" fill="#0b1220"/>
+    <path d="M260 104V640M620 104V640M40 152H940M40 256H940M40 360H940M40 488H940" fill="none" stroke="#334155" stroke-width="1"/>
+  </g>
+  <rect x="40" y="104" width="900" height="536" rx="14" fill="none" stroke="#334155"/>
+  <g font-family="system-ui,sans-serif" font-size="16">
+    <g fill="#67e8f9" font-weight="700">
+      <text x="56" y="134">Прибор</text>
+      <text x="276" y="134">Что измеряет или показывает</text>
+      <text x="636" y="134">Чего нельзя вывести</text>
+    </g>
+    <g fill="#f8fafc" font-weight="700">
+      <text x="56" y="180">Светодиод на порту</text>
+      <text x="56" y="284">Базовый PoE-тестер</text>
+      <text x="56" y="388">Тестер с имитацией</text>
+      <text x="56" y="412">нагрузки PD</text>
+      <text x="56" y="516">Диагностика</text>
+      <text x="56" y="540">на коммутаторе</text>
+      <text x="56" y="564">(show power inline)</text>
+    </g>
+    <g fill="#cbd5e1">
+      <text x="276" y="180">PSE обнаружил PD и подал</text>
+      <text x="276" y="204">питание. Цвет и режим</text>
+      <text x="276" y="228">свечения зависят от модели.</text>
+      <text x="276" y="284">Наличие питания и напряжение</text>
+      <text x="276" y="308">без нагрузки; иногда — класс</text>
+      <text x="276" y="332">и полярность пар.</text>
+      <text x="276" y="388">Класс, тип PSE, напряжение и</text>
+      <text x="276" y="412">мощность под нагрузкой</text>
+      <text x="276" y="436">(TruePower), полярность пар.</text>
+      <text x="276" y="516">Обнаружение PD, класс,</text>
+      <text x="276" y="540">выделенная мощность порта,</text>
+      <text x="276" y="564">остаток бюджета, статус</text>
+      <text x="276" y="588">и отказы: show power inline,</text>
+      <text x="276" y="612">show logging.</text>
+    </g>
+    <g fill="#fbbf24">
+      <text x="636" y="180">Напряжение, класс,</text>
+      <text x="636" y="204">выделенную мощность</text>
+      <text x="636" y="228">и запас в пике.</text>
+      <text x="636" y="284">Как линия ведёт себя</text>
+      <text x="636" y="308">под нагрузкой и хватит ли</text>
+      <text x="636" y="332">мощности в пике.</text>
+      <text x="636" y="388">Потребление и пик</text>
+      <text x="636" y="412">настоящей камеры, причину</text>
+      <text x="636" y="436">отказа порта и бюджет</text>
+      <text x="636" y="460">коммутатора.</text>
+      <text x="636" y="516">Фактическое потребление</text>
+      <text x="636" y="540">камеры и напряжение на PD:</text>
+      <text x="636" y="564">выделенная мощность — это</text>
+      <text x="636" y="588">не расход, а линию CLI</text>
+      <text x="636" y="612">не измеряет.</text>
+    </g>
+    <text x="40" y="672" fill="#67e8f9" font-weight="700">Для кейса «камера и ИК» нужны тестер с имитацией нагрузки и диагностика на коммутаторе.</text>
+    <text x="40" y="702" fill="#94a3b8">Возможности зависят от модели прибора и прошивки:</text>
+    <text x="40" y="726" fill="#94a3b8">набор полей, максимальный класс и мощность имитации нагрузки различаются.</text>
+  </g>
+</svg>
