@@ -1,3 +1,5 @@
+import type { LearningLevel } from './learningLevel';
+
 export interface Question {
   id: string;
   group: string;
@@ -12,7 +14,7 @@ export interface Question {
   template?: boolean;
   family?: string;
   /** beginner kept for bank compatibility (legacy alias of basic). */
-  difficulty?: 'basic' | 'beginner' | 'applied' | 'advanced';
+  difficulty?: 'basic' | 'beginner' | 'intermediate' | 'applied' | 'advanced';
 }
 
 export type QuizModeId =
@@ -35,9 +37,15 @@ export interface QuizMode {
   count: number;
 }
 
-export type ExamDifficulty = 'beginner' | 'mixed';
+export const EXAM_DIFFICULTIES = ['beginner', 'in-depth', 'applied', 'mixed'] as const;
+export type ExamDifficulty = (typeof EXAM_DIFFICULTIES)[number];
+
+export const TRIAL_DIFFICULTIES = ['basic', 'advanced', 'mixed'] as const;
+export type TrialDifficulty = (typeof TRIAL_DIFFICULTIES)[number];
 
 export interface QuizSession {
+  /** Independent registry level for new attempts; absent in legacy sessions. */
+  learningLevel?: LearningLevel;
   /** Missing in legacy attempts, which retain their original all-level question set. */
   difficulty?: ExamDifficulty;
   requestedCount?: number;
@@ -47,6 +55,8 @@ export interface QuizSession {
   submittedQuestions: Record<string, boolean>;
   startTime: number;
   endTime?: number;
+  trialDeadline?: number;
+  trialDifficulty?: TrialDifficulty;
   isCompleted: boolean;
   mode: QuizModeId;
   feedbackMode: 'instant' | 'exam';

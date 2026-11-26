@@ -1,3 +1,4 @@
+import { formatRunningConfig } from './configFormatter';
 import { normalizeIfaceName, wordArgument, vlanArgument, vlanNameArgument, interfaceArgument, interfaceTypeArgument, interfaceNumberArgument, isLayer2Interface } from './arguments';
 import { interfaceStatus } from '../../engine/OperationalState';
 import { formatAllowedVlans } from './trunkCommands';
@@ -8,6 +9,8 @@ import { ciscoL3Commands } from './l3Commands';
 import { ciscoTrunkCommands } from './trunkCommands';
 import { ciscoInterfaceShowCommands } from './showInterfaceCommands';
 import { ciscoPersistenceCommands } from './persistenceCommands';
+import { ciscoSpanningTreeCommands } from './spanningTreeCommands';
+import { ciscoSpanningTreeConfigCommands } from './spanningTreeConfigCommands';
 
 function commitDevice(state: NetworkState, device: DeviceState): NetworkState {
   return {
@@ -305,45 +308,27 @@ const baseCommands: CommandSpec[] = [
   {
     id: 'cisco.show_running_config',
     match: ['show', 'running-config'],
+    arguments: [[],
+      [{ keyword: 'interface', description: 'Display configuration of a specific interface' }, interfaceArgument],
+      [{ keyword: 'interface', description: 'Display configuration of a specific interface' }, interfaceTypeArgument, interfaceNumberArgument]],
     modes: ['privileged'],
     minPrivilege: 15,
-    handler: (_tokens, _state, device) => {
-      const lines = ['Building configuration...', '', 'Current configuration:', '!'];
-      lines.push(`hostname ${device.hostname}`, '!');
-      for (const r of device.routes) {
-        const mask =
-          r.prefixLen === 0
-            ? '0.0.0.0'
-            : r.prefixLen === 24
-              ? '255.255.255.0'
-              : `/${r.prefixLen}`;
-        if (r.nextHop) {
-          lines.push(`ip route ${r.prefix} ${mask} ${r.nextHop}`);
-        }
+    handler: (tokens, _state, device) => {
+      if (tokens.length === 2) return { output: formatRunningConfig(device) };
+      if (tokens[2] !== 'interface' || tokens.length < 4) {
+        return { output: ciscoIosProfile.messages.invalid, error: true };
       }
-      if (device.routes.length) lines.push('!');
-      for (const iface of Object.values(device.interfaces)) {
-        lines.push(`interface ${iface.name}`);
-        if (iface.ipv4) {
-          lines.push(` ip address ${iface.ipv4.address} ${iface.ipv4.mask}`);
-        }
-        if (iface.switchport?.mode === 'access') {
-          lines.push(' switchport mode access');
-          if (iface.switchport.accessVlan && iface.switchport.accessVlan !== 1) {
-            lines.push(` switchport access vlan ${iface.switchport.accessVlan}`);
-          }
-        }
-        if (iface.switchport?.mode === 'trunk') {
-          lines.push(' switchport mode trunk');
-          if (iface.switchport.trunkAllowed !== undefined) {
-            lines.push(` switchport trunk allowed vlan ${formatAllowedVlans(iface.switchport.trunkAllowed)}`);
-          }
-        }
-        lines.push(iface.adminUp ? ' no shutdown' : ' shutdown');
-        lines.push('!');
-      }
-      lines.push('end');
-      return { output: lines.join('\n') };
+      const name = normalizeIfaceName(tokens.slice(3).join(' '));
+      if (!device.interfaces[name]) return { output: `% Invalid interface ${name}`, error: true };
+      // Reuse the same formatter as the full running-config, so the selected
+      // block cannot silently disagree about the IP address or subnet mask.
+      const config = formatRunningConfig(device);
+      const header = `interface ${name}`;
+      const lines = config.split('\n');
+      const start = lines.indexOf(header);
+      if (start === -1) return { output: `% Interface ${name} not found in running-config`, error: true };
+      const end = lines.indexOf('!', start + 1);
+      return { output: lines.slice(start, end === -1 ? undefined : end).join('\n') };
     },
   },
   {
@@ -372,6 +357,14 @@ const baseCommands: CommandSpec[] = [
         device.privilege = savedPriv;
         return { output: resolved.status === 'incomplete' ? profile.messages.incomplete : profile.messages.invalid, error: true };
       }
+      // IOS "do" is for EXEC commands that can return to the current config
+      // context. A reload/disable/exit must not restore a stale privileged
+      // context after changing or resetting the session.
+      if (new Set(['cisco.reload_simulated', 'cisco.disable', 'cisco.exit', 'cisco.end', 'cisco.configure_terminal']).has(best.id)) {
+        device.modeCtx = savedMode;
+        device.privilege = savedPriv;
+        return { output: '% Command not available through do in configuration mode', error: true };
+      }
       const result = best.handler(resolved.tokens, state, device, profile);
       if (result.state) {
         const d = result.state.devices[result.state.activeDeviceId];
@@ -394,6 +387,8 @@ export const ciscoIosCommands: CommandSpec[] = [
   ...ciscoTrunkCommands,
   ...ciscoPersistenceCommands,
   ...ciscoInterfaceShowCommands,
+  ...ciscoSpanningTreeCommands,
+  ...ciscoSpanningTreeConfigCommands,
 ];
 
 export { normalizeIfaceName };

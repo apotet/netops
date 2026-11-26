@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="700" viewBox="0 0 1100 700" role="img" aria-labelledby="title desc">
+<title id="title">PoE по парам и цветам — Mode A и Mode B</title>
+<desc id="desc">Компактная двухколоночная шпаргалка. Mode A: контакты 1–2 оранжевая пара, 3–6 зелёная пара T568B. Mode B: 4–5 синяя пара, 7–8 коричневая пара. T568A меняет оранжевую и зелёную местами. Четырёхпарный PoE использует обе группы.</desc>
+<rect width="1100" height="700" rx="22" fill="#06111d"/>
+<rect x="15" y="15" width="1070" height="670" rx="20" fill="#0b1b2b" stroke="#20526b" stroke-width="2"/>
+<g font-family="Arial, 'DejaVu Sans', sans-serif">
+<text x="38" y="64" font-size="40" font-weight="700" fill="#e2f7ff">PoE: какие жилы подают питание?</text>
+<text x="38" y="99" font-size="23" fill="#a7cad9">Цвета показаны для обжима T568B · контакты RJ-45 не меняются</text>
+<rect x="35" y="124" width="505" height="353" rx="18" fill="#102c3b" stroke="#1b8c9a" stroke-width="2"/>
+<rect x="35" y="124" width="7" height="353" rx="4" fill="#3ee0e3"/>
+<text x="60" y="170" font-size="33" font-weight="700" fill="#96faff">MODE A</text>
+<text x="60" y="201" font-size="22" fill="#b8d3e3">Контакты 1–2 и 3–6</text>
+<rect x="53" y="222" width="464" height="72" rx="12" fill="#091725" stroke="#28465b"/>
+  <rect x="66" y="239" width="82" height="38" rx="8" fill="#1b3f53"/>
+  <text x="107" y="267" fill="#dbf7ff" font-size="25" font-weight="700" text-anchor="middle">1–2</text>
+  <rect x="164" y="241" width="34" height="34" rx="6" fill="#f9fafb" stroke="#a8bdc8" stroke-width="1.4"/><path d="M171 268L190 248" stroke="#f18a34" stroke-width="8" stroke-linecap="round"/><rect x="204" y="241" width="34" height="34" rx="6" fill="#f18a34" stroke="#a8bdc8" stroke-width="1.4"/>
+  <text x="255" y="267" fill="#f2f8ff" font-size="25" font-weight="600">Оранжевая пара</text>
+<rect x="53" y="303" width="464" height="72" rx="12" fill="#091725" stroke="#28465b"/>
+  <rect x="66" y="320" width="82" height="38" rx="8" fill="#1b3f53"/>
+  <text x="107" y="348" fill="#dbf7ff" font-size="25" font-weight="700" text-anchor="middle">3–6</text>
+  <rect x="164" y="322" width="34" height="34" rx="6" fill="#f9fafb" stroke="#a8bdc8" stroke-width="1.4"/><path d="M171 349L190 329" stroke="#2cb878" stroke-width="8" stroke-linecap="round"/><rect x="204" y="322" width="34" height="34" rx="6" fill="#2cb878" stroke="#a8bdc8" stroke-width="1.4"/>
+  <text x="255" y="348" fill="#f2f8ff" font-size="25" font-weight="600">Зелёная пара</text>
+<path d="M55 393H520" stroke="#34586d" stroke-width="1.5"/>
+<text x="62" y="420" font-size="21" fill="#cce9f3">В T568A эти две пары</text>
+<text x="62" y="449" font-size="21" fill="#cce9f3">меняются местами по контактам.</text>
+<rect x="559" y="124" width="506" height="353" rx="18" fill="#152b42" stroke="#487eaf" stroke-width="2"/>
+<rect x="559" y="124" width="7" height="353" rx="4" fill="#7cbfff"/>
+<text x="584" y="170" font-size="33" font-weight="700" fill="#bddfff">MODE B</text>
+<text x="584" y="201" font-size="22" fill="#b8d3e3">Контакты 4–5 и 7–8</text>
+<rect x="577" y="222" width="464" height="72" rx="12" fill="#091725" stroke="#28465b"/>
+  <rect x="590" y="239" width="82" height="38" rx="8" fill="#1b3f53"/>
+  <text x="631" y="267" fill="#dbf7ff" font-size="25" font-weight="700" text-anchor="middle">4–5</text>
+  <rect x="688" y="241" width="34" height="34" rx="6" fill="#347cda" stroke="#a8bdc8" stroke-width="1.4"/><rect x="728" y="241" width="34" height="34" rx="6" fill="#f9fafb" stroke="#a8bdc8" stroke-width="1.4"/><path d="M735 268L754 248" stroke="#347cda" stroke-width="8" stroke-linecap="round"/>
+  <text x="779" y="267" fill="#f2f8ff" font-size="25" font-weight="600">Синяя пара</text>
+<rect x="577" y="303" width="464" height="72" rx="12" fill="#091725" stroke="#28465b"/>
+  <rect x="590" y="320" width="82" height="38" rx="8" fill="#1b3f53"/>
+  <text x="631" y="348" fill="#dbf7ff" font-size="25" font-weight="700" text-anchor="middle">7–8</text>
+  <rect x="688" y="322" width="34" height="34" rx="6" fill="#f9fafb" stroke="#a8bdc8" stroke-width="1.4"/><path d="M695 349L714 329" stroke="#a16b42" stroke-width="8" stroke-linecap="round"/><rect x="728" y="322" width="34" height="34" rx="6" fill="#a16b42" stroke="#a8bdc8" stroke-width="1.4"/>
+  <text x="779" y="348" fill="#f2f8ff" font-size="25" font-weight="600">Коричневая пара</text>
+<path d="M579 393H1045" stroke="#34586d" stroke-width="1.5"/>
+<text x="586" y="420" font-size="21" fill="#cce9f3">Для T568A и T568B</text>
+<text x="586" y="449" font-size="21" fill="#cce9f3">цвета этих пар одинаковы.</text>
+<rect x="35" y="492" width="1030" height="79" rx="15" fill="#153d3b" stroke="#278b80" stroke-width="1.5"/>
+<text x="55" y="529" font-size="27" font-weight="700" fill="#a4f4db">4-парный PoE (802.3bt) = Mode A + Mode B = все 8 жил</text>
+<text x="55" y="557" font-size="21" fill="#c5e6df">Для 1000BASE-T все четыре пары также участвуют в передаче данных.</text>
+<rect x="35" y="583" width="1030" height="83" rx="15" fill="#273344" stroke="#d8a45c" stroke-width="1.5"/>
+<text x="55" y="614" font-size="22" fill="#ffe0a7" font-weight="700">НЕ ПУТАЙ:</text>
+<text x="196" y="614" font-size="21" fill="#eef4fa">Mode A/B — питание; T568A/B — цвета обжима.</text>
+<text x="55" y="646" font-size="20" fill="#cbd8e5">4 жилы (1, 2, 3, 6): возможны 100BASE-TX и Mode A, но не Mode B и не гигабит.</text>
+</g>
+</svg>

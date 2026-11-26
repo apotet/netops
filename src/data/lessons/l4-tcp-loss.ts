@@ -41,8 +41,8 @@ export const LESSON_L4_TCP_LOSS: Lesson = {
     }
   ],
   "relatedQuestionIds": [
-    "l4-fr01",
-    "tcpip-ntp01"
+    "l4-d02",
+    "l4-fr01"
   ],
   "sources": [
     "RFC 5681 — TCP Congestion Control",

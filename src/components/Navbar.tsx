@@ -39,7 +39,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const tabs: Array<{ id: NavTab; label: string; icon: React.ReactNode }> = [
-    { id: 'exam', label: 'Экзамен', icon: <Layers className="w-4 h-4" /> },
+    { id: 'exam', label: 'Тестирование', icon: <Layers className="w-4 h-4" /> },
     { id: 'theory', label: 'Теория и разборы', icon: <BookOpen className="w-4 h-4 text-cyan-400" /> },
     { id: 'ipv4', label: 'IPv4 Тренажёр', icon: <Sparkles className="w-4 h-4 text-amber-400" /> },
     { id: 'ipv6', label: 'IPv6 Тренажёр', icon: <Sparkles className="w-4 h-4 text-cyan-400" /> },

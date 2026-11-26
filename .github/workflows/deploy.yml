@@ -28,15 +28,31 @@ jobs:
       - name: Verify exact source snapshot and screen release inputs
         run: |
           python3 - <<'PY'
-          import json, subprocess, re
+          import json, pathlib, subprocess, re
           manifest = json.load(open('release/source-files.json'))
-          assert len(manifest['source_sha']) == 40
+          assert re.fullmatch(r'[0-9a-f]{40}', manifest['source_sha'])
+          paths = [item['path'] for item in manifest['files']]
+          assert len(paths) == len(set(paths))
+          expected = subprocess.check_output(['git', 'ls-files', 'src', 'public', 'scripts'], text=True).splitlines()
+          assert set(expected) <= set(paths), set(expected) - set(paths)
+          overrides = manifest.get('overrides', {})
+          assert set(overrides) <= set(paths)
           for item in manifest['files']:
               actual = subprocess.check_output(['git', 'hash-object', item['path']], text=True).strip()
               assert actual == item['sha'], item['path'] + ': source mismatch'
-              text = open(item['path']).read()
+              spec = overrides.get(item['path'])
+              upstream = item.get('upstream_sha')
+              origin = item.get('origin', 'staging')
+              if origin == 'adapted':
+                  assert spec and spec['reason'], item['path']
+                  assert upstream is None or re.fullmatch(r'[0-9a-f]{40}', upstream)
+              elif origin == 'staging':
+                  assert not spec and (upstream is None or upstream == actual), item['path']
+              else:
+                  assert origin == 'production' and not spec, item['path']
+              text = pathlib.Path(item['path']).read_bytes().decode('utf-8', errors='replace')
               assert not re.search(r'-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----', text), item['path']
-              if not (item['path'].endswith('.test.mjs') or item['path'] == 'src/utils/examReview.ts'):
+              if not (item['path'].endswith('.test.mjs') or item['path'] in ('src/utils/examReview.ts', 'src/utils/explanationFormat.ts')):
                   assert not re.search(r'RESTORED_FULL_CONTENT|UPDATED_CONTENT|FULL_FILE_CONTENT_WILL_BE_INCLUDED', text), item['path']
           tracked = subprocess.check_output(['git', 'ls-files'], text=True).splitlines()
           assert not any(p.startswith(('.env', 'node_modules/')) for p in tracked)
@@ -50,6 +66,19 @@ jobs:
         run: npm run coverage:explanations
       - name: Quiz logic tests
         run: npm run test:logic
+      - name: Release compatibility, glossary, content and navigation
+        run: |
+          node scripts/production-attempt-compat.test.mjs
+          node scripts/answer-shuffle.test.mjs
+          node scripts/glossary.test.mjs
+          node scripts/review-navigation.test.mjs
+          node scripts/l3-batch1-integration.test.mjs
+          node scripts/poe-svg-layout.test.mjs
+          node scripts/poe-standards-card-style.test.mjs
+          node scripts/poe-summary-glossary.test.mjs
+          node scripts/poe-injectors-lesson.test.mjs
+          node scripts/photo-review.test.mjs
+          node scripts/shared-assets.test.mjs
       - name: Typecheck
         run: npm run lint
       - name: Build for production subpath
@@ -68,6 +97,9 @@ jobs:
           for asset in local:
               assert asset.startswith('/netops/'), asset
               assert pathlib.Path('dist', asset.removeprefix('/netops/')).is_file(), asset
+          assert '__SHARED_ASSETS_OG_IMAGE_URL__' not in html
+          assert '/my-gemini-mirror-site/' not in html
+          assert 'https://raw.githubusercontent.com/apotet/osi-tcpip-exam-public/1c52fa81222167dc4377fe4788de86f3e36ad444/assets/cheatsheets/l3.webp' in html
           source = json.load(open('release/source-files.json'))
           version = dict(upstream=source['upstream'], source_sha=source['source_sha'],
                          production_sha=os.environ['PRODUCTION_SHA'], base='/netops/',

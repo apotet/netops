@@ -3,6 +3,7 @@ import { LESSONS, searchLessons, getLesson } from '../data/lessons';
 import type { Lesson } from '../data/lessons/types';
 import type { PracticeLink } from '../data/practiceLinks';
 import { LessonView } from './LessonView';
+import { LessonReviewBadge } from './LessonReviewBadge';
 import { CliReference } from './CliReference';
 import { Library, Search } from 'lucide-react';
 
@@ -180,6 +181,7 @@ export const KnowledgeBase: React.FC<KnowledgeBaseProps> = ({
                 {l.category} · {l.difficulty}
               </div>
               <div className="font-semibold text-slate-900 dark:text-white">{l.title}</div>
+              <LessonReviewBadge lessonId={l.id} />
               <p
                 className={`text-xs text-slate-600 dark:text-slate-400${expandedSummaryId === l.id ? '' : ' line-clamp-3'}`}
                 onClick={event => {

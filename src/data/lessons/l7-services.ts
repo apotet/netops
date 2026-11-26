@@ -60,4 +60,34 @@ export const LESSON_L7_SERVICES: Lesson = {
     'RFC 3207 — SMTP Service Extension for Secure SMTP over Transport Layer Security',
     'RFC 8314 — Cleartext Considered Obsolete: Use of Transport Layer Security (TLS) for Email Submission and Access',
   ],
+  professional: {
+    summary: 'Технический разбор HTTP 206 Content-Range, верификации цепочек mTLS, SSH direct-tcpip forwarding, NTP (UDP/123, LI=3, KoD RATE), расчёта Syslog PRI и SMTP Submission со STARTTLS.',
+    terms: ['HTTP', 'TLS', 'SSH', 'NTP', 'Syslog', 'SMTP', 'TCP', 'UDP', 'Leap Indicator'],
+    blocks: [
+      {
+        heading: 'HTTP 206 Partial Content и арифметика Content-Range',
+        body: 'Заголовок Content-Range: bytes 2000-2999/6000 в ответе 206 Partial Content задаёт включительные границы байтового смещения (first-pos=2000, last-pos=2999) и общую длину представления (complete-length=6000). Длина полезной нагрузки этого ответа равна 2999 − 2000 + 1 = 1000 октетов.\n\nЕсли локальный буфер уже содержит валидированный префикс 0–1999 (проверенный по ETag / If-Range), полученный фрагмент записывается строго со смещения 2000, образуя непрерывный диапазон 0–2999 (3000 байт), после чего остаётся запросить диапазон bytes=3000-5999.',
+      },
+      {
+        heading: 'mTLS: проверка клиентского сертификата и SSH local forwarding',
+        body: 'В двухстороннем TLS (mTLS) сервер отправляет CertificateRequest и валидирует цепочку клиента относительно своего клиентского truststore. Ошибка TLS alert unknown_ca при предъявлении клиентом полной цепочки от CA C устраняется добавлением корневого/целевого CA C в серверное хранилище доверия к клиентам, а не модификацией клиентского truststore.\n\nПри SSH local forwarding (ssh -L 127.0.0.1:15432:db.internal:5432 jump) локальный клиент открывает слушающий сокет 127.0.0.1:15432, мультиплексирует поток в сообщение channel open direct-tcpip внутри SSH-туннеля до узла jump, а сам TCP-сокет к db.internal:5432 инициирует и резолвит демон sshd на jump-хосте.',
+      },
+      {
+        heading: 'NTP (UDP/123): иерархия Stratum, LI=3 и пакеты KoD RATE',
+        body: 'Протокол NTPv4 (RFC 5905) работает поверх UDP/123 и синхронизирует системные часы в UTC для корреляции распределённых логов, дампов трафика и проверки сроков действия сертификатов. Поле Stratum отражает дистанцию от эталонных часов (Stratum 1 — GPS/атомные часы, Stratum 2..15 — каскадные серверы, 16 — несинхронизировано).\n\nВалидность ответа определяется совокупностью полей: Leap Indicator LI=3 (11b, clock unsynchronized) означает, что часы источника не синхронизированы, поэтому такой образец нельзя принимать даже при малом числе в поле Stratum. Пакет со Stratum=0 и ASCII Reference ID=RATE — это управляющее уведомление Kiss-o’-Death (KoD): клиент обязан отбросить временные метки этого пакета и увеличить интервал опроса (poll interval).',
+      },
+      {
+        heading: 'Декодирование Syslog PRI и SMTP Submission (587 STARTTLS vs 465)',
+        body: 'В заголовке Syslog (RFC 5424) приоритет вычисляется как PRI = Facility × 8 + Severity. Для <165> целочисленное деление 165 / 8 даёт Facility = 20 (local4) и остаток Severity = 5 (Notice). Фильтр архива, принимающий только Facility 20 с Severity 0..4 (Emergency..Warning), отбросит сообщение <165>, так как численно 5 > 4 (меньшая критичность).\n\nДля пользовательской отправки почты (Message Submission, RFC 6409) на TCP/587 с явным STARTTLS (RFC 3207) сессия начинается с текстового SMTP-приветствия 220, команды EHLO и команды STARTTLS, после чего поверх открытого сокета выполняется TLS handshake и повторный EHLO. Порт TCP/465 использует implicit TLS (RFC 8314), где TLS ClientHello передаётся сразу после трёхстороннего рукопожатия TCP.',
+      },
+    ],
+    sources: [
+      'RFC 9110 — HTTP Semantics: 206 Partial Content и Content-Range',
+      'RFC 8446 — The Transport Layer Security (TLS) Protocol Version 1.3',
+      'RFC 4254 — The Secure Shell (SSH) Connection Protocol: TCP/IP forwarding',
+      'RFC 5905 — Network Time Protocol Version 4: Kiss-o’-Death и RATE',
+      'RFC 5424 — The Syslog Protocol: PRI, facility и severity',
+      'RFC 6409 — Message Submission for Mail',
+    ],
+  },
 };

@@ -1,5 +1,5 @@
 import { NetworkState } from './types';
-import { trunkNeighbors } from './SviIpv4Reachability';
+import { deriveVlanForwarding } from './VlanForwarding';
 
 /** Configuration-level VLAN path check. Does not simulate frames, MAC learning, or ICMP. */
 export function checkVlanPath(
@@ -13,11 +13,10 @@ export function checkVlanPath(
   const start = state.devices[fromDevice];
   const end = state.devices[toDevice];
   if (!start || !end) return { reachable: false, detail: 'Устройство не найдено' };
+  const forwarding = deriveVlanForwarding(state);
   for (const [device, port] of [[start, fromIf], [end, toIf]] as const) {
-    const iface = device.interfaces[port];
-    if (!iface || !iface.adminUp || iface.switchport?.mode !== 'access' ||
-        iface.switchport.accessVlan !== vlanId || !device.vlans[vlanId]?.active) {
-      return { reachable: false, detail: `${device.hostname} ${port}: access VLAN ${vlanId} не готов` };
+    if (!forwarding.accessEndpointReady(device.id, port, vlanId)) {
+      return { reachable: false, detail: `${device.hostname} ${port}: access VLAN ${vlanId} не готов (VLAN/admin/link/STP forwarding)` };
     }
   }
 
@@ -26,12 +25,12 @@ export function checkVlanPath(
   while (queue.length) {
     const current = queue.shift()!;
     if (current === toDevice) return { reachable: true, detail: `VLAN ${vlanId} проходит между ${fromDevice} и ${toDevice} (проверка конфигурации)` };
-    for (const peerId of trunkNeighbors(state, current, vlanId)) {
+    for (const peerId of forwarding.neighbors(current, vlanId)) {
       if (!visited.has(peerId)) {
         visited.add(peerId);
         queue.push(peerId);
       }
     }
   }
-  return { reachable: false, detail: `VLAN ${vlanId}: сквозной L2-путь не подтверждён. Проверьте VLAN на портах, allowed list и оба конца линка` };
+  return { reachable: false, detail: `VLAN ${vlanId}: сквозной L2-путь не подтверждён. Проверьте VLAN на портах, allowed list, STP forwarding и оба конца линка` };
 }

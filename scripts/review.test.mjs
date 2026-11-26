@@ -78,13 +78,14 @@ await build({ stdin: { contents: `
   import { renderToStaticMarkup } from 'react-dom/server';
   import { ExamReview } from './src/components/ExamReview';
   export const render = session => renderToStaticMarkup(React.createElement(ExamReview,
-    { session, onExit() {}, onRetry() {}, onNavigateToTheory() {} }));
+    { session, onExit() {}, onRetry() {}, onOpenLesson() {} }));
 `, resolveDir: process.cwd(), sourcefile: 'review-ui.ts' }, bundle: true, platform: 'node', format: 'esm',
   external: ['react-dom', 'react', 'react-dom/server', 'lucide-react'], outfile, logLevel: 'silent' });
 const { render } = await import(pathToFileURL(outfile).href);
 // The current UI starts on mistakes when the attempt has any. This fixture has
 // one wrong answer, seven correct answers and two unconfirmed answers.
 const defaultHtml = render(session);
+assert.match(defaultHtml, /class="review-actions"[\s\S]*?Вернуться к тестам<\/button>/);
 assert.equal((defaultHtml.match(/<details\b/g) || []).length, 1, 'default mistakes filter shows the one wrong answer');
 assert.ok(defaultHtml.includes('Показано 1 из 10'));
 assert.ok(defaultHtml.includes('Вопрос 2</span>'), 'default card is the wrong question, not the first question');
@@ -124,10 +125,10 @@ assert.ok(html.includes('Ваш выбор'));
 assert.ok(html.includes('Индивидуальное объяснение 0'));
 assert.ok(html.includes('Индивидуальное объяснение в сохранённом вопросе отсутствует.'));
 assert.ok(!html.includes('TODO'));
-assert.ok(!html.includes('Разобрать подробнее:'), 'no theory button without exact mapping');
+assert.ok(!html.includes('Перейти к уроку:'), 'no theory button without exact mapping');
 assert.ok(html.includes('aria-pressed="true"'));
 assert.equal(render({ ...session, isCompleted: false }), '', 'actual review UI hidden until completion');
-assert.ok(render({ ...session, questions: [sni] }).includes('Разобрать подробнее:'), 'mapped lesson visible');
+assert.ok(render({ ...session, questions: [sni] }).includes('Перейти к уроку:'), 'mapped lesson visible');
 const photoHtml = render({ ...session, questions: [{ ...questions[0], image: 'assets/photos/lc-connector.webp', imageAlt: 'LC-коннектор' }] });
 assert.ok(photoHtml.includes('alt="LC-коннектор"') && photoHtml.includes('lc-connector.webp'), 'photo context preserved in review');
 assert.equal(store.export(), before, 'render does not record progress');

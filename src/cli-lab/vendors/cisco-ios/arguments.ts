@@ -64,6 +64,9 @@ export function parseVlanList(raw: string): number[] | null {
 
 export const ipv4Argument: CommandArgument = { name: 'A.B.C.D', description: 'IPv4 address', validate: isIpv4 };
 export const maskArgument: CommandArgument = { name: 'A.B.C.D', description: 'Contiguous subnet mask (/0 through /32)', validate: value => maskToPrefix(value) !== null };
+// Contextual help distinguishes interface assignment from a route prefix;
+// the final policy rejection is handled by the interface command.
+export const interfaceMaskArgument: CommandArgument = { name: 'A.B.C.D', description: 'Interface subnet mask (/1 through /32)', validate: value => maskToPrefix(value) !== null };
 export const wordArgument: CommandArgument = { name: 'WORD', description: 'Device hostname', validate: value => value.length > 0 };
 export const vlanArgument: CommandArgument = { name: '<1-4094>', description: 'VLAN identifier', validate: value => /^\d+$/.test(value) && Number(value) >= 1 && Number(value) <= 4094 };
 export const vlanListArgument: CommandArgument = { name: '<vlan-list>', description: 'VLAN IDs/ranges, e.g. 10,20-30', validate: value => parseVlanList(value) !== null };

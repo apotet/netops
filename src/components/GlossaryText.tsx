@@ -6,7 +6,7 @@ import './GlossaryText.css';
 
 const OPEN_EVENT = 'glossary-tooltip-open';
 
-export function GlossaryText({ children, enabled = true }: { children: string; enabled?: boolean }) {
+export function GlossaryText({ children, enabled = true, plainTerms = [], scope }: { children: string; enabled?: boolean; plainTerms?: string[]; scope?: "poe" | "poe-formula" | "ipv6" | "http" }) {
   const id = useId();
   const [active, setActive] = useState<{ term: string; anchor: HTMLButtonElement } | null>(null);
   const popup = useRef<HTMLDivElement>(null);
@@ -58,7 +58,7 @@ export function GlossaryText({ children, enabled = true }: { children: string; e
   if (!enabled) return <>{children}</>;
   const tooltip = active && GLOSSARY_TOOLTIPS[active.term];
   return <>
-    {splitGlossaryText(children).map((part, index) => part.term ? (
+    {splitGlossaryText(children, scope).map((part, index) => part.term && !plainTerms.includes(part.term) ? (
       <button
         key={index}
         type="button"

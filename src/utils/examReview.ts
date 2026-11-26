@@ -1,14 +1,12 @@
+import { explanationText } from './explanationFormat';
+export { explanationText } from './explanationFormat';
 import type { ProgressSession } from './examProgress';
-import { answerCorrect } from './examProgress';
+import { answerCorrect, hasValidTrialTiming } from './examProgress';
 import { getLessonForQuestion } from '../data/lessons';
+import { isLearningLevel } from '../types/learningLevel';
 
 export const LAST_REVIEW_KEY = 'osi_last_exam_review_v1';
 export type ReviewFilter = 'all' | 'wrong' | 'correct';
-export function explanationText(value: unknown): string | null {
-  if (typeof value !== 'string') return null;
-  const text = value.trim();
-  return !text || /RESTORED_FULL_CONTENT|UPDATED_CONTENT|FULL_FILE_CONTENT_WILL_BE_INCLUDED|^(?:TODO|TBD|undefined|null)$/i.test(text) ? null : text;
-}
 /** Read-only projection of the saved attempt, never of a newly sampled bank. */
 export function reviewRows(session: ProgressSession) {
   if (!session.isCompleted) return [];
@@ -40,10 +38,12 @@ export function restoreReview(raw: string, epoch: string): ProgressSession | nul
   try {
     const wrapper = JSON.parse(raw);
     const s = wrapper?.session;
+    if (s?.learningLevel !== undefined && !isLearningLevel(s.learningLevel)) return null;
     const object = (value: unknown) => Boolean(value && typeof value === 'object' && !Array.isArray(value));
     if (wrapper.version !== 1 || !s || s.isCompleted !== true || s.progressEpoch !== epoch ||
         !['instant', 'exam'].includes(s.feedbackMode) || !Array.isArray(s.questions) || !s.questions.length ||
         s.questions.length > 617 || !object(s.userAnswers) || !object(s.submittedQuestions)) return null;
+    if (!hasValidTrialTiming(s)) return null;
     const ids = new Set<string>();
     for (const q of s.questions) {
       if (!q || typeof q.id !== 'string' || ids.has(q.id) || typeof q.text !== 'string' || typeof q.topic !== 'string' ||

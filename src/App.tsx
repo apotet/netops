@@ -1,3 +1,4 @@
+import type { PracticeLink } from './data/practiceLinks';
 import React, { useState, useEffect, useRef } from 'react';
 import { Navbar, NavTab } from './components/Navbar';
 import { ExamView, type ExamViewHandle } from './components/ExamView';
@@ -21,6 +22,7 @@ function readStoredBool(key: string, fallback: boolean): boolean {
 }
 
 export function App() {
+  const [practiceRequest, setPracticeRequest] = useState<{ link: PracticeLink; id: number } | null>(null);
   const [activeTab, setActiveTab] = useState<NavTab>('exam');
   const examViewRef = useRef<ExamViewHandle>(null);
   const [isDark, setIsDark] = useState<boolean>(() => readStoredBool('osi_theme_dark', true));
@@ -29,6 +31,7 @@ export function App() {
   const [showCredits, setShowCredits] = useState<boolean>(false);
 
   const [theoryQuestionId, setTheoryQuestionId] = useState<string | null>(null);
+  const [theoryLessonId, setTheoryLessonId] = useState<string | null>(null);
   const [theoryFromExam, setTheoryFromExam] = useState<boolean>(false);
   const [ipv4InitialPrefix, setIpv4InitialPrefix] = useState<number | undefined>(undefined);
   const [ipv4InitialSubTab, setIpv4InitialSubTab] = useState<Ipv4SubTab | undefined>(undefined);
@@ -69,13 +72,35 @@ export function App() {
   }, [soundEnabled]);
 
   const handleNavigateToTheory = (questionId: string) => {
+    setTheoryLessonId(null);
     setTheoryQuestionId(questionId);
     setTheoryFromExam(true);
     setActiveTab('theory');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const handleOpenLesson = (lessonId: string, questionId?: string) => {
+    setTheoryLessonId(lessonId);
+    setTheoryQuestionId(questionId || null);
+    setTheoryFromExam(true);
+    setActiveTab('theory');
+    // Do not race the paragraph-anchor scroll animation in LessonView.
+    window.scrollTo({ top: 0, behavior: 'auto' });
+  };
+
+  const handleOpenPractice = (link: PracticeLink) => {
+    setTheoryLessonId(null);
+    setPracticeRequest(previous => ({ link, id: (previous?.id ?? 0) + 1 }));
+    setTheoryQuestionId(null);
+    setTheoryFromExam(false);
+    setActiveTab('practice');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   const handleTabChange = (tab: NavTab) => {
+    setTheoryLessonId(null);
+    if (tab === 'ipv6') setIpv6InitialMode(undefined);
+    if (tab === 'practice') setPracticeRequest(null);
     if (tab === 'exam' && activeTab === 'exam') examViewRef.current?.returnToParameters();
     setActiveTab(tab);
     if (tab !== 'theory') {
@@ -85,21 +110,23 @@ export function App() {
   };
 
   const handleReturnToExam = () => {
+    setTheoryLessonId(null);
     setTheoryQuestionId(null);
     setTheoryFromExam(false);
     setActiveTab('exam');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleNavigateToIpv6 = () => {
+  const [ipv6InitialMode, setIpv6InitialMode] = useState<'concept' | 'type'>();
+  const handleNavigateToIpv6 = (mode: 'concept' | 'type') => {
+    setIpv6InitialMode(mode);
     setActiveTab('ipv6');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleNavigateToIpv4 = (prefix?: number, mode?: 'calc' | 'trainer') => {
-    if (prefix) setIpv4InitialPrefix(prefix);
-    if (mode === 'calc') setIpv4InitialSubTab('calculator');
-    else if (mode === 'trainer') setIpv4InitialSubTab('practice');
+    setIpv4InitialPrefix(prefix);
+    setIpv4InitialSubTab(mode === 'calc' ? 'calculator' : mode === 'trainer' ? 'practice' : undefined);
     setActiveTab('ipv4');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -118,7 +145,8 @@ export function App() {
 
       <main className="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-6 sm:py-8 pb-28 lg:pb-8">
         {activeTab === 'exam' && (
-          <ExamView ref={examViewRef} soundEnabled={soundEnabled} onNavigateToTheory={handleNavigateToTheory} onNavigateToLearning={() => {
+          <ExamView onOpenLesson={handleOpenLesson} onOpenPractice={handleOpenPractice} onNavigateToIpv4={handleNavigateToIpv4} onNavigateToIpv6={handleNavigateToIpv6} ref={examViewRef} soundEnabled={soundEnabled} onNavigateToTheory={handleNavigateToTheory} onNavigateToLearning={() => {
+            setTheoryLessonId(null);
             setTheoryQuestionId(null);
             setTheoryFromExam(false);
             setActiveTab('theory');
@@ -127,18 +155,21 @@ export function App() {
         )}
         {(activeTab === 'theory' || activeTab === 'osi') && (
           <TheoryView
+            initialLessonId={theoryLessonId}
+            onOpenPractice={handleOpenPractice}
             initialQuestionId={theoryQuestionId}
             fromExam={theoryFromExam}
             onReturnToExam={handleReturnToExam}
             onNavigateToIpv4={handleNavigateToIpv4}
             onNavigateToIpv6={handleNavigateToIpv6}
             onClearInitialQuestion={() => {
+              setTheoryLessonId(null);
               setTheoryQuestionId(null);
               setTheoryFromExam(false);
             }}
           />
         )}
-        {activeTab === 'ipv6' && <Ipv6Trainer />}
+        {activeTab === 'ipv6' && <Ipv6Trainer key={ipv6InitialMode} initialMode={ipv6InitialMode} />}
         {activeTab === 'ipv4' && (
           <Ipv4Trainer
             soundEnabled={soundEnabled}
@@ -146,7 +177,7 @@ export function App() {
             initialSubTab={ipv4InitialSubTab}
           />
         )}
-        {activeTab === 'practice' && <PracticeHub />}
+        {activeTab === 'practice' && <PracticeHub key={practiceRequest?.id ?? 'default'} initialPracticeLink={practiceRequest?.link} />}
       </main>
 
       <MobileTabBar
@@ -158,6 +189,8 @@ export function App() {
         isOpen={isCommandPaletteOpen}
         onClose={() => setIsCommandPaletteOpen(false)}
         onSelectTab={(tab) => {
+          if (tab === 'ipv6') setIpv6InitialMode(undefined);
+          if (tab === 'practice') setPracticeRequest(null);
           setActiveTab(tab);
           if (tab !== 'theory') {
             setTheoryQuestionId(null);

@@ -9,7 +9,7 @@ interface MobileTabBarProps {
 
 export const MobileTabBar: React.FC<MobileTabBarProps> = ({ activeTab, onTabChange }) => {
   const tabs: Array<{ id: NavTab; label: string }> = [
-    { id: 'exam', label: 'Экзамен' },
+    { id: 'exam', label: 'Тесты' },
     { id: 'theory', label: 'Теория' },
     { id: 'ipv4', label: 'IPv4' },
     { id: 'ipv6', label: 'IPv6' },

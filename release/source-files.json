@@ -1,730 +1,1684 @@
 {
   "upstream": "https://github.com/apotet/my-gemini-mirror-site",
-  "source_sha": "fd98446c04ce37895707cf62d2afec0cd62ff6a6",
+  "source_sha": "ff3fe73696aabbf53caf57c8a9aaf2b270bf48f8",
+  "previous_production_sha": "dc205a85d76e90d35fdcd20c5a1f11f48463ca2e",
   "files": [
     {
       "path": ".gitignore",
-      "sha": "05b806c7fb54ca1604cdd2373be3d13c01d8dc80"
+      "sha": "05b806c7fb54ca1604cdd2373be3d13c01d8dc80",
+      "origin": "staging"
     },
     {
       "path": "docs/CLI_ARGUMENT_GRAMMAR.md",
-      "sha": "da467c15286b156c999ce7ce10499a15ba33edd1"
+      "sha": "da467c15286b156c999ce7ce10499a15ba33edd1",
+      "origin": "staging"
     },
     {
       "path": "docs/CLI_OPERATIONAL_STATE.md",
-      "sha": "976e3f2c02282a36c955da26770537a8c2876fb9"
+      "sha": "976e3f2c02282a36c955da26770537a8c2876fb9",
+      "origin": "staging"
     },
     {
       "path": "docs/QUESTION_BANK_EXPANSION.md",
-      "sha": "3a8b6ca6340c3e474a65c509a7ff6377fec85e81"
+      "sha": "3a8b6ca6340c3e474a65c509a7ff6377fec85e81",
+      "origin": "staging"
     },
     {
       "path": "docs/STP_QUESTION_AUDIT.md",
-      "sha": "8dfe1aebf0e76e69676cf1ed524590bcacc01d67"
+      "sha": "8dfe1aebf0e76e69676cf1ed524590bcacc01d67",
+      "origin": "staging"
+    },
+    {
+      "path": "docs/audits/issue-171-baseline.json",
+      "sha": "bac996548b92d739750b4d822ebb415e6d44cb5b",
+      "origin": "staging"
     },
     {
       "path": "index.dev.html",
-      "sha": "69bc736073a0307101a7b1aca041896c11dad74a"
+      "sha": "d8f9b423a972f082f50e94c7d8d05d228511c6e2",
+      "origin": "staging"
     },
     {
       "path": "index.html",
-      "sha": "172d9828e6a0776cb56d59bdea871e23c1bd9d65"
+      "sha": "7e920fabac5ac8b706ce1d8e8bc1d2b9e8475871",
+      "origin": "staging"
     },
     {
       "path": "metadata.json",
-      "sha": "be20037d4082eb0a334a85869eec10ea36e4d312"
-    },
-    {
-      "path": "NETOPS_DECISIONS.md",
-      "sha": "167640028da5464328e85c0c645fef0aaad7ae5a"
+      "sha": "be20037d4082eb0a334a85869eec10ea36e4d312",
+      "origin": "staging"
     },
     {
       "path": "package-lock.json",
-      "sha": "6cd62d96533a96d7e2b7bc38b70094f92153fb18"
+      "sha": "6cd62d96533a96d7e2b7bc38b70094f92153fb18",
+      "origin": "staging"
     },
     {
       "path": "package.json",
-      "sha": "23cce7dafd37afd19f46c39b038b1ae95a147dfd"
+      "sha": "23cce7dafd37afd19f46c39b038b1ae95a147dfd",
+      "origin": "production"
+    },
+    {
+      "path": "public/lesson-images/copper-categories.webp",
+      "sha": "1da135b99190bdb870261e12a3cd4dcc44c77642",
+      "origin": "staging"
+    },
+    {
+      "path": "public/lesson-images/copper-ethernet-lesson.webp",
+      "sha": "e5e84756ed062c1a9cbd134421e6e72441e9ee2c",
+      "origin": "staging"
+    },
+    {
+      "path": "public/lesson-images/copper-pinout-four-wires.webp",
+      "sha": "c237c4622912b1ec8d6c2734354f1a00e4dfca89",
+      "origin": "staging"
+    },
+    {
+      "path": "public/lesson-images/copper-termination-checklist.webp",
+      "sha": "5eed2965f16333f55ffc57b8fd0e7f83a49f31fa",
+      "origin": "staging"
+    },
+    {
+      "path": "public/lesson-images/copper-tester-case.webp",
+      "sha": "f501c95db4906ceefd24b7536124d29699cbaae2",
+      "origin": "staging"
+    },
+    {
+      "path": "public/lesson-images/http-301-404.svg",
+      "sha": "a753a50c0ecd741423f257d9a27a64740d574c7b",
+      "origin": "staging"
+    },
+    {
+      "path": "public/lesson-images/l3-acl-topdown-evaluation.svg",
+      "sha": "3dc3dc9da850b4cd7cfc46ee5830c6371c638cdf",
+      "origin": "staging"
+    },
+    {
+      "path": "public/lesson-images/l3-lacp-modes-hashing.svg",
+      "sha": "38c5785a6ad14e5a5910c44fc80c314d91b68fbf",
+      "origin": "staging"
+    },
+    {
+      "path": "public/lesson-images/l3-lldp-neighbors-flow.svg",
+      "sha": "f9dfb4c1e6087b329bb67a06c964b8c7374ba839",
+      "origin": "staging"
+    },
+    {
+      "path": "public/lesson-images/l3-mtu-mss-pmtud.svg",
+      "sha": "b9c1b9da94c432446e3cbe64f214f08c9c669101",
+      "origin": "staging"
+    },
+    {
+      "path": "public/lesson-images/l3-ptp-ieee1588-sync.svg",
+      "sha": "b53c728ccc0c413ed4612bf37a68af4fbe78a090",
+      "origin": "staging"
+    },
+    {
+      "path": "public/lesson-images/poe-data-power-loop.svg",
+      "sha": "8debdd4af3101fdade2529889955e03bd85ae9ca",
+      "origin": "staging"
+    },
+    {
+      "path": "public/lesson-images/poe-hardware-recognition-card.svg",
+      "sha": "65447c73b85f82a073a778cf0db07c6f3c52e830",
+      "origin": "staging"
+    },
+    {
+      "path": "public/lesson-images/poe-ieee-vs-passive-compare.svg",
+      "sha": "ea2eddf73d59a98a8b723cbbcf01d20c7409f1b6",
+      "origin": "staging"
+    },
+    {
+      "path": "public/lesson-images/poe-injector-splitter-chains.svg",
+      "sha": "8299f84ed8373281b9f69054f455b4b58d6d611a",
+      "origin": "staging"
+    },
+    {
+      "path": "public/lesson-images/poe-injectors-splitters-approved.png",
+      "sha": "fae10c8abae2acb29daa62025328e1875cdf34c9",
+      "origin": "staging"
+    },
+    {
+      "path": "public/lesson-images/poe-instrument-compare.svg",
+      "sha": "cbccddf016eafdc9b264cddf9289ef942a24a314",
+      "origin": "staging"
+    },
+    {
+      "path": "public/lesson-images/poe-linkrunner-g2-autotest.jpg",
+      "sha": "6f2c2eba84f6f3c8e79edf13f2901e93764c7c02",
+      "origin": "staging"
+    },
+    {
+      "path": "public/lesson-images/poe-pairs-compact.svg",
+      "sha": "cf781a65a36b5beb0c2f6eafccf58ee8f4a91199",
+      "origin": "staging"
+    },
+    {
+      "path": "public/lesson-images/poe-pairs-mode-ab.svg",
+      "sha": "262e281b5156a7b7c7c39d36207a266d63fda5f6",
+      "origin": "staging"
+    },
+    {
+      "path": "public/lesson-images/poe-standards-cheatsheet.svg",
+      "sha": "247ee61fdc8be83484d7dc004663d905a7eba69c",
+      "origin": "staging"
+    },
+    {
+      "path": "public/lesson-images/poe-tester-fields.svg",
+      "sha": "fd99a3f1c639c215d09ed688aee03dae0f0bc59d",
+      "origin": "staging"
     },
     {
       "path": "scripts/advanced-glossary.test.mjs",
-      "sha": "91ad638d144054c7d354fa81553435844155f98a"
+      "sha": "23f45ef2a32c90424546498b4759f3da251d4955",
+      "origin": "staging"
     },
     {
       "path": "scripts/answer-shuffle.test.mjs",
-      "sha": "d241db2766b7c85cb6c1b66961199ff25cbbd990"
+      "sha": "71edb3de35c437ab74faa6b67c41c1472c937494",
+      "origin": "staging"
     },
     {
       "path": "scripts/bank-entry.ts",
-      "sha": "cc4c0932a4175eb8b39399eaf5f315acbfad282e"
+      "sha": "fdf228e02736283a3e6b9c9df482451edec85ca4",
+      "origin": "staging"
     },
     {
       "path": "scripts/base-exam.test.mjs",
-      "sha": "b6b98877d8d6aae8437e2c5b5e78366a58246848"
+      "sha": "8c5830088d7c52c16f89e5b5f4a2bbb3fa295829",
+      "origin": "adapted",
+      "upstream_sha": "b5ba1c228bd35ed788c55a24276e0436ff868583"
+    },
+    {
+      "path": "scripts/beginner-exam.test.mjs",
+      "sha": "afcfc300e70157c67321db4e1bcd00a78feb8d2e",
+      "origin": "staging"
     },
     {
       "path": "scripts/cli-abbreviations.test.mjs",
-      "sha": "d31ea402818ec4477c1c8a4c4bf15e36e2be2209"
+      "sha": "d31ea402818ec4477c1c8a4c4bf15e36e2be2209",
+      "origin": "staging"
     },
     {
       "path": "scripts/cli-access-svi-followup.test.mjs",
-      "sha": "e742fc9088f1095b653a0b83093326d259082080"
+      "sha": "e742fc9088f1095b653a0b83093326d259082080",
+      "origin": "staging"
     },
     {
       "path": "scripts/cli-arguments.test.mjs",
-      "sha": "175ed68dda139020febeab48f461a837aa00c21f"
+      "sha": "fa533573b40007c831fbd2e97395c31d8c99f892",
+      "origin": "staging"
     },
     {
       "path": "scripts/cli-canonical-resolution.test.mjs",
-      "sha": "16536a3d4bb0597ed7b2123654d7b77ba4b47017"
+      "sha": "16536a3d4bb0597ed7b2123654d7b77ba4b47017",
+      "origin": "staging"
     },
     {
       "path": "scripts/cli-completion-status.test.mjs",
-      "sha": "db3047736a92866a8a0dc9da5debd4eb77dda366"
+      "sha": "db3047736a92866a8a0dc9da5debd4eb77dda366",
+      "origin": "production"
     },
     {
       "path": "scripts/cli-contextual-help.test.mjs",
-      "sha": "0b3e9c21129959e86d48c3530784fdd7b721af73"
+      "sha": "0b3e9c21129959e86d48c3530784fdd7b721af73",
+      "origin": "production"
     },
     {
       "path": "scripts/cli-diagnostic-hints.test.mjs",
-      "sha": "a43ca5215f7f6c19b0b9dacf5a850b0caeb3b792"
+      "sha": "a43ca5215f7f6c19b0b9dacf5a850b0caeb3b792",
+      "origin": "staging"
     },
     {
       "path": "scripts/cli-ios-modes-lab.test.mjs",
-      "sha": "28509b16212769ee7f3272ff14388a72bad1d3a9"
+      "sha": "28509b16212769ee7f3272ff14388a72bad1d3a9",
+      "origin": "staging"
     },
     {
       "path": "scripts/cli-lesson-terms.test.mjs",
-      "sha": "7f5b72a33f4eb6efcab1d45ed94d8d32cfefe98a"
+      "sha": "7f5b72a33f4eb6efcab1d45ed94d8d32cfefe98a",
+      "origin": "staging"
     },
     {
       "path": "scripts/cli-operational-state.test.mjs",
-      "sha": "65b5fc9d24f6026b1134fd3be3c3411e0211d6d6"
+      "sha": "65b5fc9d24f6026b1134fd3be3c3411e0211d6d6",
+      "origin": "staging"
     },
     {
       "path": "scripts/cli-persistence.test.mjs",
-      "sha": "ff0ae6851cb7c6e5552b963341245ca891dec4a2"
+      "sha": "ff0ae6851cb7c6e5552b963341245ca891dec4a2",
+      "origin": "production"
     },
     {
       "path": "scripts/cli-reference.test.mjs",
-      "sha": "aa5c37ef53db99ad99653c29dec0edb7dea90c80"
+      "sha": "b8aa178a53851e140704826dced466f509c774c8",
+      "origin": "staging"
     },
     {
       "path": "scripts/cli-show-diagnostic.test.mjs",
-      "sha": "e3976b6fa70dfb73d52c09013d1fcc96d18f4590"
+      "sha": "e3976b6fa70dfb73d52c09013d1fcc96d18f4590",
+      "origin": "staging"
     },
     {
       "path": "scripts/cli-show-interfaces.test.mjs",
-      "sha": "37457ba558d4486a7f67d6d179759ac9838c5fed"
+      "sha": "37457ba558d4486a7f67d6d179759ac9838c5fed",
+      "origin": "production"
     },
     {
       "path": "scripts/cli-tab.test.mjs",
-      "sha": "b00ac4d009f824d0c453d88ba6f3cbd26e383ddf"
+      "sha": "b00ac4d009f824d0c453d88ba6f3cbd26e383ddf",
+      "origin": "staging"
     },
     {
       "path": "scripts/cli-three-switch.test.mjs",
-      "sha": "fa7079604a0463624e066353f99c6abb3eb95c8c"
+      "sha": "fa7079604a0463624e066353f99c6abb3eb95c8c",
+      "origin": "staging"
     },
     {
       "path": "scripts/cli-trunk-allowed-ops.test.mjs",
-      "sha": "84dc6f442a081c0388e3bed4b9f69e498509ee94"
+      "sha": "84dc6f442a081c0388e3bed4b9f69e498509ee94",
+      "origin": "staging"
     },
     {
       "path": "scripts/cli-trunk-diagnostics.test.mjs",
-      "sha": "f8cd5f7a9176c07dfe7b9685792bb927f0ff6bfb"
+      "sha": "f8cd5f7a9176c07dfe7b9685792bb927f0ff6bfb",
+      "origin": "staging"
     },
     {
       "path": "scripts/cli-two-switch-svi.test.mjs",
-      "sha": "ac8aa6d2f4aff629e943dae28fecb237551cfa26"
+      "sha": "ac8aa6d2f4aff629e943dae28fecb237551cfa26",
+      "origin": "staging"
     },
     {
       "path": "scripts/cli-two-switch.test.mjs",
-      "sha": "ba4a2f3ac7fc3cbb45517bca1be27e0ba51a4915"
+      "sha": "ba4a2f3ac7fc3cbb45517bca1be27e0ba51a4915",
+      "origin": "staging"
     },
     {
       "path": "scripts/coverage-report.mjs",
-      "sha": "cf9e64b8a82a9dad5eb2ff806baeeb4a34ed6c3c"
+      "sha": "cf9e64b8a82a9dad5eb2ff806baeeb4a34ed6c3c",
+      "origin": "staging"
     },
     {
       "path": "scripts/data-entry.ts",
-      "sha": "918a7223ab287a573185116f1bbe79685568a6a9"
+      "sha": "6ba1e8ca2593c8605fe3fdb56834abb6c8610ba4",
+      "origin": "staging"
+    },
+    {
+      "path": "scripts/fixtures/beginner-exam-baseline.json",
+      "sha": "d3d33dba1c647088564e77f377bdfbb7333729de",
+      "origin": "staging"
+    },
+    {
+      "path": "scripts/fixtures/photo-review-baseline.json",
+      "sha": "557c3088a66b3e0e43a9c01e07fde3b06308b106",
+      "origin": "staging"
     },
     {
       "path": "scripts/glossary-hover.test.mjs",
-      "sha": "a7091a2428236cb8abe7f6bbc283ea768a602b4b"
+      "sha": "a7091a2428236cb8abe7f6bbc283ea768a602b4b",
+      "origin": "production"
     },
     {
       "path": "scripts/glossary.test.mjs",
-      "sha": "6dbb8fd452a035304ee48dde51e83d928f87ee35"
+      "sha": "6dbb8fd452a035304ee48dde51e83d928f87ee35",
+      "origin": "staging"
+    },
+    {
+      "path": "scripts/in-depth-entry.ts",
+      "sha": "f31ed62e451d13fccfe4f30a61062077b7cd13f4",
+      "origin": "staging"
     },
     {
       "path": "scripts/l2-security.test.mjs",
-      "sha": "35c78303191ba423d396d3738c0069d60c8143d2"
+      "sha": "64cecc01a23e5269d3ff4f3a31d801e2b94a03f3",
+      "origin": "staging"
+    },
+    {
+      "path": "scripts/l3-batch1-integration.test.mjs",
+      "sha": "0236f069aa3c5fea9edf490971a6ef0bbaa4575e",
+      "origin": "staging"
+    },
+    {
+      "path": "scripts/learning-level-exam-entry.ts",
+      "sha": "57002485ab34305d732525d593cd277feed96407",
+      "origin": "staging"
+    },
+    {
+      "path": "scripts/learning-level-exam.test.mjs",
+      "sha": "c1f40da0308912af80117af347d2ba4620c3a188",
+      "origin": "adapted",
+      "upstream_sha": "f9aef289594c45a5c56cde7b4c429bdcd5066876"
     },
     {
       "path": "scripts/load-bank.mjs",
-      "sha": "4a8531a95ee98e92e32d035f8f7f2b84b3a1b5e5"
+      "sha": "4a8531a95ee98e92e32d035f8f7f2b84b3a1b5e5",
+      "origin": "staging"
     },
     {
       "path": "scripts/mixed-exam.test.mjs",
-      "sha": "27d359aadd8251b45d4b4caac9ab6e43a7fc3392"
+      "sha": "27d359aadd8251b45d4b4caac9ab6e43a7fc3392",
+      "origin": "staging"
+    },
+    {
+      "path": "scripts/photo-review.test.mjs",
+      "sha": "580f27fcd998ec22b7fbbe2dff243b38cf1594ad",
+      "origin": "adapted",
+      "upstream_sha": "71f458d17c6edf2cfc29433284229131f2091a14"
+    },
+    {
+      "path": "scripts/poe-injectors-lesson.test.mjs",
+      "sha": "174a58564b21149f8bffcaf617051de23ba3b5ce",
+      "origin": "staging"
+    },
+    {
+      "path": "scripts/poe-standards-card-style.test.mjs",
+      "sha": "6fcb6a1e987f738071d8c45e72c152cb8ef1bcdc",
+      "origin": "staging"
+    },
+    {
+      "path": "scripts/poe-summary-glossary.test.mjs",
+      "sha": "a47d70f743507aaaf768301070050fcc94c75cf5",
+      "origin": "adapted",
+      "upstream_sha": "c2308242cb802f93a9ff2276560d9211788f4b1c"
+    },
+    {
+      "path": "scripts/poe-svg-layout.test.mjs",
+      "sha": "13c40f039b726be9ee770f117c1ae0760f7c57b3",
+      "origin": "staging"
     },
     {
       "path": "scripts/practice-links.test.mjs",
-      "sha": "581299be5b5390a69364208d79b46801fd2b62cb"
+      "sha": "48d15fc87445a3d14cd1d436e5e17db95a59e678",
+      "origin": "staging"
+    },
+    {
+      "path": "scripts/production-attempt-compat.test.mjs",
+      "sha": "cdb7720d53081bf06627e68f874c3efa24e94dcf",
+      "origin": "adapted"
     },
     {
       "path": "scripts/progress-entry.ts",
-      "sha": "e546c5b2d01c45366bc0bfc547097eb40799bd5e"
+      "sha": "e546c5b2d01c45366bc0bfc547097eb40799bd5e",
+      "origin": "staging"
     },
     {
       "path": "scripts/progress.test.mjs",
-      "sha": "a21abd2544cd341ba8fc42a134ddce2c3641003a"
+      "sha": "a21abd2544cd341ba8fc42a134ddce2c3641003a",
+      "origin": "staging"
     },
     {
       "path": "scripts/quiz-logic.test.mjs",
-      "sha": "18022b796bd32684ed55b3507dcb65989823a653"
+      "sha": "81c16e8e852140b605ce2b8e033cdba0435d4080",
+      "origin": "staging"
     },
     {
       "path": "scripts/review-entry.ts",
-      "sha": "a04d672cdee2043bad78559fff58118b910b81a6"
+      "sha": "a04d672cdee2043bad78559fff58118b910b81a6",
+      "origin": "staging"
+    },
+    {
+      "path": "scripts/review-material-fixtures.mjs",
+      "sha": "572247d94561433cd06bd5cb8a08ca388051319f",
+      "origin": "staging"
+    },
+    {
+      "path": "scripts/review-navigation.test.mjs",
+      "sha": "c2164074dbea24923b9c002ad10bdbea420f7e3b",
+      "origin": "staging"
     },
     {
       "path": "scripts/review.test.mjs",
-      "sha": "22b1aa5b12b6e7e6830789c096cd86683fcf60f0"
+      "sha": "a36c347bd48e6d57e580285c783679483fe0e339",
+      "origin": "staging"
+    },
+    {
+      "path": "scripts/shared-assets.test.mjs",
+      "sha": "a666bb680ee8d0510307d80e00529801a0330f1e",
+      "origin": "staging"
     },
     {
       "path": "scripts/stp-lesson-links.test.mjs",
-      "sha": "bf37991ea029bde82abdfb9f76a20b998b3a7e08"
+      "sha": "bf37991ea029bde82abdfb9f76a20b998b3a7e08",
+      "origin": "staging"
     },
     {
       "path": "scripts/stp-questions.test.mjs",
-      "sha": "b6692a1057cc52ad9a7c7bc6e25003d0dd13431d"
+      "sha": "f59761a51f27db6117b758d326c33e233919df52",
+      "origin": "adapted",
+      "upstream_sha": "b6692a1057cc52ad9a7c7bc6e25003d0dd13431d"
     },
     {
       "path": "scripts/study-text.test.mjs",
-      "sha": "2adbbe16d455e99f1284b74f33829049bd7963da"
+      "sha": "1d43421cebf3eb4a5724732a8e700e3504532273",
+      "origin": "staging"
     },
     {
       "path": "scripts/svi-lesson.test.mjs",
-      "sha": "d943513a69952f09bb820f0ae6e3e73b1233ccb3"
+      "sha": "6b539ee7a108319182413cb32a61c9fe2934575b",
+      "origin": "adapted",
+      "upstream_sha": "953e3b1310536a90c8799f6745fdf86cfa9a264f"
     },
     {
       "path": "scripts/validate-questions.mjs",
-      "sha": "25d9bc9bfdc731fc4eabaa9661e7f74ad48a59d4"
+      "sha": "052d0f9f3e514d7749114f1ae2536297cd87742a",
+      "origin": "staging"
     },
     {
       "path": "src/App.tsx",
-      "sha": "fdeba68245b050b48f40d1a7f861ecd273d5e782"
+      "sha": "730badfc450f28831faf25095b27dc7e8fb398c2",
+      "origin": "adapted",
+      "upstream_sha": "a50f9cc56d80025d08bc919bcf2d0a3337f866b9"
     },
     {
       "path": "src/cli-lab/CliLabShell.tsx",
-      "sha": "a1c17f6150460900482da92095dc14b8d325a967"
+      "sha": "8d2c76f670ea2b9ee2bc0cdbe20b956412a9a5e8",
+      "origin": "adapted",
+      "upstream_sha": "dca93ac1159454f4bab6ef0c020cc4b79af92113"
+    },
+    {
+      "path": "src/cli-lab/components/HostPingPanel.tsx",
+      "sha": "e82636c0641a2e348ae526e6b5815b5a59307d4f",
+      "origin": "staging"
+    },
+    {
+      "path": "src/cli-lab/components/TopologyPanel.tsx",
+      "sha": "c16918431c4a8e7684d67ed1fb360be9edfa1adf",
+      "origin": "staging"
     },
     {
       "path": "src/cli-lab/engine/CommandResolution.ts",
-      "sha": "e0e2545ff352ec2cb09868984603ccbf4139dcd6"
-    },
-    {
-      "path": "src/cli-lab/engine/completionStatus.ts",
-      "sha": "2d8922a37ba52ea9c359387ccfe7a3e2ee2b803f"
+      "sha": "9807a4f4ef943045d4a488b158907bb41791bd7c",
+      "origin": "staging"
     },
     {
       "path": "src/cli-lab/engine/ConfigPersistence.ts",
-      "sha": "3ed59d8e08d3f1b4501f56d75660dd61eff295eb"
+      "sha": "41bb257f5d7dfa63430ca802cceff22451f5e61f",
+      "origin": "staging"
     },
     {
       "path": "src/cli-lab/engine/ContextualHelp.ts",
-      "sha": "b99146dd573ee92aa30fc1b5bf0a8ecd3c603235"
+      "sha": "32ffe615ec72f9fdb3f2bbaf76a43c5f5c654960",
+      "origin": "staging"
     },
     {
       "path": "src/cli-lab/engine/GoalEvaluator.ts",
-      "sha": "233b285d5c017bcd329ab332dddc9b778ccbd76a"
+      "sha": "7d35d73d9922fad24627088e827c3157daf63c8b",
+      "origin": "staging"
+    },
+    {
+      "path": "src/cli-lab/engine/HostIpv4Reachability.ts",
+      "sha": "5c84d5642edf78e82d5b7d9af0a9d12d0833e78b",
+      "origin": "staging"
     },
     {
       "path": "src/cli-lab/engine/LabEngine.ts",
-      "sha": "2531bb25d81337e17c2d865c4ff83be1838a70cc"
+      "sha": "fb4a2c03aeda077d9c51979e6a3b78f926b0c4de",
+      "origin": "staging"
     },
     {
       "path": "src/cli-lab/engine/OperationalState.ts",
-      "sha": "d81e4154d5c4ba02a968df905bde25cbf5590b45"
+      "sha": "15186dc49b7eec084992dd986f50e82bf30bcb8c",
+      "origin": "staging"
+    },
+    {
+      "path": "src/cli-lab/engine/SpanningTree.ts",
+      "sha": "613b9c66dc7ef44bf15304ad2ddf880c5652d032",
+      "origin": "staging"
     },
     {
       "path": "src/cli-lab/engine/SviIpv4Reachability.ts",
-      "sha": "a51cea78636a86fbc4e8520c6abbd7f43d4d3bcf"
+      "sha": "d3b478a91a74d549fa26debfa37a9e4e4908120b",
+      "origin": "staging"
     },
     {
-      "path": "src/cli-lab/engine/types.ts",
-      "sha": "465c7be9074da47d4ce05a60670b0220ce5a003a"
+      "path": "src/cli-lab/engine/VlanForwarding.ts",
+      "sha": "7a0aca0983afde3a3ac78700f1ba0e9d58fd97c0",
+      "origin": "staging"
+    },
+    {
+      "path": "src/cli-lab/engine/VlanMembership.ts",
+      "sha": "28b70ce23b2fd2c703991dc04642950b63e55dbc",
+      "origin": "staging"
     },
     {
       "path": "src/cli-lab/engine/VlanPath.ts",
-      "sha": "2158e6e0ff85c2cce48ac6d1f14c7f5fff7f11c5"
+      "sha": "6e757ebe92da73e0c629f3b64e86396e3edf2fd9",
+      "origin": "staging"
+    },
+    {
+      "path": "src/cli-lab/engine/completionStatus.ts",
+      "sha": "2d8922a37ba52ea9c359387ccfe7a3e2ee2b803f",
+      "origin": "staging"
+    },
+    {
+      "path": "src/cli-lab/engine/types.ts",
+      "sha": "674818380047d01c374376234f8ac874a6f07472",
+      "origin": "staging"
+    },
+    {
+      "path": "src/cli-lab/fullscreen.css",
+      "sha": "fc04a7e5415087dd5bb068282ddfa2f1a02ffe21",
+      "origin": "adapted",
+      "upstream_sha": "0331a30c4d68f3191ab694bdb60d5dc4cc2354fc"
+    },
+    {
+      "path": "src/cli-lab/hostPing.ts",
+      "sha": "aea7b95eae04d5b872c3039a9478a2a464cc5ef3",
+      "origin": "staging"
+    },
+    {
+      "path": "src/cli-lab/portDetails.ts",
+      "sha": "752834e293a57898d9aabc5015c0d59ba3fb31b5",
+      "origin": "staging"
+    },
+    {
+      "path": "src/cli-lab/scenarioTheory.ts",
+      "sha": "3811dd8cb3bd70907fd792be2840b45fe95b0afb",
+      "origin": "staging"
     },
     {
       "path": "src/cli-lab/scenarios/cisco-access-svi-followup.ts",
-      "sha": "0ee60be32ac2165bf90a773ba11daaf4b56c1055"
+      "sha": "0ee60be32ac2165bf90a773ba11daaf4b56c1055",
+      "origin": "staging"
+    },
+    {
+      "path": "src/cli-lab/scenarios/cisco-four-switch-host-ring.ts",
+      "sha": "6c1253755c5d9f4f33c343f284ab5c8340f6c342",
+      "origin": "staging"
     },
     {
       "path": "src/cli-lab/scenarios/cisco-ios-modes.ts",
-      "sha": "98cdbcd806af79ed2c00f86e6070a4e0c01d2e59"
+      "sha": "98cdbcd806af79ed2c00f86e6070a4e0c01d2e59",
+      "origin": "staging"
     },
     {
       "path": "src/cli-lab/scenarios/cisco-l3-gateway.ts",
-      "sha": "b49cd231e907901760e529243ebaeee549263b42"
+      "sha": "b49cd231e907901760e529243ebaeee549263b42",
+      "origin": "staging"
     },
     {
       "path": "src/cli-lab/scenarios/cisco-show-diagnostic.ts",
-      "sha": "df870368b39d25d2983adb7f4f0f1d5f7edcba31"
+      "sha": "df870368b39d25d2983adb7f4f0f1d5f7edcba31",
+      "origin": "staging"
     },
     {
       "path": "src/cli-lab/scenarios/cisco-three-switch-missing-vlan.ts",
-      "sha": "1ade8ce8fec667d7268346335da19e989f39f08a"
+      "sha": "1ade8ce8fec667d7268346335da19e989f39f08a",
+      "origin": "staging"
     },
     {
       "path": "src/cli-lab/scenarios/cisco-trunk.ts",
-      "sha": "b6fe35432e47d1ac2f925064e13be8364a091c1b"
+      "sha": "b6fe35432e47d1ac2f925064e13be8364a091c1b",
+      "origin": "staging"
     },
     {
       "path": "src/cli-lab/scenarios/cisco-two-switch-svi.ts",
-      "sha": "aa20cc44e54b472a591dc428677909c18fa75213"
+      "sha": "d27332c055afb395acd7892656d5059057bafc5f",
+      "origin": "staging"
     },
     {
       "path": "src/cli-lab/scenarios/cisco-two-switch-trunk-diagnostics.ts",
-      "sha": "50574ffb7860dca0b33c0e770a8490d549d8f80d"
+      "sha": "50574ffb7860dca0b33c0e770a8490d549d8f80d",
+      "origin": "staging"
     },
     {
       "path": "src/cli-lab/scenarios/cisco-two-switch-vlan.ts",
-      "sha": "09d8ae1cb4019b3a7abbaa60d33be67c706fe291"
+      "sha": "09d8ae1cb4019b3a7abbaa60d33be67c706fe291",
+      "origin": "staging"
     },
     {
       "path": "src/cli-lab/scenarios/cisco-vlan-access.ts",
-      "sha": "8337de4fa1957c45902db47c3fead9e71307fa8b"
+      "sha": "8337de4fa1957c45902db47c3fead9e71307fa8b",
+      "origin": "staging"
+    },
+    {
+      "path": "src/cli-lab/topologyLayers.ts",
+      "sha": "f88da73c67016963cf4b2f740b6403e44387e384",
+      "origin": "staging"
     },
     {
       "path": "src/cli-lab/vendors/cisco-ios/arguments.ts",
-      "sha": "21614c8c07ed57b59baf8f83f8889d3157954b30"
+      "sha": "30b82742c178f536d358890ed04f710090bd4352",
+      "origin": "staging"
+    },
+    {
+      "path": "src/cli-lab/vendors/cisco-ios/commandCatalog.ts",
+      "sha": "0b593b9bf39323a06a6f1b599edb81cfd86f00e3",
+      "origin": "staging"
     },
     {
       "path": "src/cli-lab/vendors/cisco-ios/commands.ts",
-      "sha": "77bc501db46b8757b752768cefae713f9a8dbefc"
+      "sha": "2df29ae5372b5d059cc49cb22f3e5802d33626ef",
+      "origin": "staging"
+    },
+    {
+      "path": "src/cli-lab/vendors/cisco-ios/configFormatter.ts",
+      "sha": "e3488c6e1e8d8153a4cfdfaedc6813d0b1d2a2a7",
+      "origin": "staging"
     },
     {
       "path": "src/cli-lab/vendors/cisco-ios/l3Commands.ts",
-      "sha": "5970238eccf8801682cdded5cb7c618650d95059"
+      "sha": "e99a08f65bd9bea1ddad4a2e004c808ca3fefac2",
+      "origin": "staging"
     },
     {
       "path": "src/cli-lab/vendors/cisco-ios/persistenceCommands.ts",
-      "sha": "04cb69434bcc6f2c173d9a67bf935f89f4385748"
+      "sha": "8f49e62becde77a1ce267c7884292b0a41213561",
+      "origin": "staging"
     },
     {
       "path": "src/cli-lab/vendors/cisco-ios/profile.ts",
-      "sha": "dfb5f26e5700588e7b15301039b04ba565d672b1"
+      "sha": "dfb5f26e5700588e7b15301039b04ba565d672b1",
+      "origin": "staging"
     },
     {
       "path": "src/cli-lab/vendors/cisco-ios/showInterfaceCommands.ts",
-      "sha": "42d336e6c115bb7a43d0af98407c3e0e3319d56e"
+      "sha": "21ca43eacaae112d68d33436119e1ac578e3e061",
+      "origin": "staging"
+    },
+    {
+      "path": "src/cli-lab/vendors/cisco-ios/spanningTreeCommands.ts",
+      "sha": "fa9c09a86e53fe5a489b4df362d7a54c4e8452bc",
+      "origin": "staging"
+    },
+    {
+      "path": "src/cli-lab/vendors/cisco-ios/spanningTreeConfigCommands.ts",
+      "sha": "fda64e59b619198df1ca0c7de16d0cd2c360b852",
+      "origin": "staging"
     },
     {
       "path": "src/cli-lab/vendors/cisco-ios/trunkCommands.ts",
-      "sha": "6f6ef87b5d35ad3a852d0a2c87534240fc654325"
+      "sha": "98c4c362bb6e29aed7373c093c406dd0fb9a75ca",
+      "origin": "staging"
     },
     {
       "path": "src/components/CliReference.tsx",
-      "sha": "d05faa27a692db5e0b984eed12aea60f2b490526"
-    },
-    {
-      "path": "src/components/CliSimulator.tsx",
-      "sha": "5dfa7a814d8d063b5305ccd83bb88394c72610db"
+      "sha": "d05faa27a692db5e0b984eed12aea60f2b490526",
+      "origin": "staging"
     },
     {
       "path": "src/components/CommandPalette.tsx",
-      "sha": "c24dff7d56eb760eb9da666c9258df4b79427393"
-    },
-    {
-      "path": "src/components/DeployModal.tsx",
-      "sha": "b0082bf61343abf011be59ef2638ae3d4f58a7eb"
+      "sha": "2796aa95d9a8490691eeb9f442a98d7d80f8f926",
+      "origin": "staging"
     },
     {
       "path": "src/components/DetectiveTopology.tsx",
-      "sha": "e6a95c3e025659dfcee37bfd7a0d18e2b4edbeb8"
+      "sha": "e6a95c3e025659dfcee37bfd7a0d18e2b4edbeb8",
+      "origin": "staging"
+    },
+    {
+      "path": "src/components/EngineeringReview.tsx",
+      "sha": "140d2e1bdf901d5e769a8a53d4bbe85beb849083",
+      "origin": "adapted",
+      "upstream_sha": "43ea450bcf3862ae81206d205bb5a452d1ba14de"
+    },
+    {
+      "path": "src/components/EthernetPinout.tsx",
+      "sha": "fbb8db13c169c9c188b95f07cce934d5c60f56cc",
+      "origin": "staging"
     },
     {
       "path": "src/components/ExamReview.css",
-      "sha": "6aff79adaf671fa748237df93eb7da461f0712ba"
+      "sha": "24611be054dff22fb652858b1556d37423bd2aef",
+      "origin": "staging"
     },
     {
       "path": "src/components/ExamReview.tsx",
-      "sha": "11a7cb6d3f15e8a33124c1acd065549b501b364c"
+      "sha": "b126a1ddcad3f7a8a7383fbc53473b4ba4e8a5f6",
+      "origin": "staging"
     },
     {
       "path": "src/components/ExamView.tsx",
-      "sha": "c456db0c770c2728fc3f408405f7989c95c56800"
+      "sha": "7e33c7c6f63e9f1ac096a29a9ff215c7e6e34807",
+      "origin": "staging"
+    },
+    {
+      "path": "src/components/FormattedExplanation.tsx",
+      "sha": "ff412abd4da76a0441d2f3afe99bb8850aa690f1",
+      "origin": "staging"
     },
     {
       "path": "src/components/GlossaryText.css",
-      "sha": "e38f6709d13a14d901a322ca4a8c6e7c3426f85a"
+      "sha": "e38f6709d13a14d901a322ca4a8c6e7c3426f85a",
+      "origin": "staging"
     },
     {
       "path": "src/components/GlossaryText.tsx",
-      "sha": "1c1ba53c361daaeb5c31aaf22b56e24c2f6e8939"
+      "sha": "4a6119b137bd8c701dd8b29adf81af08b444d4ec",
+      "origin": "staging"
     },
     {
       "path": "src/components/HomeOsiStack.tsx",
-      "sha": "d90dff6cabb084f35bb3ebaf4af3d3e6ba1be09f"
+      "sha": "d90dff6cabb084f35bb3ebaf4af3d3e6ba1be09f",
+      "origin": "staging"
     },
     {
       "path": "src/components/Ipv4Trainer.tsx",
-      "sha": "e92a6d142e30bab87d2db77e24e42843961e8efc"
+      "sha": "e92a6d142e30bab87d2db77e24e42843961e8efc",
+      "origin": "staging"
     },
     {
       "path": "src/components/Ipv6Trainer.tsx",
-      "sha": "c25a957aa7ac9f004b08c79470b827c74f50978c"
+      "sha": "57b052c48ac286c6a837393ed0311e15af867883",
+      "origin": "staging"
     },
     {
       "path": "src/components/KnowledgeBase.tsx",
-      "sha": "ae262b2f2bcc80e703835bc58aac62a593af0a6e"
+      "sha": "672779784bc1a65dda80135ac64f1c72177a9830",
+      "origin": "staging"
     },
     {
       "path": "src/components/KnowledgeRadar.tsx",
-      "sha": "1deda0287476d65eb1e3536110576d23d1f27846"
+      "sha": "2d4e420567f38d3d23437a825fcc3cb0e257dbac",
+      "origin": "staging"
+    },
+    {
+      "path": "src/components/LessonKnowledgeCheck.tsx",
+      "sha": "4642cdcf814f517b2b8b793dcd68a4b5e3d54046",
+      "origin": "staging"
+    },
+    {
+      "path": "src/components/LessonReviewBadge.tsx",
+      "sha": "8c8bb4f24c36005c7c41980fc2c37ac098f6265c",
+      "origin": "staging"
     },
     {
       "path": "src/components/LessonTermTags.tsx",
-      "sha": "292e91d0fd446449161c1633458f39d316894019"
+      "sha": "c141ce794b80098dfc2c8e6b8dc1c71bc2f723f7",
+      "origin": "staging"
     },
     {
       "path": "src/components/LessonView.tsx",
-      "sha": "68ad536631db8fbbe16bc7baa948f23fb6cd578e"
+      "sha": "557feb2c91ada39ac365bd2b79553de72a53546f",
+      "origin": "staging"
     },
     {
       "path": "src/components/LivingOsiStack.tsx",
-      "sha": "1979056c389afda6f7299279edcb6502cea0fb6e"
+      "sha": "1979056c389afda6f7299279edcb6502cea0fb6e",
+      "origin": "staging"
     },
     {
       "path": "src/components/MobileTabBar.tsx",
-      "sha": "20fb670e0360dc577903f97d867a7321464f8f3c"
+      "sha": "ef196684779e5dafb9b544adcee56e9fa59712ca",
+      "origin": "staging"
     },
     {
       "path": "src/components/Navbar.tsx",
-      "sha": "8af3cb541599e8d919bad9a34643df6b0c4ca1cc"
+      "sha": "8d33c6e76a9fad594ec13bb309e99cfdac9d804b",
+      "origin": "adapted",
+      "upstream_sha": "e48a8f8621e6b7a73bd907a5cc554da4b1465856"
     },
     {
       "path": "src/components/NetOpsLogo.tsx",
-      "sha": "7c86cbdc1dbebdbf68cca64b028346e73c2e8788"
+      "sha": "7c86cbdc1dbebdbf68cca64b028346e73c2e8788",
+      "origin": "staging"
     },
     {
       "path": "src/components/OsiExplorer.tsx",
-      "sha": "8d8d0573d59a95ad7e104539800beb97a83d15be"
+      "sha": "8d8d0573d59a95ad7e104539800beb97a83d15be",
+      "origin": "staging"
     },
     {
       "path": "src/components/PacketJourney.tsx",
-      "sha": "2ceb4e2b744a52f584edeee294ae38e051901572"
+      "sha": "2ceb4e2b744a52f584edeee294ae38e051901572",
+      "origin": "staging"
     },
     {
       "path": "src/components/PhotoCredits.tsx",
-      "sha": "413493327fa61e42fcb7af44a3e6bbac39f1da0b"
+      "sha": "d9f0a59ea709e0b087a737f927e682e93f089820",
+      "origin": "staging"
     },
     {
       "path": "src/components/PracticeHub.tsx",
-      "sha": "63f9f9547507e448d74176c2246008a5eb7dff5d"
+      "sha": "63f9f9547507e448d74176c2246008a5eb7dff5d",
+      "origin": "staging"
     },
     {
       "path": "src/components/PracticeLinkButton.tsx",
-      "sha": "6126e722492147ca51ce927d680f2e4953e33faa"
+      "sha": "6126e722492147ca51ce927d680f2e4953e33faa",
+      "origin": "staging"
     },
     {
       "path": "src/components/ProtocolSimulators.tsx",
-      "sha": "f2d28a8f0e858ce3a449350d6bac109b7a882ffd"
+      "sha": "f2d28a8f0e858ce3a449350d6bac109b7a882ffd",
+      "origin": "staging"
     },
     {
       "path": "src/components/SniDiagram.tsx",
-      "sha": "7ec4b573a16f472ccb59632da8e2b1734c66adcd"
+      "sha": "7ec4b573a16f472ccb59632da8e2b1734c66adcd",
+      "origin": "staging"
     },
     {
       "path": "src/components/StudyTextToggle.tsx",
-      "sha": "84e19d2ca0a6d13cd56394bedb451b5204fc044a"
+      "sha": "cbd7842d7e8abc7830338fa8a358355025e4cce2",
+      "origin": "staging"
     },
     {
       "path": "src/components/TheoryCheatsheets.tsx",
-      "sha": "9725eace549024179b54fc5b94698711576a12d4"
+      "sha": "9725eace549024179b54fc5b94698711576a12d4",
+      "origin": "staging"
     },
     {
       "path": "src/components/TheoryModels.tsx",
-      "sha": "9c3f12d7969538548dd014e89c559c0bb93215cf"
+      "sha": "9c3f12d7969538548dd014e89c559c0bb93215cf",
+      "origin": "staging"
     },
     {
       "path": "src/components/TheoryPorts.tsx",
-      "sha": "093ae3e6aa9f8a028f7c8b5288e5201c3889dbb6"
+      "sha": "093ae3e6aa9f8a028f7c8b5288e5201c3889dbb6",
+      "origin": "staging"
     },
     {
       "path": "src/components/TheoryRazbory.tsx",
-      "sha": "197f91c1c77cd72ac591863d8c28ca142dc2f529"
+      "sha": "7129fd35cd2bbede0be8710b33d2784c9e6e4be4",
+      "origin": "staging"
     },
     {
       "path": "src/components/TheoryScenarios.tsx",
-      "sha": "434e26a0f5883e7d2aed28604b14905e073ae9c2"
+      "sha": "434e26a0f5883e7d2aed28604b14905e073ae9c2",
+      "origin": "staging"
     },
     {
       "path": "src/components/TheoryView.tsx",
-      "sha": "6ae65222cd7fd3577777f647f36ba8e31e068192"
+      "sha": "b708ea07fd16f030d50b982aee07163562760dd2",
+      "origin": "staging"
     },
     {
       "path": "src/components/VlanSimulator.tsx",
-      "sha": "68e160f8122bdb21555971ebadb26855834e3ca7"
+      "sha": "6674e4d625700b8348472aacdcf8fe9cfe1aa8d4",
+      "origin": "adapted",
+      "upstream_sha": "68e160f8122bdb21555971ebadb26855834e3ca7"
     },
     {
       "path": "src/components/ZoomableImage.tsx",
-      "sha": "94d1630674265724e326f68e78c106832565e9e7"
+      "sha": "dece06202e0af58eba82e5160679d03f9afcb8bb",
+      "origin": "staging"
+    },
+    {
+      "path": "src/config/sharedAssets.ts",
+      "sha": "a5cea9a8c76b21d7616635a5a76e00b97bfbf1e9",
+      "origin": "staging"
+    },
+    {
+      "path": "src/data/appliedL3SessionPro.ts",
+      "sha": "2bd88600eca1a827f96bd728975df32a2e87f92f",
+      "origin": "staging"
+    },
+    {
+      "path": "src/data/auditedQuestionExplanations.ts",
+      "sha": "001cc170b59cf76aa5e490b0ca4f0cca5fb70840",
+      "origin": "staging"
+    },
+    {
+      "path": "src/data/baseFoundations.ts",
+      "sha": "73b0cc4d6691ca865750dd095298cfacb4083ef4",
+      "origin": "staging"
+    },
+    {
+      "path": "src/data/baseFoundationsBatch3.ts",
+      "sha": "01da9900dbf47067cabc5de875686699316c3ff5",
+      "origin": "staging"
+    },
+    {
+      "path": "src/data/baseFoundationsBatch4.ts",
+      "sha": "9b54540fb05f4ac000127a1ccc4a0dbb13eea28e",
+      "origin": "staging"
+    },
+    {
+      "path": "src/data/baseFoundationsBatch5.ts",
+      "sha": "116cd74572257c0ff189f5ae8a50799928f92bb2",
+      "origin": "staging"
+    },
+    {
+      "path": "src/data/baseFoundationsBatch6.ts",
+      "sha": "a59200617eaf2db66c02ccfd907b433e8b258350",
+      "origin": "staging"
+    },
+    {
+      "path": "src/data/baseFoundationsBatch7.ts",
+      "sha": "393b5fd1302e23a3e90baa2fd32363ca5078bfaf",
+      "origin": "staging"
+    },
+    {
+      "path": "src/data/beginnerExam.ts",
+      "sha": "3d9434d7df3969e35b15c2a32f2163a29fbabb0d",
+      "origin": "staging"
+    },
+    {
+      "path": "src/data/diagnosticCases177.ts",
+      "sha": "5e57ea38d12f7f6a2ce2018fda4f246fa80cfda9",
+      "origin": "staging"
+    },
+    {
+      "path": "src/data/diagnosticExplanations.ts",
+      "sha": "8eb91cb11045ea1c36cdc8f8ee16072e7a572e16",
+      "origin": "staging"
+    },
+    {
+      "path": "src/data/expertCases177.ts",
+      "sha": "eedf06cb33fba2df8a37dfb5aa9d72ac12348058",
+      "origin": "staging"
+    },
+    {
+      "path": "src/data/expertCases225.ts",
+      "sha": "3808f8261f37d8ef5559d57529e6362dea0f29d8",
+      "origin": "staging"
     },
     {
       "path": "src/data/glossary.ts",
-      "sha": "d98f569e2eecd0a4804be0676ca3b869a6117ecc"
+      "sha": "0244b178a2f5044767ebcdde205ee260b5caf4c3",
+      "origin": "adapted",
+      "upstream_sha": "f83889f6c6032f912088dd671d5b7b979a75cc74"
+    },
+    {
+      "path": "src/data/inDepth/group1.ts",
+      "sha": "dbb137fca75c0be12d10c8a53b47057c06ee7c15",
+      "origin": "staging"
+    },
+    {
+      "path": "src/data/inDepth/group2.ts",
+      "sha": "6176939e31da773fee82d4f0f321dfb8598bd928",
+      "origin": "staging"
+    },
+    {
+      "path": "src/data/inDepth/group3.ts",
+      "sha": "8668c2d2bf339e209a051ac5e782504dfb01ae78",
+      "origin": "staging"
+    },
+    {
+      "path": "src/data/inDepth/group4.ts",
+      "sha": "5f66cf96773223a67acab5a7f40ca1fbbd5ea7bb",
+      "origin": "staging"
+    },
+    {
+      "path": "src/data/inDepth/group5.ts",
+      "sha": "b4f6aa2534750db30ab3b89e19bf998b02c42205",
+      "origin": "staging"
+    },
+    {
+      "path": "src/data/inDepth/index.ts",
+      "sha": "94c96770c19ae31818c92c81a1c47489dba1b395",
+      "origin": "staging"
+    },
+    {
+      "path": "src/data/inDepth/previousQuestions.ts",
+      "sha": "3867ccfb6da67394c0ac446b28c07751064d3ead",
+      "origin": "staging"
+    },
+    {
+      "path": "src/data/inDepth/reviewedTerms.ts",
+      "sha": "24f93b733c0c483c7ccfe0add4916651320ad498",
+      "origin": "staging"
+    },
+    {
+      "path": "src/data/inDepth/sharedTerms.ts",
+      "sha": "0f8315f4e074d6e9e92bd0458a031a8fc325db67",
+      "origin": "staging"
+    },
+    {
+      "path": "src/data/inDepth/specificPracticalTips.ts",
+      "sha": "55d4812a32aa9dd8540e8f9780cdddb6d24e2dde",
+      "origin": "staging"
+    },
+    {
+      "path": "src/data/inDepth/types.ts",
+      "sha": "e66dc7a057c8fd999cb3fd51079f4569e67897ee",
+      "origin": "staging"
+    },
+    {
+      "path": "src/data/ipv4ExplanationPractice.ts",
+      "sha": "45dab44a01a3df913355f727f34638e9e464963e",
+      "origin": "staging"
+    },
+    {
+      "path": "src/data/learningLevelExam.ts",
+      "sha": "dd0f1428419aeb2f4a10c9be8ec85edc9452ebe7",
+      "origin": "staging"
+    },
+    {
+      "path": "src/data/learningLevels.ts",
+      "sha": "89aeeff2a60dfabff82a8b6029d62aa8069794e6",
+      "origin": "staging"
     },
     {
       "path": "src/data/lessons/cli-console-ssh-telnet.ts",
-      "sha": "538cefb6cbb31807f94899828205117badb2a823"
+      "sha": "538cefb6cbb31807f94899828205117badb2a823",
+      "origin": "staging"
     },
     {
       "path": "src/data/lessons/cli-ios-modes.ts",
-      "sha": "4bf72ffb02e4782af1cd211b10f4bcb22d503556"
+      "sha": "4bf72ffb02e4782af1cd211b10f4bcb22d503556",
+      "origin": "staging"
+    },
+    {
+      "path": "src/data/lessons/cli-ip-static-route.ts",
+      "sha": "11bb524a80f940c03b1ac1d44eaf84c3506cabdf",
+      "origin": "staging"
+    },
+    {
+      "path": "src/data/lessons/cli-poe-diagnostics.ts",
+      "sha": "34ec1b2e2c2d069f21d8734b80c4c9e8f9b95a30",
+      "origin": "staging"
+    },
+    {
+      "path": "src/data/lessons/cli-save-config.ts",
+      "sha": "dad1806f5b262c7327d48db9ab2aabb93e947a9a",
+      "origin": "staging"
     },
     {
       "path": "src/data/lessons/cli-show-help-tab.ts",
-      "sha": "180e90a0f6816b369d061242478aa364d6ec6363"
+      "sha": "65488fe62b06afed26995a811f9fc1123000542f",
+      "origin": "staging"
+    },
+    {
+      "path": "src/data/lessons/cli-trunk-vlan-diagnostics.ts",
+      "sha": "39e254930b6f5711b17f48733a39f1251f6da8ba",
+      "origin": "staging"
+    },
+    {
+      "path": "src/data/lessons/cli-vlan-trunk.ts",
+      "sha": "9fac0b204fe769c11266baa5dc30cd0a660b0ac9",
+      "origin": "staging"
+    },
+    {
+      "path": "src/data/lessons/existingUnderstandingHeadings.ts",
+      "sha": "7fe2b4c1ae256db9d93f80c846e169b000f3c435",
+      "origin": "staging"
+    },
+    {
+      "path": "src/data/lessons/foundation-coverage.ts",
+      "sha": "045784d4720357c817d27b2ef4e4e12775f5ab4c",
+      "origin": "staging"
     },
     {
       "path": "src/data/lessons/index.ts",
-      "sha": "eb4d837780b60ca64a4f774fec54f2a99e2886c1"
+      "sha": "25cfa7213913f0ca9ded7a4b34e7b75acbb2be77",
+      "origin": "staging"
+    },
+    {
+      "path": "src/data/lessons/l1-copper-cable.ts",
+      "sha": "bebdfe425cba0fe02b89d4f8930f836732c0681d",
+      "origin": "staging"
+    },
+    {
+      "path": "src/data/lessons/l1-copper-fault-poe.ts",
+      "sha": "f9ed9a80c4160853e6a8c0621d0800da803389ca",
+      "origin": "staging"
+    },
+    {
+      "path": "src/data/lessons/l1-copper-installation.ts",
+      "sha": "76701eb26f16d75dc75fb102aca12f535535f3f2",
+      "origin": "staging"
+    },
+    {
+      "path": "src/data/lessons/l1-fiber-hardware.ts",
+      "sha": "b6239f8f083c03f29d6411908f1c877fbd7857e9",
+      "origin": "staging"
+    },
+    {
+      "path": "src/data/lessons/l1-fiber-splicing.ts",
+      "sha": "9deef3ac6c27c151cea66363b23665842be07c98",
+      "origin": "staging"
+    },
+    {
+      "path": "src/data/lessons/l1-optical-testing-equipment.ts",
+      "sha": "69909d27386f66eb27d63897954768c5414db26d",
+      "origin": "staging"
+    },
+    {
+      "path": "src/data/lessons/l1-poe-budget.ts",
+      "sha": "99b5a560eee2ab26efe9aa9f89e509f423badda9",
+      "origin": "staging"
+    },
+    {
+      "path": "src/data/lessons/l1-poe-injectors-splitters.ts",
+      "sha": "32bcaef5d313bfd0c9bfe91dbb982e0b455b28b7",
+      "origin": "staging"
+    },
+    {
+      "path": "src/data/lessons/l12-wifi-standards-roaming.ts",
+      "sha": "03886e721b866903dfc985b2cd1e26d87611cac5",
+      "origin": "staging"
     },
     {
       "path": "src/data/lessons/l2-access-auth.ts",
-      "sha": "cc04f5a1585e7fc64d1e464d445b5a836c3cb4f5"
+      "sha": "cc04f5a1585e7fc64d1e464d445b5a836c3cb4f5",
+      "origin": "staging"
     },
     {
       "path": "src/data/lessons/l2-access-guard.ts",
-      "sha": "6692113c8d5165f901e9ecf07e33a9283429fcc1"
+      "sha": "6692113c8d5165f901e9ecf07e33a9283429fcc1",
+      "origin": "staging"
+    },
+    {
+      "path": "src/data/lessons/l2-bpdu-guard.ts",
+      "sha": "b139e2c014b90c1eed5f6af14c381f77d92e12b3",
+      "origin": "staging"
+    },
+    {
+      "path": "src/data/lessons/l2-dai.ts",
+      "sha": "51fc6e9f9b465c84640c9da114d5fe213a33daf0",
+      "origin": "staging"
     },
     {
       "path": "src/data/lessons/l2-ethernet.ts",
-      "sha": "27de31e5101d2fc4ca3653cfdb4cc7fbafd99b25"
+      "sha": "71512e55beddc5bcb5571b20c812c437396e34e2",
+      "origin": "staging"
+    },
+    {
+      "path": "src/data/lessons/l2-hsr-redundancy.ts",
+      "sha": "46d8eb05ba4c977e64935a7397200a50762ca2be",
+      "origin": "staging"
+    },
+    {
+      "path": "src/data/lessons/l2-igmp-snooping.ts",
+      "sha": "fcac8576d9ef23ec385b2044fc20b3130355dc81",
+      "origin": "staging"
+    },
+    {
+      "path": "src/data/lessons/l2-ipsg.ts",
+      "sha": "25eed3f5a10e881c3e2321cc1fc8d13eab68d45b",
+      "origin": "staging"
+    },
+    {
+      "path": "src/data/lessons/l2-lacp-etherchannel.ts",
+      "sha": "a7a060fce5bfa99fe75302a9cda669eca54debdd",
+      "origin": "staging"
+    },
+    {
+      "path": "src/data/lessons/l2-lldp-neighbors.ts",
+      "sha": "4bb30dbaa7649ec704e1e760099f27fc7aa23237",
+      "origin": "staging"
     },
     {
       "path": "src/data/lessons/l2-mstp-advanced.ts",
-      "sha": "c4a9ab05df9947a009b4b92219776ad3ebf5efdc"
+      "sha": "c4a9ab05df9947a009b4b92219776ad3ebf5efdc",
+      "origin": "staging"
+    },
+    {
+      "path": "src/data/lessons/l2-ptp-time-sync.ts",
+      "sha": "bf89b89ef082ceee630d0c87d683468372eb4cb3",
+      "origin": "staging"
     },
     {
       "path": "src/data/lessons/l2-rstp-convergence.ts",
-      "sha": "d3a59c8f15dc68e2837feffe0aee6747b412fbae"
+      "sha": "d3a59c8f15dc68e2837feffe0aee6747b412fbae",
+      "origin": "staging"
     },
     {
       "path": "src/data/lessons/l2-stp-election.ts",
-      "sha": "931ff86e2e3761cc42295647b1b82aedf9adbbab"
+      "sha": "931ff86e2e3761cc42295647b1b82aedf9adbbab",
+      "origin": "staging"
     },
     {
       "path": "src/data/lessons/l2-stp-guard-design.ts",
-      "sha": "a6b0899da284e2086502510bd7d9da18e41e9475"
+      "sha": "bfe4eefb31f1def4d36e3eb6734da06b64a4cb82",
+      "origin": "staging"
     },
     {
       "path": "src/data/lessons/l2-stp-protection.ts",
-      "sha": "bc2ed643f5f4785dfe614ca8ad744d66f877bfd1"
+      "sha": "2c365eac2f795a3d32c0a0cc4f51b712b9d7d037",
+      "origin": "staging"
     },
     {
       "path": "src/data/lessons/l2-stp.ts",
-      "sha": "3dc82d6b3646628265381621784c1760cc4d72d1"
+      "sha": "3dc82d6b3646628265381621784c1760cc4d72d1",
+      "origin": "staging"
     },
     {
       "path": "src/data/lessons/l2-svi.ts",
-      "sha": "c3270a95a1b2a625d643f2b1381d0d8ae3568765"
+      "sha": "c3270a95a1b2a625d643f2b1381d0d8ae3568765",
+      "origin": "staging"
     },
     {
       "path": "src/data/lessons/l2-vlan-security.ts",
-      "sha": "0c07ba2cab74d9e0d85a8b279786a9ae4b369cd8"
+      "sha": "0121af8be9731f7e59dbec72087e0f163fef8cba",
+      "origin": "staging"
     },
     {
       "path": "src/data/lessons/l2-vlan.ts",
-      "sha": "8bd054835a7977670618b3adcd3d4b358fadd388"
+      "sha": "8bd054835a7977670618b3adcd3d4b358fadd388",
+      "origin": "staging"
+    },
+    {
+      "path": "src/data/lessons/l2-wifi-security-diagnostics.ts",
+      "sha": "059f365fca6f7cd8dc85688e0dd8d978e182988d",
+      "origin": "staging"
+    },
+    {
+      "path": "src/data/lessons/l3-acl-filtering.ts",
+      "sha": "a3bc4c3420bc78e5aeb94fd10da5cda38001830e",
+      "origin": "staging"
     },
     {
       "path": "src/data/lessons/l3-arp.ts",
-      "sha": "234f33df36a4fa6f3751210d2e1293fe4639429d"
+      "sha": "234f33df36a4fa6f3751210d2e1293fe4639429d",
+      "origin": "staging"
+    },
+    {
+      "path": "src/data/lessons/l3-bgp.ts",
+      "sha": "87558a5724ba2a3057748a5af2bd5a9d17eca328",
+      "origin": "staging"
+    },
+    {
+      "path": "src/data/lessons/l3-eigrp.ts",
+      "sha": "d5be882872144d23a6f94da326dfc4f5409a44c6",
+      "origin": "staging"
+    },
+    {
+      "path": "src/data/lessons/l3-icmp-basics.ts",
+      "sha": "069b945a1add8fa9302cb53f1eab598ed38153f8",
+      "origin": "staging"
     },
     {
       "path": "src/data/lessons/l3-ipv6.ts",
-      "sha": "f1b37a6e6232eb7e3c5da97b76d44d2fcdd86847"
+      "sha": "f1b37a6e6232eb7e3c5da97b76d44d2fcdd86847",
+      "origin": "staging"
+    },
+    {
+      "path": "src/data/lessons/l3-masks.ts",
+      "sha": "948456e43a0f5653c9a82355bcf23e5f3a0f44b4",
+      "origin": "staging"
+    },
+    {
+      "path": "src/data/lessons/l3-mtu-mss-fragmentation.ts",
+      "sha": "ae4a68ee67f063578488e71ef1b27f8de597ae79",
+      "origin": "staging"
     },
     {
       "path": "src/data/lessons/l3-nat.ts",
-      "sha": "dc5de031abd2fb63a39d5e6427f9bae7fc373194"
+      "sha": "7ce2c62d85768ddc2ee12ef57285699522c223e3",
+      "origin": "staging"
     },
     {
       "path": "src/data/lessons/l3-ospf.ts",
-      "sha": "0e7f59082222afac98603ef38d4d21e1629891c1"
+      "sha": "9a51b92bd435b62d90fc92baa253aecb306fe657",
+      "origin": "staging"
+    },
+    {
+      "path": "src/data/lessons/l3-private-ipv4.ts",
+      "sha": "3dd1b16580c0b22b6367963945cc5f895efc2800",
+      "origin": "staging"
+    },
+    {
+      "path": "src/data/lessons/l3-route-selection.ts",
+      "sha": "bfc42104dd438d18fb517ffc357e53bd6b429217",
+      "origin": "staging"
     },
     {
       "path": "src/data/lessons/l3-rpki.ts",
-      "sha": "aae12a183b83cd4588bf7bbfd76f45af902fe337"
+      "sha": "aae12a183b83cd4588bf7bbfd76f45af902fe337",
+      "origin": "staging"
+    },
+    {
+      "path": "src/data/lessons/l3-subnets.ts",
+      "sha": "02fc03f2290f35707b4a094d203550544b20c8ff",
+      "origin": "staging"
     },
     {
       "path": "src/data/lessons/l3-vrrp.ts",
-      "sha": "aa484f5a3b178dfbe8dc1614b1eb75bee1b73e51"
+      "sha": "aa484f5a3b178dfbe8dc1614b1eb75bee1b73e51",
+      "origin": "staging"
+    },
+    {
+      "path": "src/data/lessons/l4-applied-tcp-session-flows.ts",
+      "sha": "ff2aa4824e6e2247cc2e161696e1940397696759",
+      "origin": "staging"
+    },
+    {
+      "path": "src/data/lessons/l4-directory-remote-industrial-ports.ts",
+      "sha": "34a825bb1d7e63e076a5607ed17ffe06ea358f6f",
+      "origin": "staging"
+    },
+    {
+      "path": "src/data/lessons/l4-load-balancing.ts",
+      "sha": "f6e3fc514f88c0157bd59c71d9dec3e502176a97",
+      "origin": "staging"
+    },
+    {
+      "path": "src/data/lessons/l4-service-ports.ts",
+      "sha": "3e616a3ffaed7e9098e5756275bc08254f108680",
+      "origin": "staging"
     },
     {
       "path": "src/data/lessons/l4-tcp-loss.ts",
-      "sha": "502110a553da805809c7fc0778a9d88719d0545c"
+      "sha": "9e9717a252fad4551eb69a71481af3f322bcb650",
+      "origin": "staging"
     },
     {
       "path": "src/data/lessons/l4-tcp.ts",
-      "sha": "b81bf680580841684015799bcb32fa8a21537305"
+      "sha": "88472f08258012511b3961fde6e8b91a0b093c97",
+      "origin": "staging"
     },
     {
       "path": "src/data/lessons/l7-dhcp.ts",
-      "sha": "9c29d9c8ddb8fe208a270d47efb5f9a78f848651"
+      "sha": "9c29d9c8ddb8fe208a270d47efb5f9a78f848651",
+      "origin": "staging"
     },
     {
       "path": "src/data/lessons/l7-dns-dhcp.ts",
-      "sha": "a0c269500159927e4bb00f70fb1b6e9844c36199"
+      "sha": "af4033ca87f9a00298a5d749a888fa2f415d5f6c",
+      "origin": "staging"
+    },
+    {
+      "path": "src/data/lessons/l7-dns-ttl.ts",
+      "sha": "3c3ca8bce4055921c190a44b393c73f30a862c37",
+      "origin": "staging"
     },
     {
       "path": "src/data/lessons/l7-dns.ts",
-      "sha": "4fa5eef190170f44c9f63827406f9e684295d97d"
+      "sha": "6875d405502dfdd78c13383d5f62725146004f06",
+      "origin": "staging"
+    },
+    {
+      "path": "src/data/lessons/l7-http-status-basics.ts",
+      "sha": "11e1992d101a00dc6e6075b01af1e328b94c0d8e",
+      "origin": "staging"
+    },
+    {
+      "path": "src/data/lessons/l7-monitoring-snmp-syslog.ts",
+      "sha": "944d24e1c7851d049029736aa5e781a3d7634dd8",
+      "origin": "staging"
     },
     {
       "path": "src/data/lessons/l7-services.ts",
-      "sha": "7e1d03c6092d544798f0044122552f7e3cc4ea45"
+      "sha": "35deec550f4e6411b2db0c7c793eef0a2e154d09",
+      "origin": "staging"
+    },
+    {
+      "path": "src/data/lessons/l7-udp-transactions-tftp-ntp-snmp.ts",
+      "sha": "3358f8ed382a61274cb823d08fdd2f04611f0601",
+      "origin": "staging"
+    },
+    {
+      "path": "src/data/lessons/lessonSectionLinks.ts",
+      "sha": "9699a6e66359a923ec9fdf39438a9cb37eeb69a2",
+      "origin": "staging"
     },
     {
       "path": "src/data/lessons/osi-pdu.ts",
-      "sha": "cc8378fc6f78038d608e5bcf678b604ee3d92004"
+      "sha": "0d147229ced82882c6cf461fe4085fb878564428",
+      "origin": "staging"
+    },
+    {
+      "path": "src/data/lessons/osi-session-presentation.ts",
+      "sha": "6c0022e94fc792b1c9778645613b8a1a34a495df",
+      "origin": "staging"
     },
     {
       "path": "src/data/lessons/qos-basics.ts",
-      "sha": "a807d50e9e338512f2d3563f612ae709c7a17fb9"
+      "sha": "2badfa854edbaf15333e31b9c9e6fb3a81321737",
+      "origin": "staging"
+    },
+    {
+      "path": "src/data/lessons/reviewStatus.ts",
+      "sha": "eb59b6274e3aec130c9c0d9454c2ee2fceaa467e",
+      "origin": "adapted",
+      "upstream_sha": "7cef7865e3e4ffc9471de4855a72c808e2e9c2a9"
     },
     {
       "path": "src/data/lessons/tcp-window-retransmit.ts",
-      "sha": "2926088d2b3c8f6e6c175438b9220c0b546bf321"
+      "sha": "d02651778a49abd9393ef4409958e044dd1357cb",
+      "origin": "staging"
     },
     {
       "path": "src/data/lessons/tcpip-encapsulation.ts",
-      "sha": "11a9b6183cd382b2e373fd2b6f6a9f5ef2e68529"
+      "sha": "3702ed1628bcdc5b4725a8cd4a13b7359d4a66f4",
+      "origin": "staging"
     },
     {
       "path": "src/data/lessons/tcpip-model.ts",
-      "sha": "11a84b0c279a95d43f4689cbcd5000114f942eb3"
+      "sha": "bda4f9f525013445fdfa46f993848258a6ca4dd1",
+      "origin": "staging"
     },
     {
       "path": "src/data/lessons/tls-sni.ts",
-      "sha": "ec998a4d5975e6a8de4d343f65cff48086f33b9a"
+      "sha": "ec998a4d5975e6a8de4d343f65cff48086f33b9a",
+      "origin": "staging"
     },
     {
       "path": "src/data/lessons/ts-copp-storm.ts",
-      "sha": "433de00f22997ff7f289a2a9a686d0cf4fd479e5"
+      "sha": "433de00f22997ff7f289a2a9a686d0cf4fd479e5",
+      "origin": "staging"
     },
     {
       "path": "src/data/lessons/ts-method.ts",
-      "sha": "30f62a2fc8dfb003c181d7f8d628182ee390d49e"
+      "sha": "4adfa08510d5ead9a5b3593b3554c8119e24e095",
+      "origin": "staging"
+    },
+    {
+      "path": "src/data/lessons/ts-optics.ts",
+      "sha": "2bafeb374c9a2de8e96230f7be0fd3eccb8b9d3e",
+      "origin": "staging"
+    },
+    {
+      "path": "src/data/lessons/ts-zabbix-monitoring.ts",
+      "sha": "6a932f2aa3c23293f3025dd2ef44234b311c1f50",
+      "origin": "staging"
     },
     {
       "path": "src/data/lessons/types.ts",
-      "sha": "8ca399d887d2ff7afbfafe04623834a0ae5d750f"
+      "sha": "72c6685036b6cdff7f0cf4160fbc70cb0a813bae",
+      "origin": "staging"
     },
     {
       "path": "src/data/levelNotes.ts",
-      "sha": "d4e7fbf3ee29060b389249a719959401c772cce8"
+      "sha": "d28213029cecce04450f518235f0212ee15e1525",
+      "origin": "staging"
     },
     {
       "path": "src/data/memeTitles.ts",
-      "sha": "f6dad3534a89a32b36d26e4679d14284d363bc8e"
+      "sha": "f6dad3534a89a32b36d26e4679d14284d363bc8e",
+      "origin": "staging"
     },
     {
       "path": "src/data/mixedExam.ts",
-      "sha": "5c908d274124700d36d1d1b4e6011fbd9a3f3347"
+      "sha": "5c908d274124700d36d1d1b4e6011fbd9a3f3347",
+      "origin": "staging"
+    },
+    {
+      "path": "src/data/monitoringCases.ts",
+      "sha": "58b1c477d68074144018b87f86003523bcffe20d",
+      "origin": "staging"
     },
     {
       "path": "src/data/practiceLinks.ts",
-      "sha": "924df9aa516a7b047a4bc81573664ebeb7c34eb2"
+      "sha": "924df9aa516a7b047a4bc81573664ebeb7c34eb2",
+      "origin": "staging"
+    },
+    {
+      "path": "src/data/previousDiagnosticQuestions.ts",
+      "sha": "c61044b8d3a1c5a7a12357e956e2c422fdc179b6",
+      "origin": "staging"
+    },
+    {
+      "path": "src/data/previousProductionQuestions.json",
+      "sha": "4ded5a06b71eaefb80f116fbdc9b1c86fe215393",
+      "origin": "adapted"
     },
     {
       "path": "src/data/questionExplanations.ts",
-      "sha": "1c5e0cc07312bf0e46dd90319bd44f1e37878b78"
+      "sha": "be83d7f4f57000492a157eba8839baab5b6f4d43",
+      "origin": "staging"
     },
     {
       "path": "src/data/questionExplanationsApplied.ts",
-      "sha": "3f6c6ad91444ace6fc29f40ff2e64d780d4f9230"
+      "sha": "eadd44a97c299eb7c882f109f7c95f9af50846d8",
+      "origin": "staging"
+    },
+    {
+      "path": "src/data/questionLearningLevels.json",
+      "sha": "aa4682284e7803f1fbd4e930a6e154d71acc96af",
+      "origin": "staging"
     },
     {
       "path": "src/data/questions.json",
-      "sha": "e25a80bf76eb8d05da4debe7c364846796e84bb8"
+      "sha": "4d29560f2d756617f83b628d59b06e54c9780f74",
+      "origin": "staging"
     },
     {
       "path": "src/data/questionsData.ts",
-      "sha": "1581201dfd33e9a9f352e8075265b07f25b5a721"
+      "sha": "69f24fa8882347207061a864a806722ebfafc204",
+      "origin": "staging"
     },
     {
       "path": "src/data/questionsExtra.ts",
-      "sha": "9d8a6ea40a7056fa5ba2d934a2b9379a4ffa0ffd"
+      "sha": "488461a39edc8cf4f40abcba56a3959a94af60ac",
+      "origin": "staging"
     },
     {
       "path": "src/data/questionsExtraDifficulty.ts",
-      "sha": "d174cf0bbd5f42628da0a57e4f0f4235757fd275"
+      "sha": "0486179219891630c19278b44697c21e9b93b291",
+      "origin": "staging"
     },
     {
       "path": "src/data/wellKnownPorts.ts",
-      "sha": "8f3659db327f66f81cf5d86a8f4d2904684d4da1"
+      "sha": "8f3659db327f66f81cf5d86a8f4d2904684d4da1",
+      "origin": "staging"
+    },
+    {
+      "path": "src/data/wifiCases.ts",
+      "sha": "54f5bd45354b75d62bed1aa4f0aad0929b16b94c",
+      "origin": "staging"
     },
     {
       "path": "src/index.css",
-      "sha": "32ef16abe2daac0d47aae66b15d79e1d46461639"
+      "sha": "32ef16abe2daac0d47aae66b15d79e1d46461639",
+      "origin": "staging"
     },
     {
       "path": "src/main.tsx",
-      "sha": "c1d9f920661cb84283eeabccd6ac72fe4233460c"
+      "sha": "c1d9f920661cb84283eeabccd6ac72fe4233460c",
+      "origin": "staging"
     },
     {
       "path": "src/projectExporter.ts",
-      "sha": "06dade3051ec192d46ab5a881730327283697416"
+      "sha": "06dade3051ec192d46ab5a881730327283697416",
+      "origin": "staging"
+    },
+    {
+      "path": "src/types/learningLevel.ts",
+      "sha": "cd1e5a5f93b2cc287e5108b3be1764ca68cec83b",
+      "origin": "staging"
     },
     {
       "path": "src/types/quiz.ts",
-      "sha": "edb65a705ab714be3d58f4d5f46ec3f82c2d463f"
+      "sha": "5483f389130504bea94ae8bc8dfc361394abd87f",
+      "origin": "staging"
     },
     {
       "path": "src/utils/examProgress.ts",
-      "sha": "9679c2c1345845337e1089d7cf31b36e53840ec6"
+      "sha": "79df1b90dcc6bba293d996ca4f21f6f4f433438a",
+      "origin": "adapted",
+      "upstream_sha": "f442ffb723899fddbd46d4a8d3257bcd4f6ec72b"
     },
     {
       "path": "src/utils/examReview.ts",
-      "sha": "64028469e5fe2121c7a0013c8b5582862df582c6"
+      "sha": "60941f77cdbe54bba801a2029be526466aacd8d7",
+      "origin": "staging"
+    },
+    {
+      "path": "src/utils/explanationFormat.ts",
+      "sha": "8946b0fe32fb16bbc96173ab76cff75bdeb74e45",
+      "origin": "staging"
     },
     {
       "path": "src/utils/glossaryText.ts",
-      "sha": "f42d64f8aef3844edb88f57bf57f75ba905018d0"
+      "sha": "afe736a708833115dd3ab0a013d287d248d1af90",
+      "origin": "staging"
     },
     {
       "path": "src/utils/haptics.ts",
-      "sha": "ab1f66277f772757c8793a0bba0317cfbd095271"
+      "sha": "ab1f66277f772757c8793a0bba0317cfbd095271",
+      "origin": "staging"
+    },
+    {
+      "path": "src/utils/lessonGlossaryScope.ts",
+      "sha": "de20782108bb08224c4d6ef3c8c3db3fa0516039",
+      "origin": "staging"
     },
     {
       "path": "src/utils/sound.ts",
-      "sha": "d5b04f03fd1070d9ce2f35f2db1045fb15612654"
+      "sha": "d5b04f03fd1070d9ce2f35f2db1045fb15612654",
+      "origin": "staging"
     },
     {
       "path": "src/utils/studyTextMode.ts",
-      "sha": "c779a715869cea5343e10ab36ca854310d5e650d"
+      "sha": "c779a715869cea5343e10ab36ca854310d5e650d",
+      "origin": "staging"
     },
     {
       "path": "src/utils/userProgress.ts",
-      "sha": "5c5798daf9b54f8a318a054fbebeff6d12add153"
+      "sha": "5c5798daf9b54f8a318a054fbebeff6d12add153",
+      "origin": "staging"
     },
     {
       "path": "tsconfig.json",
-      "sha": "5d9e75d04d8cc61824864b90a9b912c1c0478de3"
+      "sha": "5d9e75d04d8cc61824864b90a9b912c1c0478de3",
+      "origin": "staging"
     },
     {
       "path": "vite.config.ts",
-      "sha": "7c53710bec4128b979f0748f08cc5ea7e706981c"
+      "sha": "6095ba89683c339ebce4754f6068f0c46baa4adc",
+      "origin": "adapted",
+      "upstream_sha": "19d7ba9dda7621436179f6143c0fb07e359a7af7"
     }
-  ]
+  ],
+  "overrides": {
+    "scripts/base-exam.test.mjs": {
+      "reason": "Confirm legacy attempt metadata after restoration."
+    },
+    "scripts/learning-level-exam.test.mjs": {
+      "reason": "Normalize inherited blank-line whitespace; assertions unchanged."
+    },
+    "scripts/photo-review.test.mjs": {
+      "reason": "Verify trusted N4 photo history and rejected corrupted keys."
+    },
+    "scripts/poe-summary-glossary.test.mjs": {
+      "reason": "Require a pending badge for both PoE lessons."
+    },
+    "scripts/production-attempt-compat.test.mjs": {
+      "reason": "Test N4 question, order, scoring and review compatibility."
+    },
+    "scripts/stp-questions.test.mjs": {
+      "reason": "Assert the published label for the existing explanation toggle."
+    },
+    "scripts/svi-lesson.test.mjs": {
+      "reason": "Pin the updated CLI lesson catalog size while keeping all existing checks."
+    },
+    "src/App.tsx": {
+      "reason": "Remove experimental entry points, keep lesson and practice navigation."
+    },
+    "src/cli-lab/CliLabShell.tsx": {
+      "reason": "Use the stable topology with the functional console, layers and scenarios."
+    },
+    "src/cli-lab/fullscreen.css": {
+      "reason": "Remove the experimental topology workspace rule."
+    },
+    "src/components/EngineeringReview.tsx": {
+      "reason": "Render the saved explanation for verified pre-release questions."
+    },
+    "src/components/Navbar.tsx": {
+      "reason": "Remove experimental navigation on desktop and mobile."
+    },
+    "src/components/VlanSimulator.tsx": {
+      "reason": "Label the published VLAN simulator as practice."
+    },
+    "src/data/glossary.ts": {
+      "reason": "Define 25 missing lesson tags so their cards open in the transferred lessons."
+    },
+    "src/data/lessons/reviewStatus.ts": {
+      "reason": "Keep the two pending PoE lessons unapproved as instructed."
+    },
+    "src/data/previousProductionQuestions.json": {
+      "reason": "Trusted historical questions generated from the N4 production bank."
+    },
+    "src/utils/examProgress.ts": {
+      "reason": "Validate and restore trusted N4 attempts and preserve their displayed answer keys."
+    },
+    "vite.config.ts": {
+      "reason": "Set the local and default production base to /netops/."
+    }
+  }
 }

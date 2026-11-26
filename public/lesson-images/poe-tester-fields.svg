@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 640" width="980" height="640">
+  <rect width="980" height="640" rx="24" fill="#0f172a"/>
+  <text x="40" y="48" fill="#e2e8f0" font-family="system-ui,sans-serif" font-size="28" font-weight="700">Экран PoE-тестера: что означают поля</text>
+  <text x="40" y="78" fill="#94a3b8" font-family="system-ui,sans-serif" font-size="16">Учебная схема, не фото конкретного прибора</text>
+  <rect x="40" y="110" width="420" height="470" rx="16" fill="#111827" stroke="#334155"/>
+  <text x="64" y="148" fill="#67e8f9" font-family="ui-monospace,monospace" font-size="18" font-weight="700">PoE TEST</text>
+  <text x="64" y="190" fill="#cbd5e1" font-family="ui-monospace,monospace" font-size="16">Requested Class</text>
+  <text x="280" y="190" fill="#f8fafc" font-family="ui-monospace,monospace" font-size="18" font-weight="700">4</text>
+  <text x="64" y="230" fill="#cbd5e1" font-family="ui-monospace,monospace" font-size="16">Received Class</text>
+  <text x="280" y="230" fill="#f8fafc" font-family="ui-monospace,monospace" font-size="18" font-weight="700">0</text>
+  <text x="64" y="270" fill="#cbd5e1" font-family="ui-monospace,monospace" font-size="16">Unloaded Voltage</text>
+  <text x="260" y="270" fill="#f8fafc" font-family="ui-monospace,monospace" font-size="18" font-weight="700">54.6 V</text>
+  <text x="64" y="310" fill="#cbd5e1" font-family="ui-monospace,monospace" font-size="16">TruePower Power</text>
+  <text x="250" y="310" fill="#f8fafc" font-family="ui-monospace,monospace" font-size="18" font-weight="700">—</text>
+  <text x="64" y="350" fill="#cbd5e1" font-family="ui-monospace,monospace" font-size="16">PSE Type</text>
+  <text x="250" y="350" fill="#f8fafc" font-family="ui-monospace,monospace" font-size="18" font-weight="700">1/2</text>
+  <text x="64" y="400" fill="#fbbf24" font-family="system-ui,sans-serif" font-size="15">Requested 4 / Received 0</text>
+  <text x="64" y="424" fill="#fbbf24" font-family="system-ui,sans-serif" font-size="15">несовпадение класса,</text>
+  <text x="64" y="448" fill="#fbbf24" font-family="system-ui,sans-serif" font-size="15">а не обрыв кабеля</text>
+  <g font-family="system-ui,sans-serif" font-size="16">
+    <text x="500" y="150" fill="#67e8f9" font-weight="700">Requested Class</text>
+    <text x="500" y="174" fill="#cbd5e1">Класс, который выбрал тестер для проверки.</text>
+    <text x="500" y="198" fill="#94a3b8">Не измеренное потребление камеры.</text>
+    <text x="500" y="240" fill="#67e8f9" font-weight="700">Received Class</text>
+    <text x="500" y="264" fill="#cbd5e1">Класс, который подтвердил PSE.</text>
+    <text x="500" y="288" fill="#94a3b8">4/0 — запрос и подтверждение не совпали.</text>
+    <text x="500" y="330" fill="#67e8f9" font-weight="700">Unloaded Voltage</text>
+    <text x="500" y="354" fill="#cbd5e1">Напряжение без нагрузки.</text>
+    <text x="500" y="378" fill="#94a3b8">Само по себе не доказывает мощность в пике.</text>
+    <text x="500" y="420" fill="#67e8f9" font-weight="700">TruePower</text>
+    <text x="500" y="444" fill="#cbd5e1">Измерение под нагрузкой, если режим включён.</text>
+    <text x="500" y="468" fill="#94a3b8">Именно его сравнивают с паспортом PD.</text>
+    <text x="500" y="510" fill="#67e8f9" font-weight="700">13.00 W у Class 0</text>
+    <text x="500" y="534" fill="#cbd5e1">Предел выбранного класса, не текущий расход.</text>
+  </g>
+</svg>

@@ -1,0 +1,102 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="860" height="760" viewBox="0 0 860 760" role="img" aria-labelledby="ht1 hd1">
+<title id="ht1">Как отличить вживую: IEEE PoE-инжектор, IEEE PoE-сплиттер и пассивная пара</title>
+<desc id="hd1">Наглядная карточка трёх устройств: IEEE PoE-инжектор с двумя RJ-45 Data IN и Data + Power OUT и входом питания; IEEE PoE-сплиттер с PoE IN и выходами Ethernet и DC; пассивная кабельная пара из двух переходников RJ-45 и DC с предупреждением.</desc>
+<defs>
+  <linearGradient id="bg3" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#020b15"/><stop offset="1" stop-color="#081e2c"/></linearGradient>
+  <linearGradient id="bodyDark" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#1e293b"/><stop offset="1" stop-color="#0f172a"/></linearGradient>
+</defs>
+<rect width="860" height="760" rx="18" fill="url(#bg3)"/>
+<text x="430" y="38" text-anchor="middle" font-family="Arial,sans-serif" font-size="23" font-weight="800" fill="#f1f8ff">Как узнать устройства вживую: три корпуса и их разъёмы</text>
+<text x="430" y="61" text-anchor="middle" font-family="Arial,sans-serif" font-size="13.5" fill="#94a3b8">Учебная иллюстрация (нажми на карточку, чтобы увеличить на телефоне)</text>
+<g transform="translate(24,78)" font-family="Arial,sans-serif">
+  <rect x="0" y="0" width="812" height="206" rx="14" fill="#071a2b" stroke="#38bdf8" stroke-width="1.8"/>
+  <rect x="14" y="12" width="28" height="24" rx="6" fill="#0ea5e9"/><text x="28" y="29" text-anchor="middle" font-size="15" font-weight="800" fill="#020b15">1</text>
+  <text x="52" y="29" font-size="17" font-weight="800" fill="#e0f2fe">IEEE PoE-инжектор (Midspan PSE)</text>
+  <rect x="612" y="11" width="184" height="24" rx="6" fill="#064e3b" stroke="#34d399" stroke-width="1"/>
+  <text x="704" y="27" text-anchor="middle" font-size="12" font-weight="700" fill="#a7f3d0">✓ IEEE 802.3af / at / bt</text>
+  <g transform="translate(175,54)">
+    <rect x="-126" y="42" width="126" height="8" rx="4" fill="#475569"/>
+    <rect x="-152" y="32" width="32" height="28" rx="4" fill="#334155" stroke="#94a3b8" stroke-width="1.4"/>
+    <line x1="-142" y1="40" x2="-142" y2="52" stroke="#cbd5e1" stroke-width="2.5"/>
+    <line x1="-134" y1="40" x2="-134" y2="52" stroke="#cbd5e1" stroke-width="2.5"/>
+    <text x="-76" y="24" text-anchor="middle" font-size="12.5" font-weight="700" fill="#cbd5e1">Вход питания</text>
+    <text x="-76" y="72" text-anchor="middle" font-size="11.5" fill="#94a3b8">230 В (C14) / БП</text>
+    <rect x="0" y="0" width="440" height="92" rx="12" fill="url(#bodyDark)" stroke="#64748b" stroke-width="2"/>
+    <text x="220" y="22" text-anchor="middle" font-size="12" font-weight="700" fill="#94a3b8">IEEE 802.3at PoE+ INJECTOR · 30W</text>
+    <circle cx="38" cy="48" r="5" fill="#4ade80"/><text x="38" y="68" text-anchor="middle" font-size="10.5" fill="#86efac">PWR</text>
+    <circle cx="72" cy="48" r="5" fill="#fb923c"/><text x="72" y="68" text-anchor="middle" font-size="10.5" fill="#fdba74">PoE</text>
+    <rect x="122" y="34" width="118" height="46" rx="6" fill="#071929" stroke="#38bdf8" stroke-width="1.8"/>
+    <rect x="163" y="42" width="36" height="26" rx="3" fill="#020617" stroke="#38bdf8" stroke-width="1.2"/>
+    <rect x="173" y="42" width="16" height="6" fill="#38bdf8"/>
+    <text x="181" y="108" text-anchor="middle" font-size="13" font-weight="800" fill="#7dd3fc">Data IN (LAN)</text>
+    <text x="181" y="124" text-anchor="middle" font-size="11.5" fill="#94a3b8">от обычного коммутатора</text>
+    <rect x="268" y="34" width="146" height="46" rx="6" fill="#1f160c" stroke="#fb923c" stroke-width="1.8"/>
+    <rect x="323" y="42" width="36" height="26" rx="3" fill="#020617" stroke="#fb923c" stroke-width="1.2"/>
+    <rect x="333" y="42" width="16" height="6" fill="#fb923c"/>
+    <text x="341" y="108" text-anchor="middle" font-size="13" font-weight="800" fill="#fdba74">Data + Power OUT (PoE)</text>
+    <text x="341" y="124" text-anchor="middle" font-size="11.5" fill="#94a3b8">к PoE-камере / точке доступа</text>
+  </g>
+</g>
+<g transform="translate(24,300)" font-family="Arial,sans-serif">
+  <rect x="0" y="0" width="812" height="206" rx="14" fill="#071e26" stroke="#2dd4bf" stroke-width="1.8"/>
+  <rect x="14" y="12" width="28" height="24" rx="6" fill="#14b8a6"/><text x="28" y="29" text-anchor="middle" font-size="15" font-weight="800" fill="#020b15">2</text>
+  <text x="52" y="29" font-size="17" font-weight="800" fill="#ccfbf1">IEEE PoE-сплиттер (PD + встроенный DC/DC)</text>
+  <rect x="612" y="11" width="184" height="24" rx="6" fill="#064e3b" stroke="#34d399" stroke-width="1"/>
+  <text x="704" y="27" text-anchor="middle" font-size="12" font-weight="700" fill="#a7f3d0">✓ Стабилизированный DC</text>
+  <g transform="translate(36,56)">
+    <rect x="0" y="34" width="144" height="30" rx="6" fill="#1f160c" stroke="#fb923c" stroke-width="1.5"/>
+    <text x="72" y="54" text-anchor="middle" font-size="13" font-weight="800" fill="#fdba74">PoE IN (RJ-45)</text>
+    <line x1="144" y1="49" x2="218" y2="49" stroke="#fb923c" stroke-width="4"/>
+    <text x="72" y="84" text-anchor="middle" font-size="11.5" fill="#94a3b8">от PoE-коммутатора / инжектора</text>
+    <rect x="218" y="8" width="248" height="84" rx="12" fill="url(#bodyDark)" stroke="#2dd4bf" stroke-width="2"/>
+    <text x="342" y="34" text-anchor="middle" font-size="13.5" font-weight="800" fill="#ccfbf1">IEEE 802.3af/at SPLITTER</text>
+    <text x="342" y="55" text-anchor="middle" font-size="12" fill="#5eead4">PD + DC/DC 48 В → 12 В</text>
+    <text x="342" y="76" text-anchor="middle" font-size="11.5" fill="#94a3b8">Выход: 12 В / 1.5–2 А (указан на корпусе)</text>
+    <path d="M 466 32 L 542 32" stroke="#38bdf8" stroke-width="4"/>
+    <rect x="542" y="14" width="198" height="34" rx="6" fill="#071929" stroke="#38bdf8" stroke-width="1.8"/>
+    <text x="641" y="36" text-anchor="middle" font-size="13" font-weight="800" fill="#7dd3fc">Ethernet OUT (RJ-45)</text>
+    <path d="M 466 68 L 542 68" stroke="#fb923c" stroke-width="4"/>
+    <rect x="542" y="52" width="198" height="34" rx="6" fill="#1f160c" stroke="#fb923c" stroke-width="1.8"/>
+    <text x="641" y="74" text-anchor="middle" font-size="13" font-weight="800" fill="#fdba74">DC OUT (12 В, 5,5×2,1)</text>
+    <text x="641" y="106" text-anchor="middle" font-size="11.5" fill="#94a3b8">два отдельных кабеля в камеру без PoE</text>
+  </g>
+</g>
+<g transform="translate(24,522)" font-family="Arial,sans-serif">
+  <rect x="0" y="0" width="812" height="218" rx="14" fill="#1e0b10" stroke="#ef4444" stroke-width="2.2"/>
+  <rect x="14" y="12" width="28" height="24" rx="6" fill="#ef4444"/><text x="28" y="29" text-anchor="middle" font-size="15" font-weight="800" fill="#ffffff">3</text>
+  <text x="52" y="29" font-size="17" font-weight="800" fill="#fee2e2">Пассивная кабельная пара (два переходника RJ-45 + DC)</text>
+  <rect x="580" y="11" width="216" height="24" rx="6" fill="#7f1d1d" stroke="#f87171" stroke-width="1"/>
+  <text x="688" y="27" text-anchor="middle" font-size="12" font-weight="800" fill="#fecaca">⚠ БЕЗ IEEE DETECTION И DC/DC</text>
+  <g transform="translate(26,52)">
+    <rect x="0" y="0" width="366" height="96" rx="10" fill="#2c1218" stroke="#f87171" stroke-width="1.4"/>
+    <text x="183" y="22" text-anchor="middle" font-size="14" font-weight="800" fill="#fecaca">Пассивный инжектор (кабель 1)</text>
+    <rect x="14" y="34" width="94" height="24" rx="5" fill="#071929" stroke="#38bdf8" stroke-width="1.2"/>
+    <text x="61" y="50" text-anchor="middle" font-size="11.5" font-weight="700" fill="#7dd3fc">LAN (RJ-45)</text>
+    <rect x="14" y="64" width="94" height="24" rx="5" fill="#450a0a" stroke="#f87171" stroke-width="1.2"/>
+    <text x="61" y="80" text-anchor="middle" font-size="11.5" font-weight="700" fill="#fca5a5">DC IN (гнездо)</text>
+    <path d="M 108 46 L 166 58 M 108 76 L 166 58" stroke="#f87171" stroke-width="3"/>
+    <rect x="166" y="42" width="66" height="32" rx="6" fill="#1e293b" stroke="#94a3b8" stroke-width="1.2"/>
+    <text x="199" y="62" text-anchor="middle" font-size="11" font-weight="700" fill="#cbd5e1">корпус</text>
+    <line x1="232" y1="58" x2="262" y2="58" stroke="#f87171" stroke-width="3.5"/>
+    <rect x="262" y="42" width="90" height="32" rx="5" fill="#450a0a" stroke="#f87171" stroke-width="1.4"/>
+    <text x="307" y="62" text-anchor="middle" font-size="11.5" font-weight="800" fill="#fecaca">RJ-45 (PoE)</text>
+  </g>
+  <g transform="translate(420,52)">
+    <rect x="0" y="0" width="366" height="96" rx="10" fill="#2c1218" stroke="#f87171" stroke-width="1.4"/>
+    <text x="183" y="22" text-anchor="middle" font-size="14" font-weight="800" fill="#fecaca">Пассивный сплиттер (кабель 2)</text>
+    <rect x="14" y="42" width="90" height="32" rx="5" fill="#450a0a" stroke="#f87171" stroke-width="1.4"/>
+    <text x="59" y="62" text-anchor="middle" font-size="11.5" font-weight="800" fill="#fecaca">RJ-45 (PoE)</text>
+    <line x1="104" y1="58" x2="134" y2="58" stroke="#f87171" stroke-width="3.5"/>
+    <rect x="134" y="42" width="66" height="32" rx="6" fill="#1e293b" stroke="#94a3b8" stroke-width="1.2"/>
+    <text x="167" y="62" text-anchor="middle" font-size="11" font-weight="700" fill="#cbd5e1">корпус</text>
+    <path d="M 200 58 L 254 46 M 200 58 L 254 76" stroke="#f87171" stroke-width="3"/>
+    <rect x="254" y="34" width="98" height="24" rx="5" fill="#071929" stroke="#38bdf8" stroke-width="1.2"/>
+    <text x="303" y="50" text-anchor="middle" font-size="11.5" font-weight="700" fill="#7dd3fc">LAN (RJ-45)</text>
+    <rect x="248" y="64" width="108" height="24" rx="5" fill="#450a0a" stroke="#f87171" stroke-width="1.2"/>
+    <text x="302" y="80" text-anchor="middle" font-size="11" font-weight="700" fill="#fca5a5">DC OUT (штекер)</text>
+  </g>
+  <rect x="26" y="160" width="760" height="44" rx="8" fill="#450a0a" stroke="#ef4444" stroke-width="1.2"/>
+  <text x="406" y="180" text-anchor="middle" font-size="12.5" font-weight="800" fill="#fecaca">Внутри нет электроники согласования: надпись «9–48V» и разъём RJ-45 НЕ делают пару IEEE-совместимой.</text>
+  <text x="406" y="196" text-anchor="middle" font-size="12" fill="#fca5a5">Работает только в паре «свой БП DC → своя DC-камера»; подключение к IEEE-порту или ПК опасно.</text>
+</g>
+</svg>

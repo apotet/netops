@@ -1,17 +1,10 @@
 /**
  * Entry for Node validation: mirrors questionsData composition without React/Vite UI.
  */
-import rawQuestions from '../src/data/questions.json';
-import { EXTRA_QUESTIONS } from '../src/data/questionsExtra';
-import { EXTRA_DIFFICULTY_QUESTIONS } from '../src/data/questionsExtraDifficulty';
+import { ALL_QUESTIONS } from '../src/data/questionsData';
 import { getQuestionDeepDive } from '../src/data/questionExplanations';
-import type { Question } from '../src/types/quiz';
 
-export const ALL_QUESTIONS: Question[] = [
-  ...(rawQuestions as Question[]),
-  ...EXTRA_QUESTIONS,
-  ...EXTRA_DIFFICULTY_QUESTIONS,
-];
+export { ALL_QUESTIONS };
 
 export function buildCoverageRows() {
   return ALL_QUESTIONS.map((q) => {

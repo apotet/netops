@@ -64,6 +64,8 @@ export const LESSON_L2_ETHERNET: Lesson = {
   "relatedQuestionIds": [
     "l2-01",
     "l2-02",
+    "l2-03",
+    "l2-05",
     "l2-04",
     "gen-osi-a-4",
     "gen-osi-a-6",

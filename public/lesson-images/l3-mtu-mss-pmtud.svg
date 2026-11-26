@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="860" height="560" viewBox="0 0 860 560" role="img" aria-labelledby="t3 d3">
+<title id="t3">MTU 1500, TCP MSS 1460 и туннельный оверхед (PMTUD black hole)</title>
+<desc id="d3">Разложение кадра Ethernet MTU 1500 (IPv4 20 + TCP 20 + MSS 1460), сужение MTU внутри GRE/IPsec туннеля и причина PMTUD black hole при блокировке ICMP Fragmentation Needed.</desc>
+<defs><linearGradient id="bg3" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#020b15"/><stop offset="1" stop-color="#081e2c"/></linearGradient></defs>
+<rect width="860" height="560" rx="18" fill="url(#bg3)"/>
+<text x="430" y="38" text-anchor="middle" font-family="Arial,sans-serif" font-size="22" font-weight="800" fill="#f1f8ff">MTU, TCP MSS и почему «пинг идёт, а HTTPS зависает»</text>
+
+<!-- Top: Packet anatomy -->
+<g transform="translate(24,58)" font-family="Arial,sans-serif">
+  <rect x="0" y="0" width="812" height="178" rx="14" fill="#071a2b" stroke="#38bdf8" stroke-width="1.8"/>
+  <text x="20" y="28" font-size="15.5" font-weight="800" fill="#7dd3fc">Анатомия пакета при стандартном Ethernet MTU = 1500 байт</text>
+
+  <!-- IPv4 bar -->
+  <text x="20" y="58" font-size="13" font-weight="700" fill="#cbd5e1">IPv4 (без опций):</text>
+  <rect x="160" y="42" width="104" height="34" rx="5" fill="#1e3a8a" stroke="#60a5fa"/>
+  <text x="212" y="64" text-anchor="middle" font-size="12.5" font-weight="700" fill="#dbeafe">IPv4 (20 Б)</text>
+  <rect x="268" y="42" width="104" height="34" rx="5" fill="#0f766e" stroke="#2dd4bf"/>
+  <text x="320" y="64" text-anchor="middle" font-size="12.5" font-weight="700" fill="#ccfbf1">TCP (20 Б)</text>
+  <rect x="376" y="42" width="414" height="34" rx="5" fill="#0c2f4d" stroke="#38bdf8"/>
+  <text x="583" y="64" text-anchor="middle" font-size="13" font-weight="800" fill="#e0f2fe">TCP Payload = MSS 1460 байт (1500 − 20 − 20)</text>
+
+  <!-- IPv6 bar -->
+  <text x="20" y="106" font-size="13" font-weight="700" fill="#cbd5e1">IPv6 (без ext):</text>
+  <rect x="160" y="90" width="144" height="34" rx="5" fill="#312e81" stroke="#818cf8"/>
+  <text x="232" y="112" text-anchor="middle" font-size="12.5" font-weight="700" fill="#e0e7ff">IPv6 (40 Б)</text>
+  <rect x="308" y="90" width="104" height="34" rx="5" fill="#0f766e" stroke="#2dd4bf"/>
+  <text x="360" y="112" text-anchor="middle" font-size="12.5" font-weight="700" fill="#ccfbf1">TCP (20 Б)</text>
+  <rect x="416" y="90" width="374" height="34" rx="5" fill="#0c2f4d" stroke="#38bdf8"/>
+  <text x="603" y="112" text-anchor="middle" font-size="13" font-weight="800" fill="#e0f2fe">TCP Payload = MSS 1440 байт (1500 − 40 − 20)</text>
+
+  <text x="20" y="156" font-size="12" fill="#94a3b8">При underlay MTU 1500 туннели (GRE/IPsec/PPPoE) уменьшают внутренний MTU (пример: 1400–1492 Б).</text>
+</g>
+
+<!-- Bottom: PMTUD Black Hole -->
+<g transform="translate(24,254)" font-family="Arial,sans-serif">
+  <rect x="0" y="0" width="812" height="282" rx="14" fill="#1e0b10" stroke="#ef4444" stroke-width="2"/>
+  <text x="20" y="30" font-size="15.5" font-weight="800" fill="#fecaca">Механизм PMTUD Black Hole (чёрная дыра MTU)</text>
+
+  <rect x="22" y="52" width="150" height="68" rx="10" fill="#0b2438" stroke="#38bdf8"/>
+  <text x="97" y="82" text-anchor="middle" font-size="14" font-weight="800" fill="#f1f8ff">Клиент / Сервер</text>
+  <text x="97" y="102" text-anchor="middle" font-size="12" fill="#7dd3fc">Шлёт 1500 Б (DF=1)</text>
+
+  <line x1="172" y1="74" x2="316" y2="74" stroke="#38bdf8" stroke-width="3.5"/>
+  <text x="244" y="64" text-anchor="middle" font-size="12" font-weight="700" fill="#7dd3fc">Пакет 1500 Б, DF=1</text>
+
+  <rect x="316" y="52" width="184" height="68" rx="10" fill="#2c1218" stroke="#f87171"/>
+  <text x="408" y="80" text-anchor="middle" font-size="14" font-weight="800" fill="#fee2e2">Узкий участок / Туннель</text>
+  <text x="408" y="102" text-anchor="middle" font-size="12" fill="#fca5a5">MTU = 1400 → DROP!</text>
+
+  <line x1="316" y1="106" x2="172" y2="106" stroke="#ef4444" stroke-width="3" stroke-dasharray="6,4"/>
+  <text x="244" y="136" text-anchor="middle" font-size="12" font-weight="800" fill="#fca5a5">ICMP Type 3 Code 4 (или ICMPv6 Type 2 PTB)</text>
+  <text x="244" y="154" text-anchor="middle" font-size="12" fill="#f87171">ЗАБЛОКИРОВАН ФАЕРВОЛОМ (DROP)</text>
+
+  <rect x="536" y="52" width="254" height="106" rx="10" fill="#450a0a" stroke="#ef4444"/>
+  <text x="663" y="78" text-anchor="middle" font-size="13.5" font-weight="800" fill="#fecaca">Симптом у пользователя:</text>
+  <text x="550" y="102" font-size="12.5" fill="#fee2e2">• Короткий ping и TCP SYN проходят</text>
+  <text x="550" y="122" font-size="12.5" fill="#fee2e2">• Большой TLS/HTTP-пакет исчезает</text>
+  <text x="550" y="142" font-size="12.5" fill="#fee2e2">• Страница/SSH «вечно грузится»</text>
+
+  <rect x="22" y="180" width="768" height="84" rx="10" fill="#071e26" stroke="#2dd4bf" stroke-width="1.4"/>
+  <text x="36" y="204" font-size="13.5" font-weight="800" fill="#5eead4">Как проверить и вылечить:</text>
+  <text x="36" y="226" font-size="12.5" fill="#e2e8f0">1. Проверка: ping с запретом фрагментации (Linux: ping -M do -s 1472; Windows: ping -f -l 1472) с подбором размера.</text>
+  <text x="36" y="248" font-size="12.5" fill="#e2e8f0">2. Лечение: разрешить ICMP Type 3 Code 4 / ICMPv6 Type 2 (PTB) и/или настроить TCP MSS clamping на границе туннеля.</text>
+</g>
+</svg>

@@ -1,6 +1,7 @@
 import { hasUnsavedChanges } from './ConfigPersistence';
 import { checkVlanPath } from './VlanPath';
 import { checkSviIpv4Reachability } from './SviIpv4Reachability';
+import { checkHostIpv4Reachability } from './HostIpv4Reachability';
 import { DeviceState, GoalCheckResult, GoalPredicate, NetworkState } from './types';
 
 function deviceOf(state: NetworkState, id: string): DeviceState | undefined {
@@ -11,6 +12,16 @@ export function evaluatePredicate(state: NetworkState, p: GoalPredicate): GoalCh
   const dev = 'device' in p ? deviceOf(state, p.device) : undefined;
 
   switch (p.type) {
+    case 'ipv4.hostReachable': {
+      const result = checkHostIpv4Reachability(state, p.fromHost, p.toHost);
+      return { predicate: p, passed: result.reachable, detail: result.detail };
+    }
+    case 'stp.bridgePriority': {
+      const ok = dev?.stp?.priority === p.priority;
+      return { predicate: p, passed: ok,
+        detail: ok ? `${dev?.hostname}: CST bridge priority ${p.priority}`
+          : `${dev?.hostname ?? p.device}: ожидается CST bridge priority ${p.priority}` };
+    }
     case 'ipv4.sviReachable': {
       const result = checkSviIpv4Reachability(state, p.device, p.destination);
       return { predicate: p, passed: result.kind === 'remote', detail: result.detail };

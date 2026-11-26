@@ -1,3 +1,9 @@
+# NetOps production — кандидат N5
+
+Состав, исходный staging SHA и сведения об откате в [release/N5_RELEASE.md](release/N5_RELEASE.md).
+
+---
+
 # NetOps production release — N3 (2026-11-11)
 
 - Pinned staging SHA: `79000e37ac6951a535229560e3e8eb1423843485`.

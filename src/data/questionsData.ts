@@ -1,14 +1,26 @@
 import rawQuestions from './questions.json';
+import { DIAGNOSTIC_QUESTIONS_177 } from './diagnosticCases177';
+import { MONITORING_QUESTIONS } from './monitoringCases';
+import { WIFI_QUESTIONS } from './wifiCases';
+import { EXPERT_CASES_177 } from './expertCases177';
+import { EXPERT_QUESTIONS_225 } from './expertCases225';
+import { sharedAssetUrl } from '../config/sharedAssets';
 import { EXTRA_QUESTIONS } from './questionsExtra';
 import { EXTRA_DIFFICULTY_QUESTIONS } from './questionsExtraDifficulty';
 import { Question, QuizMode, QuizModeId, ExamDifficulty } from '../types/quiz';
 import { selectMixedQuestions } from './mixedExam';
+import { selectBeginnerQuestions } from './beginnerExam';
 
 /** Base bank + expansion packs. Existing questions.json is never trimmed. */
 export const ALL_QUESTIONS: Question[] = [
   ...(rawQuestions as Question[]),
   ...EXTRA_QUESTIONS,
   ...EXTRA_DIFFICULTY_QUESTIONS,
+  ...DIAGNOSTIC_QUESTIONS_177,
+  ...MONITORING_QUESTIONS,
+  ...WIFI_QUESTIONS,
+  ...EXPERT_QUESTIONS_225,
+  ...EXPERT_CASES_177.map(item => item.question),
 ];
 
 /** Unique IDs only — source of truth for UI counters. */
@@ -39,7 +51,7 @@ export const DUPLICATE_QUESTION_IDS = _bankStats.duplicates;
 export const QUIZ_MODES: QuizMode[] = [
   {
     id: 'mixed',
-    title: 'Смешанный экзамен',
+    title: 'Смешанное тестирование',
     subtitle: 'Все уровни OSI и стек TCP/IP',
     description: 'Комплексный срез знаний по всем темам: от оптики и витой пары до прикладных протоколов.',
     icon: 'Layers',
@@ -110,26 +122,36 @@ export const QUIZ_MODES: QuizMode[] = [
   },
 ];
 
-/** Strict level filter: unlabelled/basic questions are not beginner. */
-export function filterExamDifficulty(questions: readonly Question[], difficulty: ExamDifficulty): Question[] {
-  return questions.filter(q => difficulty === 'mixed' || q.difficulty === 'beginner');
+type LegacyExamDifficulty = Exclude<ExamDifficulty, 'in-depth'>;
+
+// These pairs ask for the same fact. Other families can group distinct skills
+// under a broad topic, which the legacy topic shuffle may sample together.
+const equivalentQuestionFamilies = new Set(['tcp-rst-meaning', 'tcpip-application-mapping']);
+
+const examQuestionDifficulty = {
+  beginner: 'beginner',
+  applied: 'applied',
+} as const;
+export function filterExamDifficulty(questions: readonly Question[], difficulty: LegacyExamDifficulty): Question[] {
+  return questions.filter(q => difficulty === 'mixed' || q.difficulty === examQuestionDifficulty[difficulty]);
 }
 
-export function getExamPool(modeId: QuizModeId, difficulty: ExamDifficulty): Question[] {
+export function getExamPool(modeId: QuizModeId, difficulty: LegacyExamDifficulty): Question[] {
   return filterExamDifficulty(ALL_QUESTIONS, difficulty).filter(q =>
-    modeId === 'mixed' ? difficulty === 'beginner' || q.group !== 'visual-l1' : q.group === modeId);
+    modeId === 'mixed' ? difficulty !== 'mixed' || q.group !== 'visual-l1' : q.group === modeId);
 }
 
 export function getRandomQuestions(
   modeId: QuizModeId,
   count: number = 10,
   random: () => number = Math.random,
-  difficulty: ExamDifficulty = 'mixed'
+  difficulty: LegacyExamDifficulty = 'mixed'
 ): Question[] {
   // Preserve the existing all-level mixed quotas. Beginner pools have their own
   // strict sample: photo/group quotas must never pull in a different difficulty.
   if (difficulty === 'mixed' && modeId === 'mixed' && count === 10) return selectMixedQuestions(ALL_QUESTIONS, random);
   const pool = getExamPool(modeId, difficulty);
+  if (difficulty === 'beginner') return selectBeginnerQuestions(pool, count, random);
 
   const shuffled = [...new Map(pool.map(q => [q.id, q])).values()];
   for (let i = shuffled.length - 1; i > 0; i--) {
@@ -137,7 +159,34 @@ export function getRandomQuestions(
     [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
   }
 
-  return count >= shuffled.length ? shuffled : shuffled.slice(0, count);
+  if (count >= shuffled.length) return shuffled;
+  // Prefer a different skill before drawing a second variant from the same family.
+  const families = new Set<string>();
+  const alternatives: Question[] = [];
+  const distinct = shuffled.filter(question => {
+    const family = question.family;
+    if (!family || !equivalentQuestionFamilies.has(family)) return true;
+    if (families.has(family)) {
+      alternatives.push(question);
+      return false;
+    }
+    families.add(family);
+    return true;
+  });
+  return distinct.concat(alternatives).slice(0, count);
+}
+
+/** New attempts only; custom pools (including mistakes) must never be expanded. */
+export function getNewAttemptQuestions(
+  modeId: QuizModeId,
+  count: number,
+  random: () => number,
+  difficulty: LegacyExamDifficulty,
+  customQuestions?: readonly Question[],
+): Question[] {
+  if (!customQuestions) return getRandomQuestions(modeId, count, random, difficulty);
+  const pool = filterExamDifficulty(customQuestions, difficulty);
+  return difficulty === 'beginner' ? selectBeginnerQuestions(pool, count, random) : pool.slice(0, count);
 }
 
 export function resolveImageUrl(imgPath?: string): string {
@@ -145,6 +194,5 @@ export function resolveImageUrl(imgPath?: string): string {
   if (imgPath.startsWith('http://') || imgPath.startsWith('https://')) {
     return imgPath;
   }
-  const cleanPath = imgPath.replace(/^\.?\//, '');
-  return `https://raw.githubusercontent.com/apotet/osi-tcpip-exam-public/main/${cleanPath}`;
+  return sharedAssetUrl(imgPath);
 }

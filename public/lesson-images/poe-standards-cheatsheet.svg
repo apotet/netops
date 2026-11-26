@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="860" viewBox="0 0 1280 860" role="img" aria-labelledby="poe-title poe-desc">
+<title id="poe-title">Шпаргалка: стандарты и мощность PoE</title>
+<desc id="poe-desc">Сравнение IEEE 802.3af Type 1, IEEE 802.3at Type 2, IEEE 802.3bt Type 3 и Type 4 по классам мощности Class, максимальной мощности PSE и PD и количеству пар питания.</desc>
+<rect width="1280" height="860" rx="26" fill="#06111d"/>
+<rect x="22" y="22" width="1236" height="816" rx="24" fill="#0b192b" stroke="#164e63" stroke-width="2"/>
+<g font-family="Arial, 'DejaVu Sans', sans-serif">
+<text x="64" y="86" fill="#e0f7ff" font-size="43" font-weight="700">Стандарты PoE и мощность</text>
+<text x="64" y="129" fill="#9cc2d6" font-size="23">PSE — на выходе источника; PD — на входе устройства</text>
+<rect x="56" y="162" width="1168" height="70" rx="15" fill="#12334b"/>
+<g fill="#c7f3ff" font-size="25" font-weight="700">
+<text x="88" y="206">Стандарт</text>
+<text x="412" y="206">Type</text>
+<text x="545" y="206">Class</text>
+<text x="727" y="206">PSE</text>
+<text x="918" y="206">PD</text>
+<text x="1127" y="206">Пары</text>
+</g>
+<g>
+<rect x="56" y="247" width="1168" height="90" rx="16" fill="#10283c" stroke="#2b4e63" stroke-width="1"/>
+<rect x="56" y="247" width="8" height="90" rx="4" fill="#67e8f9"/>
+<text x="87" y="287" fill="#f1faff" font-size="30" font-weight="700">IEEE 802.3af</text>
+<text x="87" y="318" fill="#67e8f9" font-size="21">PoE</text>
+<text x="412" y="302" fill="#dcf6ff" font-size="28">Type 1</text>
+<text x="544" y="302" fill="#95e0f2" font-size="29" font-weight="700">0–3</text>
+<text x="724" y="302" fill="#f8fdff" font-size="32" font-weight="700">15,4 Вт</text>
+<text x="915" y="302" fill="#f8fdff" font-size="32" font-weight="700">12,95 Вт</text>
+<text x="1154" y="302" fill="#f8fdff" font-size="32" font-weight="700">2</text>
+</g>
+<g>
+<rect x="56" y="349" width="1168" height="90" rx="16" fill="#103746" stroke="#2b4e63" stroke-width="1"/>
+<rect x="56" y="349" width="8" height="90" rx="4" fill="#2dd4bf"/>
+<text x="87" y="389" fill="#f1faff" font-size="30" font-weight="700">IEEE 802.3at</text>
+<text x="87" y="420" fill="#2dd4bf" font-size="21">PoE+</text>
+<text x="412" y="404" fill="#dcf6ff" font-size="28">Type 2</text>
+<text x="544" y="404" fill="#95e0f2" font-size="29" font-weight="700">4</text>
+<text x="724" y="404" fill="#f8fdff" font-size="32" font-weight="700">30 Вт</text>
+<text x="915" y="404" fill="#f8fdff" font-size="32" font-weight="700">25,5 Вт</text>
+<text x="1154" y="404" fill="#f8fdff" font-size="32" font-weight="700">2</text>
+</g>
+<g>
+<rect x="56" y="451" width="1168" height="90" rx="16" fill="#1d3440" stroke="#2b4e63" stroke-width="1"/>
+<rect x="56" y="451" width="8" height="90" rx="4" fill="#fbbf24"/>
+<text x="87" y="491" fill="#f1faff" font-size="30" font-weight="700">IEEE 802.3bt</text>
+<text x="87" y="522" fill="#fbbf24" font-size="21">PoE++</text>
+<text x="412" y="506" fill="#dcf6ff" font-size="28">Type 3</text>
+<text x="544" y="506" fill="#95e0f2" font-size="29" font-weight="700">5–6</text>
+<text x="724" y="506" fill="#f8fdff" font-size="32" font-weight="700">60 Вт</text>
+<text x="915" y="506" fill="#f8fdff" font-size="32" font-weight="700">51 Вт</text>
+<text x="1154" y="506" fill="#f8fdff" font-size="32" font-weight="700">4</text>
+</g>
+<g>
+<rect x="56" y="553" width="1168" height="90" rx="16" fill="#1b324d" stroke="#2b4e63" stroke-width="1"/>
+<rect x="56" y="553" width="8" height="90" rx="4" fill="#93c5fd"/>
+<text x="87" y="593" fill="#f1faff" font-size="30" font-weight="700">IEEE 802.3bt</text>
+<text x="87" y="624" fill="#93c5fd" font-size="21">PoE++ · высокая мощность</text>
+<text x="412" y="608" fill="#dcf6ff" font-size="28">Type 4</text>
+<text x="544" y="608" fill="#95e0f2" font-size="29" font-weight="700">7–8</text>
+<text x="724" y="608" fill="#f8fdff" font-size="32" font-weight="700">90 Вт</text>
+<text x="915" y="608" fill="#f8fdff" font-size="32" font-weight="700">71,3 Вт</text>
+<text x="1154" y="608" fill="#f8fdff" font-size="32" font-weight="700">4</text>
+</g>
+<path d="M56 666H1224" stroke="#255067" stroke-width="2"/>
+<text x="64" y="705" fill="#cce7f5" font-size="21">Пары — витые пары, по которым передаётся питание при указанной мощности.</text>
+<text x="64" y="738" fill="#cce7f5" font-size="21">Class — класс требуемой мощности PD, не его фактическое потребление.</text>
+<text x="64" y="771" fill="#85b8ce" font-size="20">Показаны классы для каждого Type; более мощный порт поддерживает и младшие.</text>
+<text x="64" y="804" fill="#85b8ce" font-size="20">Лимит порта и общий PoE-бюджет коммутатора проверяй отдельно.</text>
+</g>
+</svg>

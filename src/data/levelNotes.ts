@@ -1,4 +1,5 @@
 /** Layer notes ported from osi-tcpip-exam-public LEVEL_NOTES */
+import { sharedAssetUrl } from '../config/sharedAssets';
 
 export interface LevelNoteSection {
   title: string;
@@ -13,8 +14,7 @@ export interface LevelNote {
   cheatWebp: string;
 }
 
-const CHEAT_BASE =
-  'https://raw.githubusercontent.com/apotet/osi-tcpip-exam-public/main/assets/cheatsheets';
+const CHEAT_BASE = sharedAssetUrl('assets/cheatsheets');
 
 function note(level: number, title: string, sections: LevelNoteSection[]): LevelNote {
   return {

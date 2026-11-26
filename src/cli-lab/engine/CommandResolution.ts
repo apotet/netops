@@ -50,6 +50,7 @@ export function resolveKeywords(
 }
 
 export interface CommandInspection {
+  invalidReason?: string;
   status: 'complete' | 'incomplete' | 'invalid' | 'ambiguous';
   tokens: string[];
   spec?: CommandSpec;
@@ -62,7 +63,8 @@ export function inspectCommand(
   specs: CommandSpec[], words: string[], mode: DeviceMode, privilege: number, device?: DeviceState,
 ): CommandInspection {
   const context = commandContext(specs, words, mode, privilege);
-  let branches = context.specs.filter(s => s.modes.includes(context.mode) && (s.minPrivilege ?? 0) <= context.privilege)
+  let branches = context.specs.filter(s => s.modes.includes(context.mode) && (s.minPrivilege ?? 0) <= context.privilege &&
+      (!s.available || !!device && s.available(device)))
     .flatMap(spec => (spec.arguments ?? [[]]).map(args => ({
       spec, path: [...spec.match.map(keyword => ({ keyword })), ...args] as CommandArgument[],
     })));
@@ -85,10 +87,17 @@ export function inspectCommand(
         return node && 'keyword' in node && node.keyword === matching[0];
       });
     } else {
+      const messages = new Set<string>();
       branches = branches.filter(b => {
         const node = at(b.path, i);
-        return node && 'validate' in node && node.validate(tokens[i], device, tokens.slice(0, i));
+        if (!node || !('validate' in node)) return false;
+        const valid = node.validate(tokens[i], device, tokens.slice(0, i));
+        if (!valid && node.invalidMessage) messages.add(node.invalidMessage);
+        return valid;
       });
+      if (!branches.length && messages.size === 1) {
+        return { status: 'invalid', tokens: words, next: [], invalidReason: [...messages][0] };
+      }
     }
     if (!branches.length) return { status: 'invalid', tokens: words, next: [] };
   }

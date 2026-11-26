@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 820" role="img" aria-labelledby="title desc">
+<title id="title">HTTP 301 и 404: две последовательности GET</title>
+<desc id="desc">301: GET old, ответ 301 с Location new, при следовании новый GET и независимый итог. 404: GET missing, ответ от сервера или посредника без предписанного кодом перехода.</desc>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#67e8f9"/></marker></defs>
+<rect width="360" height="820" rx="18" fill="#071725"/>
+<g font-family="system-ui,sans-serif" fill="#e2e8f0" text-anchor="middle">
+<text x="180" y="30" font-size="20" font-weight="700">301 · постоянный переезд</text>
+<rect x="18" y="50" width="324" height="350" rx="14" fill="#102b3c" stroke="#22d3ee"/>
+<text x="75" y="80" font-size="16">Клиент</text><text x="282" y="80" font-size="16">HTTP-узел</text>
+<g stroke="#64748b" stroke-dasharray="4 5"><path d="M48 98V355"/><path d="M312 98V355"/></g>
+<g stroke="#67e8f9" stroke-width="2" marker-end="url(#arrow)"><path d="M48 128H312"/><path d="M312 190H48"/><path d="M48 270H312"/><path d="M312 332H48"/></g>
+<g font-size="17"><text x="180" y="117">GET /old</text><text x="180" y="165">301 Moved Permanently</text><text x="180" y="184">Location: /new</text><text x="180" y="259">GET /new</text><text x="180" y="320">200 OK или другой итог</text></g>
+<text x="180" y="225" font-size="14" fill="#a5f3fc">Если клиент следует Location</text>
+<text x="180" y="378" font-size="15">Возможны 404, новый редирект</text>
+<text x="180" y="427" font-size="15" fill="#fcd34d">301 не гарантирует успех назначения</text>
+<text x="180" y="482" font-size="20" font-weight="700">404 · ресурс не найден</text>
+<rect x="18" y="502" width="324" height="244" rx="14" fill="#202a3e" stroke="#c4b5fd"/>
+<text x="75" y="534" font-size="16">Клиент</text><text x="277" y="534" font-size="16">HTTP-узел</text>
+<g stroke="#64748b" stroke-dasharray="4 5"><path d="M48 550V692"/><path d="M312 550V692"/></g>
+<g stroke="#67e8f9" stroke-width="2" marker-end="url(#arrow)"><path d="M48 582H312"/><path d="M312 647H48"/></g>
+<text x="180" y="571" font-size="17">GET /missing</text><text x="180" y="635" font-size="17">404 Not Found</text>
+<text x="180" y="700" font-size="15">Ответ: сервер, CDN, proxy,</text><text x="180" y="722" font-size="15">ingress, API-шлюз или кэш</text>
+<text x="180" y="778" font-size="16" fill="#ddd6fe">Сам 404 не требует перехода</text><text x="180" y="801" font-size="14">Учебный обмен · время идёт сверху вниз</text>
+</g></svg>

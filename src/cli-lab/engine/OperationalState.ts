@@ -1,10 +1,10 @@
 import { DeviceState, InterfaceState, NetworkState } from './types';
-import { localSviPortUp } from './SviIpv4Reachability';
+import { localSviPortUp } from './VlanForwarding';
 
 /**
  * Limited operational-state model. PHY requires an up link and enabled peer.
- * SVI autostate depends on local forwarding-eligible VLAN membership, not on
- * the peer's VLAN/allowed configuration. STP itself is not simulated.
+ * SVI autostate requires a local CST-forwarding VLAN member, not the peer's
+ * VLAN/allowed configuration or an end-to-end path. PHY is independent of STP.
  */
 export function interfaceStatus(state: NetworkState, device: DeviceState, iface: InterfaceState) {
   const sviId = /^Vlan(\d+)$/i.exec(iface.name);
