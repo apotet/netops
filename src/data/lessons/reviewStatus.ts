@@ -7,6 +7,8 @@ const USER_APPROVED_LESSON_IDS: ReadonlySet<string> = new Set<string>([
   'l1-copper-fault-poe',
   // Owner confirmed USER ACCEPT after the final PoE budget lesson release, 23 Nov 2026.
   'l1-poe-budget',
+  // Owner explicitly accepted the PoE injectors and splitters lesson, 24 Nov 2026.
+  'l1-poe-injectors-splitters',
 ]);
 
 export type LessonReviewStatus = 'needs-review' | 'approved';
