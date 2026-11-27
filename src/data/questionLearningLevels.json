@@ -2785,13 +2785,6 @@
     "confidence": "high",
     "auditRationale": "Распознать (L1 · Фото и практика): 650 MHz"
   },
-  "l1v2-a-pvc-read": {
-    "status": "ASSIGNED",
-    "auditAction": "KEEP",
-    "learningLevel": 1,
-    "confidence": "high",
-    "auditRationale": "Распознать (L1 · Фото и практика): Поливинилхлорид (PVC)"
-  },
   "l1v2-a-solid-view": {
     "status": "ASSIGNED",
     "auditAction": "KEEP",

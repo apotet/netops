@@ -14,8 +14,11 @@ assert.equal(config.SHARED_ASSETS_BASE_URL, base);
 
 const photos = ALL_QUESTIONS.filter(q => q.image);
 const paths = [...new Set(photos.map(q => q.image))];
-assert.equal(photos.length, 195);
-assert.equal(paths.length, 90);
+assert.equal(photos.length, 194);
+assert.equal(paths.length, 89);
+const retired = JSON.parse(readFileSync('src/data/retiredPvcPhotoQuestion.json', 'utf8'));
+assert.ok(!paths.includes(retired.image), 'retired photo not in current selection');
+assert.equal(resolveImageUrl(retired.image), `${base}/${retired.image}`, 'historical review retains pinned photo');
 for (const path of paths) {
   assert.equal(resolveImageUrl(path), `${base}/${path}`);
   assert.equal(resolveImageUrl(`./${path}`), `${base}/${path}`);
@@ -59,4 +62,4 @@ function checkSources(dir) {
   }
 }
 checkSources('src');
-console.log('PASS: 195 photo questions / 90 URLs, external URLs, credits, 14 cheatsheets, both Vite HTML transforms, no mutable source URLs');
+console.log('PASS: 194 active photo questions / 89 URLs plus the pinned historical photo, external URLs, credits, 14 cheatsheets, both Vite HTML transforms, no mutable source URLs');

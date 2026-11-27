@@ -1,0 +1,120 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 660" width="1100" height="660">
+  <defs>
+    <style>
+      .title { font-family: 'DejaVu Sans', Arial, sans-serif; font-size: 21px; font-weight: 700; fill: #f8fafc; }
+      .subtitle { font-family: 'DejaVu Sans', Arial, sans-serif; font-size: 12.5px; font-weight: 400; fill: #94a3b8; }
+      .sec-title { font-family: 'DejaVu Sans', Arial, sans-serif; font-size: 13.5px; font-weight: 700; fill: #e2e8f0; }
+      .label { font-family: 'DejaVu Sans', Arial, sans-serif; font-size: 12.5px; font-weight: 700; fill: #f1f5f9; }
+      .text { font-family: 'DejaVu Sans', Arial, sans-serif; font-size: 11.5px; font-weight: 400; fill: #cbd5e1; }
+      .muted { font-family: 'DejaVu Sans', Arial, sans-serif; font-size: 11px; font-weight: 400; fill: #94a3b8; }
+      .mono { font-family: 'DejaVu Sans Mono', monospace; font-size: 11.5px; font-weight: 700; fill: #e2e8f0; }
+      .mono-sm { font-family: 'DejaVu Sans Mono', monospace; font-size: 10.5px; font-weight: 400; fill: #cbd5e1; }
+      .badge { font-family: 'DejaVu Sans', Arial, sans-serif; font-size: 11px; font-weight: 700; }
+    </style>
+    <marker id="arr-cyan" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8"/>
+    </marker>
+    <marker id="arr-emerald" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#34d399"/>
+    </marker>
+    <marker id="arr-amber" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#fbbf24"/>
+    </marker>
+    <marker id="arr-rose" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#fb7185"/>
+    </marker>
+    <marker id="arr-violet" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#a78bfa"/>
+    </marker>
+  </defs>
+  <rect width="1100" height="660" rx="16" fill="#0f172a"/>
+  <text x="36" y="44" class="title">SMTP (RFC 5321): транзакция доставки, коды 2xx/4xx/5xx и очередь повторов</text>
+  <text x="36" y="66" class="subtitle">Конверт (MAIL FROM / RCPT TO) оценивается по каждому получателю отдельно; финал фиксируется только после точки DATA</text>
+
+  <!-- Left: SMTP Transaction Flow -->
+  <rect x="36" y="94" width="644" height="534" rx="12" fill="#1e293b" stroke="#334155"/>
+  <text x="58" y="122" class="sec-title">Пошаговая SMTP-транзакция: MTA A → MTA B (TCP/25)</text>
+
+  <!-- Step 1 -->
+  <rect x="58" y="140" width="600" height="44" rx="8" fill="#0f172a" stroke="#38bdf8"/>
+  <text x="74" y="160" class="mono-sm" fill="#38bdf8">A → B: EHLO mta-a.example.org   |   MAIL FROM:&lt;ops@example.org&gt;</text>
+  <text x="74" y="176" class="mono-sm" fill="#6ee7b7">B → A: 250 OK (отправитель конверта принят)</text>
+
+  <!-- Step 2: RCPT TO per recipient -->
+  <rect x="58" y="198" width="600" height="132" rx="8" fill="#0f172a" stroke="#fbbf24" stroke-width="1.3"/>
+  <text x="74" y="220" class="label" fill="#fde68a">Этап конверта: поадресная проверка RCPT TO (независимо для каждого!)</text>
+
+  <rect x="74" y="232" width="180" height="82" rx="6" fill="#064e3b" stroke="#34d399"/>
+  <text x="86" y="252" class="mono-sm" fill="#6ee7b7">RCPT TO: A</text>
+  <text x="86" y="272" class="label" fill="#f8fafc">Ответ: 250 OK</text>
+  <text x="86" y="292" class="muted">Принят к DATA</text>
+  <text x="86" y="306" class="muted">Повтор не нужен</text>
+
+  <rect x="268" y="232" width="180" height="82" rx="6" fill="#451a03" stroke="#fbbf24"/>
+  <text x="280" y="252" class="mono-sm" fill="#fde68a">RCPT TO: B</text>
+  <text x="280" y="272" class="label" fill="#f8fafc">Ответ: 450 Temp</text>
+  <text x="280" y="292" class="muted">Временный отказ</text>
+  <text x="280" y="306" class="muted">→ В очередь retry</text>
+
+  <rect x="462" y="232" width="180" height="82" rx="6" fill="#4c0519" stroke="#fb7185"/>
+  <text x="474" y="252" class="mono-sm" fill="#fda4af">RCPT TO: C</text>
+  <text x="474" y="272" class="label" fill="#f8fafc">Ответ: 550 Perm</text>
+  <text x="474" y="292" class="muted">Постоянный отказ</text>
+  <text x="474" y="306" class="muted">→ Bounce (DSN)</text>
+
+  <!-- Step 3: DATA -->
+  <rect x="58" y="346" width="600" height="68" rx="8" fill="#0f172a" stroke="#a78bfa"/>
+  <text x="74" y="368" class="mono-sm" fill="#c4b5fd">A → B: DATA</text>
+  <text x="74" y="386" class="mono-sm" fill="#e2e8f0">B → A: 354 Start mail input; end with &lt;CRLF&gt;.&lt;CRLF&gt;</text>
+  <text x="74" y="404" class="muted">Код 354 — это только приглашение к передаче тела, а НЕ подтверждение доставки!</text>
+
+  <!-- Step 4: Body + Final Dot -->
+  <rect x="58" y="430" width="600" height="52" rx="8" fill="#0f172a" stroke="#64748b"/>
+  <text x="74" y="452" class="mono-sm">A → B: Заголовки + тело письма + завершающая строка "." (CRLF.CRLF)</text>
+  <text x="74" y="470" class="muted">После точки сервер B выносит финальный вердикт по всей переданной порции DATA</text>
+
+  <!-- Step 5: Two outcomes after final dot -->
+  <rect x="58" y="498" width="290" height="110" rx="8" fill="#064e3b" stroke="#34d399"/>
+  <text x="72" y="520" class="label" fill="#6ee7b7">Вариант 1: ответ 250 после точки</text>
+  <text x="72" y="540" class="text">• A принят сервером B (следующий hop)</text>
+  <text x="72" y="558" class="text">• Для B планируется повтор (был 450)</text>
+  <text x="72" y="576" class="text">• Для C повтор НЕ нужен (был 550)</text>
+  <text x="72" y="596" class="muted">Финальный 250 касается только A!</text>
+
+  <rect x="368" y="498" width="290" height="110" rx="8" fill="#451a03" stroke="#fbbf24"/>
+  <text x="382" y="520" class="label" fill="#fde68a">Вариант 2: ответ 451 после точки</text>
+  <text x="382" y="540" class="text">• 250 на конверте и 354 не считаются</text>
+  <text x="382" y="558" class="text">• Попытка временно не удалась (4xx)</text>
+  <text x="382" y="576" class="text">• MTA A оставляет письмо в очереди</text>
+  <text x="382" y="596" class="muted">Повтор по политике очереди (backoff)</text>
+
+  <!-- Right panel: Code Classes & Roles -->
+  <rect x="702" y="94" width="362" height="252" rx="12" fill="#1e293b" stroke="#334155"/>
+  <text x="722" y="122" class="sec-title">Матрица классов кодов SMTP</text>
+
+  <rect x="722" y="138" width="322" height="56" rx="8" fill="#064e3b" stroke="#34d399"/>
+  <text x="736" y="158" class="label" fill="#6ee7b7">2xx (250) — Успех (Positive Completion)</text>
+  <text x="736" y="178" class="text">Команда выполнена; после DATA = принято</text>
+
+  <rect x="722" y="204" width="322" height="56" rx="8" fill="#451a03" stroke="#fbbf24"/>
+  <text x="736" y="224" class="label" fill="#fde68a">4xx (421, 450, 451) — Временный отказ</text>
+  <text x="736" y="244" class="text">Оставить в очереди и повторить позже</text>
+
+  <rect x="722" y="270" width="322" height="56" rx="8" fill="#4c0519" stroke="#fb7185"/>
+  <text x="736" y="290" class="label" fill="#fda4af">5xx (550, 554) — Постоянный отказ</text>
+  <text x="736" y="310" class="text">Не повторять; вернуть отправителю DSN</text>
+
+  <!-- Right bottom: Ports & Security -->
+  <rect x="702" y="366" width="362" height="262" rx="12" fill="#1e293b" stroke="#38bdf8" stroke-width="1.3"/>
+  <text x="722" y="394" class="sec-title" fill="#38bdf8">Порты SMTP и роли в доставке</text>
+  <text x="722" y="422" class="mono-sm" fill="#7dd3fc">TCP/25  — MTA ↔ MTA (Relay по MX)</text>
+  <text x="722" y="440" class="muted">Межсерверная доставка + Opportunistic STARTTLS</text>
+  <text x="722" y="468" class="mono-sm" fill="#6ee7b7">TCP/587 — Submission (MUA → MSA)</text>
+  <text x="722" y="486" class="muted">Приём от клиентов (AUTH + TLS по политике, RFC 6409)</text>
+  <text x="722" y="514" class="mono-sm" fill="#c4b5fd">TCP/465 — Implicit TLS Submission</text>
+  <text x="722" y="532" class="muted">Клиентская отправка поверх готового TLS (RFC 8314)</text>
+  <rect x="722" y="552" width="322" height="58" rx="8" fill="#0f172a" stroke="#334155"/>
+  <text x="734" y="572" class="label">Почему 4xx не равны 5xx?</text>
+  <text x="734" y="592" class="muted">Greylisting, переполненный диск, rate-limit</text>
+  <text x="734" y="605" class="muted">проходят сами — повторы спасают письмо.</text>
+</svg>

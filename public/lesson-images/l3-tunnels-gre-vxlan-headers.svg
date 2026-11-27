@@ -1,0 +1,103 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 660" width="1100" height="660">
+  <defs>
+    <style>
+      .title { font-family: 'DejaVu Sans', Arial, sans-serif; font-size: 21px; font-weight: 700; fill: #f8fafc; }
+      .subtitle { font-family: 'DejaVu Sans', Arial, sans-serif; font-size: 12.5px; font-weight: 400; fill: #94a3b8; }
+      .sec-title { font-family: 'DejaVu Sans', Arial, sans-serif; font-size: 13.5px; font-weight: 700; fill: #e2e8f0; }
+      .label { font-family: 'DejaVu Sans', Arial, sans-serif; font-size: 12.5px; font-weight: 700; fill: #f1f5f9; }
+      .text { font-family: 'DejaVu Sans', Arial, sans-serif; font-size: 11.5px; font-weight: 400; fill: #cbd5e1; }
+      .muted { font-family: 'DejaVu Sans', Arial, sans-serif; font-size: 11px; font-weight: 400; fill: #94a3b8; }
+      .mono { font-family: 'DejaVu Sans Mono', monospace; font-size: 11.5px; font-weight: 700; fill: #e2e8f0; }
+      .mono-sm { font-family: 'DejaVu Sans Mono', monospace; font-size: 10.5px; font-weight: 400; fill: #cbd5e1; }
+      .badge { font-family: 'DejaVu Sans', Arial, sans-serif; font-size: 11px; font-weight: 700; }
+    </style>
+    <marker id="arr-cyan" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8"/>
+    </marker>
+    <marker id="arr-emerald" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#34d399"/>
+    </marker>
+    <marker id="arr-amber" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#fbbf24"/>
+    </marker>
+    <marker id="arr-rose" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#fb7185"/>
+    </marker>
+    <marker id="arr-violet" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#a78bfa"/>
+    </marker>
+  </defs>
+  <rect width="1100" height="660" rx="16" fill="#0f172a"/>
+  <text x="36" y="44" class="title">Сетевые туннели и оверлеи: GRE (L3-over-L3) и VXLAN (L2-over-L3)</text>
+  <text x="36" y="66" class="subtitle">Инкапсуляция добавляет внешние заголовки (overhead), а VNI разделяет перекрывающиеся сети арендаторов</text>
+
+  <!-- TOP CARD: GRE -->
+  <rect x="36" y="92" width="1028" height="234" rx="12" fill="#1e293b" stroke="#38bdf8" stroke-width="1.5"/>
+  <text x="58" y="122" class="sec-title" fill="#38bdf8">1. GRE (RFC 2784, IP Protocol 47): перенос IPv4-пакета через путь с MTU 1500 байт</text>
+  <text x="58" y="144" class="text">Без опциональных полей (checksum/key/sequence) накладные расходы GRE составляют ровно 24 байта.</text>
+
+  <!-- GRE Header Stack -->
+  <rect x="58" y="164" width="176" height="64" rx="8" fill="#0c4a6e" stroke="#38bdf8"/>
+  <text x="146" y="188" text-anchor="middle" class="label">Outer IPv4 Header</text>
+  <text x="146" y="206" text-anchor="middle" class="mono-sm">20 байт (Proto=47)</text>
+  <text x="146" y="220" text-anchor="middle" class="muted">Underlay Src/Dst</text>
+
+  <rect x="242" y="164" width="132" height="64" rx="8" fill="#451a03" stroke="#fbbf24"/>
+  <text x="308" y="188" text-anchor="middle" class="label" fill="#fde68a">GRE Header</text>
+  <text x="308" y="206" text-anchor="middle" class="mono-sm">4 байта</text>
+  <text x="308" y="220" text-anchor="middle" class="muted">Type 0x0800</text>
+
+  <rect x="382" y="164" width="656" height="64" rx="8" fill="#064e3b" stroke="#34d399"/>
+  <text x="710" y="188" text-anchor="middle" class="label" fill="#6ee7b7">Внутренний IPv4-пакет (Inner IP + TCP/UDP + Payload)</text>
+  <text x="710" y="208" text-anchor="middle" class="mono">Максимум 1476 байт, чтобы внешний пакет не превысил 1500 байт</text>
+
+  <!-- Formula Bar -->
+  <rect x="58" y="246" width="980" height="58" rx="8" fill="#0f172a" stroke="#334155"/>
+  <text x="76" y="270" class="mono" fill="#fde68a">Расчёт Tunnel MTU:   1500 (Path MTU) − 20 (Outer IPv4) − 4 (GRE) = 1476 байт</text>
+  <text x="76" y="292" class="text">Если оставить на GRE-интерфейсе 1500 байт, внешний пакет вырастет до 1524 байт → фрагментация или сброс при DF=1.</text>
+
+  <!-- BOTTOM CARD: VXLAN -->
+  <rect x="36" y="348" width="1028" height="284" rx="12" fill="#1e293b" stroke="#a78bfa" stroke-width="1.5"/>
+  <text x="58" y="378" class="sec-title" fill="#c4b5fd">2. VXLAN (RFC 7348, UDP/4789): L2-оверлей поверх L3 и изоляция арендаторов по VNI</text>
+  <text x="58" y="400" class="text">VTEP упаковывает целый внутренний Ethernet-кадр в UDP-пакет (+50 байт overhead при IPv4 без внутреннего 802.1Q).</text>
+
+  <!-- VXLAN Header Stack -->
+  <rect x="58" y="418" width="136" height="56" rx="7" fill="#0f172a" stroke="#475569"/>
+  <text x="126" y="440" text-anchor="middle" class="mono-sm">Outer IPv4</text>
+  <text x="126" y="458" text-anchor="middle" class="muted">20 B (VTEP IP)</text>
+
+  <rect x="200" y="418" width="128" height="56" rx="7" fill="#0c4a6e" stroke="#38bdf8"/>
+  <text x="264" y="440" text-anchor="middle" class="mono-sm">Outer UDP</text>
+  <text x="264" y="458" text-anchor="middle" class="muted">8 B (Dst 4789)</text>
+
+  <rect x="334" y="418" width="186" height="56" rx="7" fill="#3b0764" stroke="#a78bfa" stroke-width="1.8"/>
+  <text x="427" y="440" text-anchor="middle" class="label" fill="#e9d5ff">VXLAN Header (8 B)</text>
+  <text x="427" y="458" text-anchor="middle" class="mono-sm" fill="#fde68a">VNI = 24 бита (16 млн)</text>
+
+  <rect x="526" y="418" width="160" height="56" rx="7" fill="#064e3b" stroke="#34d399"/>
+  <text x="606" y="440" text-anchor="middle" class="mono-sm">Inner Ethernet</text>
+  <text x="606" y="458" text-anchor="middle" class="muted">14 B (MAC арендатора)</text>
+
+  <rect x="692" y="418" width="346" height="56" rx="7" fill="#064e3b" stroke="#34d399"/>
+  <text x="865" y="440" text-anchor="middle" class="mono-sm">Inner IP + Payload арендатора</text>
+  <text x="865" y="458" text-anchor="middle" class="muted">Может перекрываться у разных клиентов!</text>
+
+  <!-- Multi-tenant VTEP Isolation Illustration -->
+  <rect x="58" y="492" width="300" height="118" rx="8" fill="#0f172a" stroke="#a78bfa"/>
+  <text x="74" y="514" class="label" fill="#c4b5fd">Принимающий VTEP (один IP)</text>
+  <text x="74" y="534" class="text">Outer IP и UDP/4789 одинаковы для</text>
+  <text x="74" y="552" class="text">обоих потоков; внутренние MAC и IP</text>
+  <text x="74" y="570" class="text">тоже могут полностью совпадать.</text>
+  <text x="74" y="594" class="mono-sm" fill="#fde68a">Ключ выбора сегмента → только VNI!</text>
+
+  <path d="M 358 532 L 424 532" stroke="#38bdf8" stroke-width="2.2" marker-end="url(#arr-cyan)"/>
+  <path d="M 358 578 L 424 578" stroke="#34d399" stroke-width="2.2" marker-end="url(#arr-emerald)"/>
+
+  <rect x="430" y="496" width="608" height="50" rx="8" fill="#0c4a6e" stroke="#38bdf8"/>
+  <text x="446" y="518" class="mono-sm" fill="#f8fafc">VNI 10010 → Виртуальный L2-сегмент Арендатора A</text>
+  <text x="446" y="536" class="muted">Подсеть 10.10.0.0/24, MAC 00:50:56:aa:00:01 (изолирована)</text>
+
+  <rect x="430" y="558" width="608" height="50" rx="8" fill="#064e3b" stroke="#34d399"/>
+  <text x="446" y="580" class="mono-sm" fill="#f8fafc">VNI 20020 → Виртуальный L2-сегмент Арендатора B</text>
+  <text x="446" y="598" class="muted">Та же подсеть 10.10.0.0/24 и тот же MAC — конфликта нет</text>
+</svg>

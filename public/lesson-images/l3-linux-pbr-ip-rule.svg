@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1040 580" width="1040" height="580">
+  <defs>
+    <style>
+      .title { font-family: 'DejaVu Sans', Arial, sans-serif; font-size: 20px; font-weight: 700; fill: #f8fafc; }
+      .sub { font-family: 'DejaVu Sans', Arial, sans-serif; font-size: 12.5px; font-weight: 400; fill: #94a3b8; }
+      .sec { font-family: 'DejaVu Sans', Arial, sans-serif; font-size: 13.5px; font-weight: 700; fill: #e2e8f0; }
+      .lbl { font-family: 'DejaVu Sans', Arial, sans-serif; font-size: 12.5px; font-weight: 700; fill: #f1f5f9; }
+      .txt { font-family: 'DejaVu Sans', Arial, sans-serif; font-size: 11.5px; font-weight: 400; fill: #cbd5e1; }
+      .mut { font-family: 'DejaVu Sans', Arial, sans-serif; font-size: 11px; font-weight: 400; fill: #94a3b8; }
+      .mono { font-family: 'DejaVu Sans Mono', monospace; font-size: 11.5px; font-weight: 700; fill: #e2e8f0; }
+      .ms { font-family: 'DejaVu Sans Mono', monospace; font-size: 10.5px; font-weight: 400; fill: #cbd5e1; }
+    </style>
+    <marker id="ac" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8"/>
+    </marker>
+    <marker id="ae" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#34d399"/>
+    </marker>
+    <marker id="aa" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#fbbf24"/>
+    </marker>
+  </defs>
+  <rect width="1040" height="580" rx="16" fill="#0f172a"/>
+  <text x="32" y="42" class="title">Policy-Based Routing (PBR) в Linux: приоритет ip rule и ip route get</text>
+  <text x="32" y="64" class="sub">Сначала приоритет правила, затем поиск маршрута в таблице</text>
+
+  <!-- Left: Packet & ip rule chain -->
+  <rect x="32" y="88" width="520" height="460" rx="12" fill="#1e293b" stroke="#38bdf8" stroke-width="1.4"/>
+  <text x="52" y="116" class="sec" fill="#38bdf8">Пошаговый поиск: 192.0.2.10 → 203.0.113.7</text>
+
+  <rect x="52" y="134" width="480" height="62" rx="8" fill="#0f172a" stroke="#64748b"/>
+  <text x="68" y="156" class="mono">0:   from all lookup local</text>
+  <text x="68" y="178" class="mut">Назначения 203.0.113.7 в таблице local нет → идём к следующему правилу</text>
+
+  <line x1="292" y1="196" x2="292" y2="216" stroke="#38bdf8" stroke-width="2" marker-end="url(#ac)"/>
+
+  <rect x="52" y="220" width="480" height="82" rx="8" fill="#064e3b" stroke="#34d399" stroke-width="2"/>
+  <text x="68" y="244" class="mono" fill="#6ee7b7">100: from 192.0.2.10 lookup 100</text>
+  <text x="68" y="266" class="txt">В таблице 100 есть маршрут: default dev eth1</text>
+  <text x="68" y="286" class="lbl" fill="#6ee7b7">Решение ядра: отправить через eth1! Ниже поиск НЕ идёт.</text>
+
+  <rect x="52" y="320" width="480" height="66" rx="8" fill="#0f172a" stroke="#475569" stroke-dasharray="5 4"/>
+  <text x="68" y="344" class="ms">200: from 192.0.2.10 lookup 200  (203.0.113.7/32 dev eth2)</text>
+  <text x="68" y="366" class="mut">Недостижимо для этого пакета — даже несмотря на более длинный /32!</text>
+
+  <rect x="52" y="400" width="480" height="62" rx="8" fill="#0f172a" stroke="#475569" stroke-dasharray="5 4"/>
+  <text x="68" y="424" class="ms">32766: from all lookup main      (203.0.113.0/24 dev eth0)</text>
+  <text x="68" y="446" class="mut">Недостижимо — таблица 100 уже дала совпадение по default.</text>
+
+  <text x="52" y="492" class="lbl" fill="#fde68a">Главное правило Linux RPDB:</text>
+  <text x="52" y="512" class="txt">Longest Prefix Match работает ВНУТРИ одной таблицы, а не между разными</text>
+  <text x="52" y="529" class="txt">таблицами! Приоритет ip rule (100 &lt; 200 &lt; 32766) всегда важнее длины маски.</text>
+
+  <!-- Right: Diagnostics ip route get -->
+  <rect x="572" y="88" width="436" height="460" rx="12" fill="#1e293b" stroke="#fbbf24" stroke-width="1.4"/>
+  <text x="592" y="116" class="sec" fill="#fde68a">Диагностика без изменения настроек</text>
+  <text x="592" y="140" class="txt">На хосте 2 внешних интерфейса; приложение шлёт</text>
+  <text x="592" y="158" class="txt">от 192.0.2.10 к 198.51.100.20.</text>
+
+  <rect x="592" y="178" width="396" height="86" rx="8" fill="#064e3b" stroke="#34d399"/>
+  <text x="606" y="200" class="lbl" fill="#6ee7b7">[OK] Точный запрос решения ядра:</text>
+  <text x="606" y="224" class="mono">ip route get 198.51.100.20 from 192.0.2.10</text>
+  <text x="606" y="248" class="mut">Прогоняет реальный RPDB (ip rule + таблицы) для пары</text>
+
+  <rect x="592" y="280" width="396" height="92" rx="8" fill="#4c0519" stroke="#fb7185"/>
+  <text x="606" y="302" class="lbl" fill="#fda4af">[NO] Типовые ошибки диагностики:</text>
+  <text x="606" y="324" class="txt">• Поменять местами dst и from (другой запрос)</text>
+  <text x="606" y="344" class="txt">• Смотреть только ip rule show (не видно итоговый маршрут)</text>
+  <text x="606" y="362" class="txt">• Смотреть только ip route show (показывает лишь main)</text>
+
+  <rect x="592" y="390" width="396" height="138" rx="8" fill="#0f172a" stroke="#334155"/>
+  <text x="606" y="414" class="lbl" fill="#7dd3fc">Что ещё учитывать при PBR в Linux:</text>
+  <text x="606" y="438" class="txt">• Если таблица 100 НЕ содержит маршрута к цели,</text>
+  <text x="606" y="456" class="txt">  ядро проверяет следующее подходящее правило.</text>
+  <text x="606" y="480" class="txt">• Для асимметричных интерфейсов проверяй rp_filter</text>
+  <text x="606" y="498" class="txt">  (strict mode=1 может отбрасывать ответные пакеты).</text>
+  <text x="606" y="518" class="mut">Команда ip route get ничего не меняет в конфиге.</text>
+</svg>

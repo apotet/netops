@@ -73,6 +73,8 @@ assert(findById([{ id: 'x' }], 'z') === null, 'missing id');
 
 await import('./mixed-exam.test.mjs');
 await import('./beginner-exam.test.mjs');
+await import('./base-photo-plan.test.mjs');
+await import('./copper-photo-retirement.test.mjs');
 await import('./learning-level-exam.test.mjs');
 await import('./progress.test.mjs');
 await import('./review.test.mjs');

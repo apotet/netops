@@ -173,3 +173,46 @@ assert.equal(hasDurableAnswerReceipts(baseStorage, trialCompleted), true);
 assert.equal(reconcileLastReview(baseStorage, trialCompleted).attemptId, completed.attemptId,
   'replayed older trial must not replace a newer valid review');
 console.log('PASS: rejected slot unchanged, durable replay repairs stats and review, concurrent receipts survive quota and trial replay');
+
+// Recent mirror photo changes must compose with both durable production slots.
+const retiredPhoto = JSON.parse(readFileSync('src/data/retiredPvcPhotoQuestion.json', 'utf8'));
+const previousPhotos = ['previousCopperUtpPhotoQuestion', 'previousOpticalInspectionQuestion']
+  .map(name => JSON.parse(readFileSync(`src/data/${name}.json`, 'utf8')));
+const photoStorage = new Map();
+const photoStorageApi = {
+  getItem: key => photoStorage.get(key) ?? null,
+  setItem: (key, value) => photoStorage.set(key, value),
+  removeItem: key => photoStorage.delete(key),
+};
+const photoStore = createProgressStore(ALL_QUESTIONS, () => photoStorageApi, () => now, [retiredPhoto]);
+const photoEpoch = photoStore.load().epoch;
+const currentPhotos = previousPhotos.map(old => ALL_QUESTIONS.find(q => q.id === old.id));
+assert.ok(currentPhotos.every(Boolean));
+assert.ok(!ALL_QUESTIONS.some(q => q.id === retiredPhoto.id), 'retirement must never return to the active bank');
+const legacyPhotos = [retiredPhoto, ...previousPhotos.map((old, i) => ({ ...currentPhotos[i], ...old }))];
+const n5PhotoData = prepareAttemptQuestions(legacyPhotos, () => 0.5);
+const n5Photo = { ...sample('n5-photo-before-promotion', n5PhotoData), progressEpoch: photoEpoch,
+  userAnswers: Object.fromEntries(n5PhotoData.questions.map(q => [q.id, q.correct])),
+  submittedQuestions: Object.fromEntries(n5PhotoData.questions.map(q => [q.id, true])),
+};
+const currentPhotoData = prepareAttemptQuestions(currentPhotos, () => 0.5);
+const legacySlotPhoto = { ...sample('legacy-current-photo', currentPhotoData), progressEpoch: photoEpoch };
+writeAttemptSlot(photoStorageApi, N5_ACTIVE_ATTEMPT_KEY, null, JSON.stringify(n5Photo));
+writeAttemptSlot(photoStorageApi, LEGACY_ACTIVE_ATTEMPT_KEY, null, JSON.stringify(legacySlotPhoto));
+const discoverPhotos = () => readSavedAttempts(photoStorageApi, [], ALL_QUESTIONS, photoEpoch, now);
+const detected = discoverPhotos();
+assert.deepEqual(detected.attempts.map(x => x.origin), [N5_ACTIVE_ATTEMPT_KEY, LEGACY_ACTIVE_ATTEMPT_KEY]);
+assert.deepEqual(detected.attempts[0].session.questions, n5Photo.questions, 'saved wording, photo and slots stay exact');
+assert.deepEqual(detected.attempts[1].session.questions, legacySlotPhoto.questions);
+recordConfirmedAnswers(detected.attempts[0].session, photoStore.recordDurably);
+recordConfirmedAnswers(detected.attempts[0].session, photoStore.recordDurably);
+assert.equal(hasDurableAnswerReceipts(photoStorageApi, n5Photo), true);
+assert.equal(photoStore.load().questions[retiredPhoto.id].seen, 1);
+assert.equal(photoStore.load().questions[retiredPhoto.id].correct, 1);
+assert.ok(!photoStore.mistakes().some(q => q.id === retiredPhoto.id));
+const corruptPhoto = structuredClone(n5Photo);
+corruptPhoto.questions[0].image = 'assets/photos/invalid.webp';
+writeAttemptSlot(photoStorageApi, N5_ACTIVE_ATTEMPT_KEY, JSON.stringify(n5Photo), JSON.stringify(corruptPhoto));
+assert.deepEqual(discoverPhotos().unreadable, [N5_ACTIVE_ATTEMPT_KEY]);
+assert.equal(photoStorageApi.getItem(LEGACY_ACTIVE_ATTEMPT_KEY), JSON.stringify(legacySlotPhoto));
+console.log('PASS: mirror photo history still restores both production slots; retired receipts are durable, replay-safe and excluded from new attempts');

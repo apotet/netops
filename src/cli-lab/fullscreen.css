@@ -226,3 +226,14 @@
     min-height: 0 !important;
   }
 }
+
+/* Isolated UX v2 fullscreen topology workspace (never alters classic .cli-fullscreen-topology). */
+.cli-fullscreen-side.cli-fullscreen-topology-v2:not([hidden]) {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}

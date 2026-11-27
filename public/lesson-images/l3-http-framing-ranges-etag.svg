@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 460 530" width="460" height="530" role="img" aria-labelledby="title">
+  <title id="title">HTTP/1.1: три разных решения</title>
+  <rect width="460" height="530" rx="16" fill="#0f172a"/>
+  <text x="20" y="38" fill="#f8fafc" font-family="system-ui,sans-serif" font-weight="700" font-size="19">HTTP/1.1: три разных решения</text>
+  <rect x="20" y="58" width="420" height="136" rx="12" fill="#1e293b" stroke="#7dd3fc"/>
+  <text x="37" y="87" fill="#7dd3fc" font-family="system-ui,sans-serif" font-weight="700" font-size="17">1. Граница chunked-ответа</text>
+  <text x="37" y="113" fill="#e2e8f0" font-family="system-ui,sans-serif" font-size="15">0 + CRLF → конец порций</text>
+  <text x="37" y="134" fill="#e2e8f0" font-family="system-ui,sans-serif" font-size="15">X-Trace: ok + CRLF → поле</text>
+  <text x="37" y="155" fill="#e2e8f0" font-family="monospace" font-size="15">CRLF → конец ответа</text>
+  <text x="37" y="176" fill="#e2e8f0" font-family="system-ui,sans-serif" font-size="15">Закрытие TCP не требуется.</text>
+  <rect x="20" y="211" width="420" height="136" rx="12" fill="#1e293b" stroke="#6ee7b7"/>
+  <text x="37" y="240" fill="#6ee7b7" font-family="system-ui,sans-serif" font-weight="700" font-size="17">2. Диапазон ответа 206</text>
+  <text x="37" y="266" fill="#e2e8f0" font-family="monospace" font-size="15">Content-Range: bytes 2000-2999/6000</text>
+  <text x="37" y="287" fill="#e2e8f0" font-family="system-ui,sans-serif" font-size="15">0–1999 уже есть; 2000–2999 записываем.</text>
+  <text x="37" y="308" fill="#e2e8f0" font-family="system-ui,sans-serif" font-size="15">3000–5999 ещё нужны.</text>
+  <text x="37" y="329" fill="#e2e8f0" font-family="system-ui,sans-serif" font-size="15">Проверь совместимость версий.</text>
+  <rect x="20" y="364" width="420" height="136" rx="12" fill="#1e293b" stroke="#fde68a"/>
+  <text x="37" y="393" fill="#fde68a" font-family="system-ui,sans-serif" font-weight="700" font-size="17">3. Конфликт If-Match</text>
+  <text x="37" y="419" fill="#e2e8f0" font-family="monospace" font-size="15">If-Match: "v7" → текущая метка "v8".</text>
+  <text x="37" y="440" fill="#e2e8f0" font-family="system-ui,sans-serif" font-size="15">412: запись не выполнена.</text>
+  <text x="37" y="461" fill="#e2e8f0" font-family="system-ui,sans-serif" font-size="15">Прочитать новую версию и согласовать правки.</text>
+  <text x="37" y="482" fill="#e2e8f0" font-family="system-ui,sans-serif" font-size="15">Повторить PUT с её сильным ETag.</text>
+</svg>

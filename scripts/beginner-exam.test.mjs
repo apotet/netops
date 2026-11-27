@@ -1,3 +1,4 @@
+import { bankBeforeCopperPhotoChanges } from './copper-photo-history-fixtures.mjs';
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
@@ -25,7 +26,7 @@ const explanationQuality = before.explanationQuality228;
 // Reconstruct only those labels for the older guards; the L2 contract independently
 // proves that no stem, key, order, classification or other bank field changed.
 const { PREVIOUS_IN_DEPTH_QUESTIONS } = await bundleEntry('src/data/inDepth/previousQuestions.ts', 'beginner-l2-history.mjs');
-const bankAtExplanationAudit = ALL_QUESTIONS.map(q => PREVIOUS_IN_DEPTH_QUESTIONS[q.id]
+const bankAtExplanationAudit = bankBeforeCopperPhotoChanges(ALL_QUESTIONS).map(q => PREVIOUS_IN_DEPTH_QUESTIONS[q.id]
   ? { ...q, answers: PREVIOUS_IN_DEPTH_QUESTIONS[q.id].answers } : q);
 reportFingerprint(hash(bankAtExplanationAudit), explanationQuality.bankSHA256, 'bank includes only the approved explanation edits');
 const priorBank = bankAtExplanationAudit.map(q => Object.hasOwn(explanationQuality.priorExplanations, q.id)
@@ -35,7 +36,7 @@ const bankBeforeExpert = priorBank.filter(q => !q.id.startsWith('expert177-'));
 reportFingerprint(hash(bankBeforeExpert), before.expertPack225.bankSHA256, 'the prior staging bank is intact');
 reportFingerprint(hash(bankBeforeExpert.filter(q => !q.id.startsWith('diag177-') && !q.id.startsWith('mon-') && !q.id.startsWith('wifi-') && !q.id.startsWith('exp225-'))), quality.bankSHA256,
   'all questions from the previous revision keep their content and order');
-assert.equal(ALL_QUESTIONS.length, 862);
+assert.equal(ALL_QUESTIONS.length, 861);
 
 function verify(chosen, pool, count) {
   const unique = [...new Map(pool.filter(q => q.difficulty === 'beginner').map(q => [q.id, q])).values()];
@@ -49,9 +50,9 @@ function verify(chosen, pool, count) {
 }
 
 const base = getExamPool('mixed', 'beginner');
-assert.equal(base.length, combinedPack.beginnerPool);
-assert.equal(base.filter(isBeginnerPhoto).length, 68);
-assert.equal(new Set(base.map(family)).size, combinedPack.families);
+assert.equal(base.length, combinedPack.beginnerPool - 1);
+assert.equal(base.filter(isBeginnerPhoto).length, 67);
+assert.equal(new Set(base.map(family)).size, combinedPack.families - 1);
 let noPhoto = 0, repeatedFamily = 0, singlesWithPhoto = 0;
 const photoPositions = new Set();
 const mixedSnapshot = [], singleSnapshot = [];

@@ -1,7 +1,7 @@
 {
   "upstream": "https://github.com/apotet/my-gemini-mirror-site",
-  "source_sha": "ff3fe73696aabbf53caf57c8a9aaf2b270bf48f8",
-  "previous_production_sha": "dc205a85d76e90d35fdcd20c5a1f11f48463ca2e",
+  "source_sha": "54af4f9b4742e7041f0364ef2bb8c9ea2aec0a48",
+  "previous_production_sha": "37bd44d20a0f9971c42fc73b6980361fae4ab0b4",
   "files": [
     {
       "path": ".gitignore",
@@ -56,7 +56,8 @@
     {
       "path": "package.json",
       "sha": "23cce7dafd37afd19f46c39b038b1ae95a147dfd",
-      "origin": "production"
+      "origin": "adapted",
+      "upstream_sha": "b4f39b7711625a37ce18bb2aeb9ea8c7993b7023"
     },
     {
       "path": "public/lesson-images/copper-categories.webp",
@@ -94,8 +95,18 @@
       "origin": "staging"
     },
     {
+      "path": "public/lesson-images/l3-http-framing-ranges-etag.svg",
+      "sha": "cab88fab3b56637caf66b4969b0fffd1951d3526",
+      "origin": "staging"
+    },
+    {
       "path": "public/lesson-images/l3-lacp-modes-hashing.svg",
       "sha": "38c5785a6ad14e5a5910c44fc80c314d91b68fbf",
+      "origin": "staging"
+    },
+    {
+      "path": "public/lesson-images/l3-linux-pbr-ip-rule.svg",
+      "sha": "76e8ab4ee194bfc44c9945453e4800df4c009031",
       "origin": "staging"
     },
     {
@@ -109,8 +120,48 @@
       "origin": "staging"
     },
     {
+      "path": "public/lesson-images/l3-port-isolation-pvlan.svg",
+      "sha": "1e6cbb9f05a4bf19c60f5d4b4e23306d8a1f9b94",
+      "origin": "staging"
+    },
+    {
+      "path": "public/lesson-images/l3-prp-dual-lan-rct.svg",
+      "sha": "0c7f486aab82b591cdf32d30adbcbf765edd4051",
+      "origin": "staging"
+    },
+    {
       "path": "public/lesson-images/l3-ptp-ieee1588-sync.svg",
       "sha": "b53c728ccc0c413ed4612bf37a68af4fbe78a090",
+      "origin": "staging"
+    },
+    {
+      "path": "public/lesson-images/l3-smtp-transaction-queues.svg",
+      "sha": "b71168df405456732158d73f7508f5179092936d",
+      "origin": "staging"
+    },
+    {
+      "path": "public/lesson-images/l3-ssh-forwarding-proxyjump.svg",
+      "sha": "32cccdb44fca3332cf5e34f8de3660cb65fd96ec",
+      "origin": "staging"
+    },
+    {
+      "path": "public/lesson-images/l3-tcp-wscale-keepalive.svg",
+      "sha": "70b648b1679c63de11308e4cc693f425e4c5afa4",
+      "origin": "staging"
+    },
+    {
+      "path": "public/lesson-images/l3-tls13-handshake-alpn.svg",
+      "sha": "aa86ceb14852903d9882b1b7342076a5dc128c39",
+      "origin": "staging"
+    },
+    {
+      "path": "public/lesson-images/l3-tunnels-gre-vxlan-headers.svg",
+      "sha": "5d8d038af2e285f398f0201c331d442459594e75",
+      "origin": "staging"
+    },
+    {
+      "path": "public/lesson-images/l3-wireshark-crc-delta.svg",
+      "sha": "1d70cb4980dd40ca1ad96cc11baa63ce0f1e6678",
       "origin": "staging"
     },
     {
@@ -190,8 +241,13 @@
       "upstream_sha": "b5ba1c228bd35ed788c55a24276e0436ff868583"
     },
     {
+      "path": "scripts/base-photo-plan.test.mjs",
+      "sha": "4123003c74f947519d4b9c39f480bc2520e63fee",
+      "origin": "staging"
+    },
+    {
       "path": "scripts/beginner-exam.test.mjs",
-      "sha": "afcfc300e70157c67321db4e1bcd00a78feb8d2e",
+      "sha": "630bbd018097e0dab637122cfb38e492c42a63d5",
       "origin": "staging"
     },
     {
@@ -217,12 +273,14 @@
     {
       "path": "scripts/cli-completion-status.test.mjs",
       "sha": "db3047736a92866a8a0dc9da5debd4eb77dda366",
-      "origin": "production"
+      "origin": "adapted",
+      "upstream_sha": "6048b265fc09306392473a5c5c2194f36be7df8a"
     },
     {
       "path": "scripts/cli-contextual-help.test.mjs",
       "sha": "0b3e9c21129959e86d48c3530784fdd7b721af73",
-      "origin": "production"
+      "origin": "adapted",
+      "upstream_sha": "bbbea807dfa1bfcb54847f87bdbcc95afd73a880"
     },
     {
       "path": "scripts/cli-diagnostic-hints.test.mjs",
@@ -247,7 +305,8 @@
     {
       "path": "scripts/cli-persistence.test.mjs",
       "sha": "ff0ae6851cb7c6e5552b963341245ca891dec4a2",
-      "origin": "production"
+      "origin": "adapted",
+      "upstream_sha": "2d9058fcac2949f02422b6ebfa5bd4cb33816ca2"
     },
     {
       "path": "scripts/cli-reference.test.mjs",
@@ -262,7 +321,8 @@
     {
       "path": "scripts/cli-show-interfaces.test.mjs",
       "sha": "37457ba558d4486a7f67d6d179759ac9838c5fed",
-      "origin": "production"
+      "origin": "adapted",
+      "upstream_sha": "3a62ebcd7504f842df6459398bae6b7f31d40981"
     },
     {
       "path": "scripts/cli-tab.test.mjs",
@@ -295,6 +355,16 @@
       "origin": "staging"
     },
     {
+      "path": "scripts/copper-photo-history-fixtures.mjs",
+      "sha": "96c0ea5cff1505b4a1252aae549bb6a9be783a54",
+      "origin": "staging"
+    },
+    {
+      "path": "scripts/copper-photo-retirement.test.mjs",
+      "sha": "bac5e1dd66ce1c30a61869b6ae5818a94d71b98e",
+      "origin": "staging"
+    },
+    {
       "path": "scripts/coverage-report.mjs",
       "sha": "cf9e64b8a82a9dad5eb2ff806baeeb4a34ed6c3c",
       "origin": "staging"
@@ -317,7 +387,8 @@
     {
       "path": "scripts/glossary-hover.test.mjs",
       "sha": "a7091a2428236cb8abe7f6bbc283ea768a602b4b",
-      "origin": "production"
+      "origin": "adapted",
+      "upstream_sha": "b3c9f2d7b4d7bdb52f30301862342a316ed44d6d"
     },
     {
       "path": "scripts/glossary.test.mjs",
@@ -346,9 +417,14 @@
     },
     {
       "path": "scripts/learning-level-exam.test.mjs",
-      "sha": "c1f40da0308912af80117af347d2ba4620c3a188",
+      "sha": "605ff0d78fa4f69d451374ec024182b8da7cb132",
       "origin": "adapted",
-      "upstream_sha": "f9aef289594c45a5c56cde7b4c429bdcd5066876"
+      "upstream_sha": "5f3f878ee52454980b12afd5cb223dfda10198f3"
+    },
+    {
+      "path": "scripts/lesson-section-links-entry.ts",
+      "sha": "e46dcd1f7ac0a3e4ed386eaffd686bd33af7ee5f",
+      "origin": "staging"
     },
     {
       "path": "scripts/load-bank.mjs",
@@ -362,9 +438,9 @@
     },
     {
       "path": "scripts/photo-review.test.mjs",
-      "sha": "580f27fcd998ec22b7fbbe2dff243b38cf1594ad",
+      "sha": "aa991e38592dbf0f5c7586660d6608d77a5b5698",
       "origin": "adapted",
-      "upstream_sha": "71f458d17c6edf2cfc29433284229131f2091a14"
+      "upstream_sha": "d1b8c166ea34abc7fc7b09a0d18ba5f5d166cf6e"
     },
     {
       "path": "scripts/poe-injectors-lesson.test.mjs",
@@ -394,8 +470,8 @@
     },
     {
       "path": "scripts/production-attempt-compat.test.mjs",
-      "sha": "ec20bbb9b050526893649d9019571d3c86077f7d",
-      "origin": "adapted"
+      "sha": "676b40c4504059cfa92d24442fa9ba510b216bba",
+      "origin": "production"
     },
     {
       "path": "scripts/progress-entry.ts",
@@ -409,7 +485,7 @@
     },
     {
       "path": "scripts/quiz-logic.test.mjs",
-      "sha": "81c16e8e852140b605ce2b8e033cdba0435d4080",
+      "sha": "2abb2a60ef190a7b1140ae5dbc2bc10ab7b1e8b6",
       "origin": "staging"
     },
     {
@@ -419,7 +495,7 @@
     },
     {
       "path": "scripts/review-material-fixtures.mjs",
-      "sha": "572247d94561433cd06bd5cb8a08ca388051319f",
+      "sha": "9111af3d4eb7d21e015728ef371476c49e760b58",
       "origin": "staging"
     },
     {
@@ -434,8 +510,9 @@
     },
     {
       "path": "scripts/shared-assets.test.mjs",
-      "sha": "a666bb680ee8d0510307d80e00529801a0330f1e",
-      "origin": "staging"
+      "sha": "0c5328675f03c974fc2a95a4821f18baded193d1",
+      "origin": "adapted",
+      "upstream_sha": "a666bb680ee8d0510307d80e00529801a0330f1e"
     },
     {
       "path": "scripts/stp-lesson-links.test.mjs",
@@ -472,9 +549,14 @@
     },
     {
       "path": "src/cli-lab/CliLabShell.tsx",
-      "sha": "8d2c76f670ea2b9ee2bc0cdbe20b956412a9a5e8",
+      "sha": "2f8f0ae9e916bfc3556cb079c0aec3f4fc68dfea",
       "origin": "adapted",
       "upstream_sha": "dca93ac1159454f4bab6ef0c020cc4b79af92113"
+    },
+    {
+      "path": "src/cli-lab/components/ExperimentalTopologyV2.tsx",
+      "sha": "a9fd1254f2676d02459e6fce0f59309930249e6b",
+      "origin": "staging"
     },
     {
       "path": "src/cli-lab/components/HostPingPanel.tsx",
@@ -484,6 +566,11 @@
     {
       "path": "src/cli-lab/components/TopologyPanel.tsx",
       "sha": "c16918431c4a8e7684d67ed1fb360be9edfa1adf",
+      "origin": "staging"
+    },
+    {
+      "path": "src/cli-lab/components/topologyLayout.ts",
+      "sha": "f0535f2da22d31e45275615a7b9b090b9e71cf9f",
       "origin": "staging"
     },
     {
@@ -558,9 +645,8 @@
     },
     {
       "path": "src/cli-lab/fullscreen.css",
-      "sha": "fc04a7e5415087dd5bb068282ddfa2f1a02ffe21",
-      "origin": "adapted",
-      "upstream_sha": "0331a30c4d68f3191ab694bdb60d5dc4cc2354fc"
+      "sha": "0331a30c4d68f3191ab694bdb60d5dc4cc2354fc",
+      "origin": "staging"
     },
     {
       "path": "src/cli-lab/hostPing.ts",
@@ -887,9 +973,8 @@
     },
     {
       "path": "src/components/VlanSimulator.tsx",
-      "sha": "6674e4d625700b8348472aacdcf8fe9cfe1aa8d4",
-      "origin": "adapted",
-      "upstream_sha": "68e160f8122bdb21555971ebadb26855834e3ca7"
+      "sha": "68e160f8122bdb21555971ebadb26855834e3ca7",
+      "origin": "staging"
     },
     {
       "path": "src/components/ZoomableImage.tsx",
@@ -903,12 +988,12 @@
     },
     {
       "path": "src/data/appliedL3SessionPro.ts",
-      "sha": "2bd88600eca1a827f96bd728975df32a2e87f92f",
+      "sha": "46adc07eacd28a580648b59ea699b76d6b6a8007",
       "origin": "staging"
     },
     {
       "path": "src/data/auditedQuestionExplanations.ts",
-      "sha": "001cc170b59cf76aa5e490b0ca4f0cca5fb70840",
+      "sha": "4c6bbba908b147349e1b4945a7a02e4b84ccce9c",
       "origin": "staging"
     },
     {
@@ -928,7 +1013,7 @@
     },
     {
       "path": "src/data/baseFoundationsBatch5.ts",
-      "sha": "116cd74572257c0ff189f5ae8a50799928f92bb2",
+      "sha": "413a430cf610f2d6e4ecc56422bde9300d76617e",
       "origin": "staging"
     },
     {
@@ -943,7 +1028,7 @@
     },
     {
       "path": "src/data/beginnerExam.ts",
-      "sha": "3d9434d7df3969e35b15c2a32f2163a29fbabb0d",
+      "sha": "af438d0b57efb1b23fb07440c374aeaf8a2f5ad6",
       "origin": "staging"
     },
     {
@@ -968,9 +1053,9 @@
     },
     {
       "path": "src/data/glossary.ts",
-      "sha": "0244b178a2f5044767ebcdde205ee260b5caf4c3",
+      "sha": "c230e4267385989071199d77032bf827c2d863a9",
       "origin": "adapted",
-      "upstream_sha": "f83889f6c6032f912088dd671d5b7b979a75cc74"
+      "upstream_sha": "71e44ab8b4393fce59b1c165396d335dab570501"
     },
     {
       "path": "src/data/inDepth/group1.ts",
@@ -1034,7 +1119,7 @@
     },
     {
       "path": "src/data/learningLevelExam.ts",
-      "sha": "dd0f1428419aeb2f4a10c9be8ec85edc9452ebe7",
+      "sha": "df9e7e42f1336b908dbd01d6ec6aa67b970b3e92",
       "origin": "staging"
     },
     {
@@ -1084,7 +1169,7 @@
     },
     {
       "path": "src/data/lessons/existingUnderstandingHeadings.ts",
-      "sha": "7fe2b4c1ae256db9d93f80c846e169b000f3c435",
+      "sha": "6b2fadff1c9dafd898d63b5ed0f97cd41f671710",
       "origin": "staging"
     },
     {
@@ -1094,12 +1179,12 @@
     },
     {
       "path": "src/data/lessons/index.ts",
-      "sha": "25cfa7213913f0ca9ded7a4b34e7b75acbb2be77",
+      "sha": "257dcdb24718de469e3a7c65098b068743f3dafd",
       "origin": "staging"
     },
     {
       "path": "src/data/lessons/l1-copper-cable.ts",
-      "sha": "bebdfe425cba0fe02b89d4f8930f836732c0681d",
+      "sha": "9cd09681100eb5d8dba959b162809cf44513c3e2",
       "origin": "staging"
     },
     {
@@ -1198,6 +1283,16 @@
       "origin": "staging"
     },
     {
+      "path": "src/data/lessons/l2-port-isolation-pvlan.ts",
+      "sha": "a7a6ef20240056496d5c9790bc559569b41f9283",
+      "origin": "staging"
+    },
+    {
+      "path": "src/data/lessons/l2-prp-redundancy.ts",
+      "sha": "89a653c16cdf51ff59c532c974ea32495c6982aa",
+      "origin": "staging"
+    },
+    {
       "path": "src/data/lessons/l2-ptp-time-sync.ts",
       "sha": "bf89b89ef082ceee630d0c87d683468372eb4cb3",
       "origin": "staging"
@@ -1239,7 +1334,7 @@
     },
     {
       "path": "src/data/lessons/l2-vlan.ts",
-      "sha": "8bd054835a7977670618b3adcd3d4b358fadd388",
+      "sha": "614c77e6c57e22d8f9e5729e96c0476d15f28703",
       "origin": "staging"
     },
     {
@@ -1275,6 +1370,11 @@
     {
       "path": "src/data/lessons/l3-ipv6.ts",
       "sha": "f1b37a6e6232eb7e3c5da97b76d44d2fcdd86847",
+      "origin": "staging"
+    },
+    {
+      "path": "src/data/lessons/l3-linux-policy-routing.ts",
+      "sha": "ab5525572063b5bdea827181a2b164f1c6eee76b",
       "origin": "staging"
     },
     {
@@ -1318,6 +1418,11 @@
       "origin": "staging"
     },
     {
+      "path": "src/data/lessons/l3-tunnels-gre-vxlan.ts",
+      "sha": "5875f344a78de61f746e2dfb71ac38c75141fe75",
+      "origin": "staging"
+    },
+    {
       "path": "src/data/lessons/l3-vrrp.ts",
       "sha": "aa484f5a3b178dfbe8dc1614b1eb75bee1b73e51",
       "origin": "staging"
@@ -1348,6 +1453,11 @@
       "origin": "staging"
     },
     {
+      "path": "src/data/lessons/l4-tcp-options-keepalive.ts",
+      "sha": "c79cc23015b2909238e0c382f8563a32cd0f6b27",
+      "origin": "staging"
+    },
+    {
       "path": "src/data/lessons/l4-tcp.ts",
       "sha": "88472f08258012511b3961fde6e8b91a0b093c97",
       "origin": "staging"
@@ -1369,7 +1479,12 @@
     },
     {
       "path": "src/data/lessons/l7-dns.ts",
-      "sha": "6875d405502dfdd78c13383d5f62725146004f06",
+      "sha": "9e1af4a44ac01b7f57d49cba53e03218865c1f4b",
+      "origin": "staging"
+    },
+    {
+      "path": "src/data/lessons/l7-http-framing-ranges-etag.ts",
+      "sha": "3443225e6b3f0dd9cb3450183f27014c2d726fcf",
       "origin": "staging"
     },
     {
@@ -1388,8 +1503,23 @@
       "origin": "staging"
     },
     {
+      "path": "src/data/lessons/l7-smtp-delivery-queues.ts",
+      "sha": "4a2bd4b3ab441f41db67e61b110e35083773a93a",
+      "origin": "staging"
+    },
+    {
+      "path": "src/data/lessons/l7-ssh-tunneling-proxyjump.ts",
+      "sha": "edc20c7e6a71ff36190bbead9768d9a1d2aafdc2",
+      "origin": "staging"
+    },
+    {
+      "path": "src/data/lessons/l7-tls-handshake-alpn.ts",
+      "sha": "4843cc179da198d22e80ff5759237b0ce693e82f",
+      "origin": "staging"
+    },
+    {
       "path": "src/data/lessons/l7-udp-transactions-tftp-ntp-snmp.ts",
-      "sha": "3358f8ed382a61274cb823d08fdd2f04611f0601",
+      "sha": "64b020d6297bc85138e6375163eb801d632b5407",
       "origin": "staging"
     },
     {
@@ -1453,6 +1583,11 @@
       "origin": "staging"
     },
     {
+      "path": "src/data/lessons/ts-wireshark-crc-diagnostics.ts",
+      "sha": "9af180b29de055caa8ab449dab4ad793fd41413e",
+      "origin": "staging"
+    },
+    {
       "path": "src/data/lessons/ts-zabbix-monitoring.ts",
       "sha": "6a932f2aa3c23293f3025dd2ef44234b311c1f50",
       "origin": "staging"
@@ -1488,14 +1623,24 @@
       "origin": "staging"
     },
     {
+      "path": "src/data/previousCopperUtpPhotoQuestion.json",
+      "sha": "86c6931a21965fea8aa4f2f1998d9b4c3032a538",
+      "origin": "staging"
+    },
+    {
       "path": "src/data/previousDiagnosticQuestions.ts",
       "sha": "c61044b8d3a1c5a7a12357e956e2c422fdc179b6",
       "origin": "staging"
     },
     {
+      "path": "src/data/previousOpticalInspectionQuestion.json",
+      "sha": "62c91a6fff227c521bd31f159fb9598aa8c57e41",
+      "origin": "staging"
+    },
+    {
       "path": "src/data/previousProductionQuestions.json",
       "sha": "4ded5a06b71eaefb80f116fbdc9b1c86fe215393",
-      "origin": "adapted"
+      "origin": "production"
     },
     {
       "path": "src/data/questionExplanations.ts",
@@ -1504,22 +1649,22 @@
     },
     {
       "path": "src/data/questionExplanationsApplied.ts",
-      "sha": "eadd44a97c299eb7c882f109f7c95f9af50846d8",
+      "sha": "d1b49d392905bc4f4500471525b3f17ddfa6a99e",
       "origin": "staging"
     },
     {
       "path": "src/data/questionLearningLevels.json",
-      "sha": "aa4682284e7803f1fbd4e930a6e154d71acc96af",
+      "sha": "fbe1d2dfac34ab00ec790fb4e02184615b6bede9",
       "origin": "staging"
     },
     {
       "path": "src/data/questions.json",
-      "sha": "4d29560f2d756617f83b628d59b06e54c9780f74",
+      "sha": "29edd14e2955be142c4f3f9121af7fbaba7c6a28",
       "origin": "staging"
     },
     {
       "path": "src/data/questionsData.ts",
-      "sha": "69f24fa8882347207061a864a806722ebfafc204",
+      "sha": "8607cb9880f9f6c25c56c87c8920940009958070",
       "origin": "staging"
     },
     {
@@ -1530,6 +1675,11 @@
     {
       "path": "src/data/questionsExtraDifficulty.ts",
       "sha": "0486179219891630c19278b44697c21e9b93b291",
+      "origin": "staging"
+    },
+    {
+      "path": "src/data/retiredPvcPhotoQuestion.json",
+      "sha": "394e1be7d9303c8964840c40a2d272293e64ec66",
       "origin": "staging"
     },
     {
@@ -1568,10 +1718,15 @@
       "origin": "staging"
     },
     {
+      "path": "src/utils/copperPhotoQuestionHistory.ts",
+      "sha": "dd954f61ab932605c0bfaf3331c46b9919d4baaa",
+      "origin": "staging"
+    },
+    {
       "path": "src/utils/examProgress.ts",
-      "sha": "de603b0e3eb3f087fc96e981954021a42cea5082",
+      "sha": "ec83dc6d5cea4ca571977fd6ca83aee6214ed6e8",
       "origin": "adapted",
-      "upstream_sha": "f442ffb723899fddbd46d4a8d3257bcd4f6ec72b"
+      "upstream_sha": "0774b359bd79e3b2fb4ddb9819db0a5b62d745ea"
     },
     {
       "path": "src/utils/examReview.ts",
@@ -1611,9 +1766,9 @@
     },
     {
       "path": "src/utils/userProgress.ts",
-      "sha": "8fae842041b78e8e3cebff0c707f5f0b2a2ec077",
+      "sha": "8a0aa152b71208e3a1d7e112bd5b962409216def",
       "origin": "adapted",
-      "upstream_sha": "5c5798daf9b54f8a318a054fbebeff6d12add153"
+      "upstream_sha": "883fe4f67bf5857c678c3a93cfbc0f3ad7421ef0"
     },
     {
       "path": "tsconfig.json",
@@ -1628,20 +1783,38 @@
     }
   ],
   "overrides": {
+    "package.json": {
+      "reason": "Retains production release support while aligning the published training application with the pinned mirror."
+    },
     "scripts/base-exam.test.mjs": {
       "reason": "Confirm legacy attempt metadata after restoration."
+    },
+    "scripts/cli-completion-status.test.mjs": {
+      "reason": "Retains production release support while aligning the published training application with the pinned mirror."
+    },
+    "scripts/cli-contextual-help.test.mjs": {
+      "reason": "Retains production release support while aligning the published training application with the pinned mirror."
+    },
+    "scripts/cli-persistence.test.mjs": {
+      "reason": "Retains production release support while aligning the published training application with the pinned mirror."
+    },
+    "scripts/cli-show-interfaces.test.mjs": {
+      "reason": "Retains production release support while aligning the published training application with the pinned mirror."
+    },
+    "scripts/glossary-hover.test.mjs": {
+      "reason": "Retains production release support while aligning the published training application with the pinned mirror."
     },
     "scripts/learning-level-exam.test.mjs": {
       "reason": "Normalize inherited blank-line whitespace; assertions unchanged."
     },
     "scripts/photo-review.test.mjs": {
-      "reason": "Verify trusted N4 photo history and rejected corrupted keys."
+      "reason": "Verifies unchanged mirror historical checks while retaining production compatibility."
     },
     "scripts/poe-summary-glossary.test.mjs": {
       "reason": "Require the explicitly approved injectors/splitters badge and preserve pending status for PoE screen reading and CLI diagnostics."
     },
-    "scripts/production-attempt-compat.test.mjs": {
-      "reason": "Test N4 question and review compatibility, N4/N5 rollback recovery, and successful/dropped slot transitions with safe replay of durable derivatives."
+    "scripts/shared-assets.test.mjs": {
+      "reason": "Retains production release support while aligning the published training application with the pinned mirror."
     },
     "scripts/stp-questions.test.mjs": {
       "reason": "Assert the published label for the existing explanation toggle."
@@ -1650,40 +1823,31 @@
       "reason": "Pin the updated CLI lesson catalog size while keeping all existing checks."
     },
     "src/App.tsx": {
-      "reason": "Remove experimental entry points, keep lesson and practice navigation."
+      "reason": "Production uses the same working routes without staging-only mock and deployment routes."
     },
     "src/cli-lab/CliLabShell.tsx": {
-      "reason": "Use the stable topology with the functional console, layers and scenarios."
-    },
-    "src/cli-lab/fullscreen.css": {
-      "reason": "Remove the experimental topology workspace rule."
+      "reason": "Production uses the same active V2 scene/shell behavior and keeps alternate/mock routes unavailable."
     },
     "src/components/EngineeringReview.tsx": {
-      "reason": "Render the saved explanation for verified pre-release questions."
+      "reason": "Resolves historical production question text and keys without changing current-bank display."
     },
     "src/components/ExamView.tsx": {
-      "reason": "Keep independent N4 and N5 attempts, commit before updating the exam or derivatives, and repair accepted progress and review from saved slots."
+      "reason": "Preserves existing production storage namespace, atomic attempt replacement, archive and repair semantics."
     },
     "src/components/Navbar.tsx": {
-      "reason": "Remove experimental navigation on desktop and mobile."
-    },
-    "src/components/VlanSimulator.tsx": {
-      "reason": "Label the published VLAN simulator as practice."
+      "reason": "Production hides the staging-only mock navigation."
     },
     "src/data/glossary.ts": {
-      "reason": "Define 25 missing lesson tags so their cards open in the transferred lessons."
-    },
-    "src/data/previousProductionQuestions.json": {
-      "reason": "Trusted historical questions generated from the N4 production bank."
+      "reason": "Keeps the 25 definitions already present in production while importing all new mirror terminology."
     },
     "src/utils/examProgress.ts": {
-      "reason": "Validate trusted N4 snapshots, check writes to independent slots, serialize cooperating N5 tabs, and verify replayed receipts durably."
+      "reason": "Composes mirror historical photo handling with N4 and N5 production storage and locking."
     },
     "src/utils/examReview.ts": {
-      "reason": "Keep last review as a checked derivative of the latest accepted completed attempt, with recovery after a write failure."
+      "reason": "Keeps production durable review recovery and archive behavior."
     },
     "src/utils/userProgress.ts": {
-      "reason": "Expose legacy backups, archive unreadable slots and update derived statistics against a fresh durable model, and clear the N5 slot on reset."
+      "reason": "Composes mirror photo history with durable production receipts and statistics."
     },
     "vite.config.ts": {
       "reason": "Set the local and default production base to /netops/."

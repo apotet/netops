@@ -1,6 +1,6 @@
 import React, { useLayoutEffect, useId, useEffect, useMemo, useRef, useState } from 'react';
 import './fullscreen.css';
-import { TopologyPanel } from './components/TopologyPanel';
+import { ExperimentalTopologyV2 } from './components/ExperimentalTopologyV2';
 import { resolveTopologyLayer, type TopologyLayerChoice } from './topologyLayers';
 import { LabEngine } from './engine/LabEngine';
 import { scenarioTheoryIds } from './scenarioTheory';
@@ -544,6 +544,21 @@ export const CliLabShell: React.FC<{ initialScenarioId?: string }> = ({ initialS
     setFullscreenPanel(null);
     requestAnimationFrame(() => shellRef.current?.querySelector<HTMLButtonElement>('[data-cli-topology-toggle]')?.focus({ preventScroll: true }));
   };
+  const openTopologyFullscreen = () => {
+    if (!fullscreen) {
+      pagePosition.current = { x: window.scrollX, y: window.scrollY };
+      returnFocus.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+      setWindowedHeight(shellRef.current?.getBoundingClientRect().height ?? 0);
+      setFullscreen(true);
+    }
+    setFullscreenPanel('topology');
+  };
+  const openDeviceConsoleFromTopology = (id: string) => {
+    switchConsole(id);
+    if (fullscreen) {
+      setFullscreenPanel(null);
+    }
+  };
   const learningControls = <>
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
@@ -732,39 +747,20 @@ export const CliLabShell: React.FC<{ initialScenarioId?: string }> = ({ initialS
 
       {hasTopology && (
         <div id={topologyPanelId} aria-label="Схема сети" role="region"
-          className={fullscreen ? 'cli-fullscreen-side cli-fullscreen-topology' : 'w-full max-w-5xl mx-auto'}
+          className={fullscreen ? 'cli-fullscreen-side cli-fullscreen-topology-v2' : 'w-full max-w-5xl mx-auto'}
           hidden={fullscreen && fullscreenPanel !== 'topology'}>
-          <div className="flex flex-wrap items-center gap-1.5 pb-2" role="group" aria-label="Слой сетевой топологии">
-            {([
-              ['auto', 'Авто'],
-              ['phy', 'Физика'],
-              ['vlan', 'VLAN'],
-              ['stp', 'STP'],
-              ['ip', 'IP'],
-            ] as const).map(([value, label]) => (
-              <button key={value} type="button"
-                aria-pressed={topologyLayerChoice === value}
-                onClick={() => setTopologyLayerChoice(value)}
-                className={topologyLayerChoice === value
-                  ? 'rounded-lg bg-cyan-500 px-2 py-1 text-[11px] font-semibold text-slate-950'
-                  : 'rounded-lg border border-slate-300 dark:border-slate-700 px-2 py-1 text-[11px] font-semibold text-slate-600 dark:text-slate-300'}>
-                {label}
-              </button>
-            ))}
-            {topologyLayerChoice === 'auto' && (
-              <span className="text-[10px] text-slate-500 dark:text-slate-400">
-                {effectiveTopologyLayer.toUpperCase()}
-              </span>
-            )}
-          </div>
-          <TopologyPanel
+          <ExperimentalTopologyV2
             layer={effectiveTopologyLayer}
+            layerChoice={topologyLayerChoice}
+            onChangeLayerChoice={setTopologyLayerChoice}
             state={engine.getState()}
             activeDeviceId={selectedDeviceId}
             onSelectDevice={switchConsole}
+            onOpenDeviceConsole={fullscreen ? openDeviceConsoleFromTopology : undefined}
             onToggleLink={scenario.allowLinkToggle ? toggleCable : undefined}
             collapsed={fullscreen ? false : topologyCollapsed}
-            scrollable={fullscreen}
+            fullscreen={fullscreen}
+            onEnterFullscreen={!fullscreen ? openTopologyFullscreen : undefined}
             onToggleCollapse={closeTopology}
           />
         </div>
