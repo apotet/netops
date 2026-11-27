@@ -11,7 +11,7 @@ import { Question, QuizMode, QuizModeId, ExamDifficulty } from '../types/quiz';
 import { selectMixedQuestions } from './mixedExam';
 import { selectBeginnerQuestions } from './beginnerExam';
 
-/** Base bank + expansion packs. Existing questions.json is never trimmed. */
+/** Active base bank + expansion packs. Retired history snapshots do not enter this list. */
 export const ALL_QUESTIONS: Question[] = [
   ...(rawQuestions as Question[]),
   ...EXTRA_QUESTIONS,

@@ -1,5 +1,6 @@
 import { ALL_QUESTIONS } from '../data/questionsData';
 import type { Question } from '../types/quiz';
+import { hasPhotoQuestionHistory, RETIRED_PVC_PHOTO, restoreHistoricalPhotoQuestion } from './copperPhotoQuestionHistory';
 
 export const PROGRESS_KEY = 'osi_user_progress_v4';
 export const LEGACY_ACTIVE_ATTEMPT_KEY = 'osi_active_session';
@@ -61,8 +62,10 @@ function validModel(value: unknown): value is ProgressModel {
 }
 
 /** One isolated store per browser runtime; storage is injected in targeted tests. */
-export function createProgressStore(bank: readonly Question[], storage: () => Storage | null, now = Date.now) {
-  const byId = new Map(bank.map(q => [q.id, q]));
+export function createProgressStore(bank: readonly Question[], storage: () => Storage | null, now = Date.now,
+    retired: readonly Question[] = []) {
+  // Preserve historical totals and receipts; mistakes and coverage still use only bank.
+  const byId = new Map([...retired, ...bank].map(q => [q.id, q]));
   let memory: ProgressModel | null = null;
   let dirty = false;
   let readBlocked = false;
@@ -109,7 +112,11 @@ export function createProgressStore(bank: readonly Question[], storage: () => St
       const active = parse(model.backup.osi_active_session);
       if (Array.isArray(active?.questions) && object(active.submittedQuestions) && object(active.userAnswers)) {
         for (const item of active.questions) {
-          const question = byId.get(item?.id);
+          const current = byId.get(item?.id);
+          const order = active.answerOrders?.[item?.id];
+          const question = current && hasPhotoQuestionHistory(current.id)
+            ? (active.answerOrders === undefined || order !== undefined ? restoreHistoricalPhotoQuestion(item, order, current) : null)
+            : current;
           const chosen = active.userAnswers[item?.id];
           if (!question || model.questions[question.id] || active.submittedQuestions[question.id] !== true ||
               !Array.isArray(chosen) || !chosen.length || new Set(chosen).size !== chosen.length ||
@@ -224,7 +231,8 @@ export function createProgressStore(bank: readonly Question[], storage: () => St
     listeners.add(listener); return () => { listeners.delete(listener); };
   }, refresh: notify, export: () => JSON.stringify(load(), null, 2) };
 }
-const store = createProgressStore(ALL_QUESTIONS, () => { try { return localStorage; } catch { return null; } });
+const store = createProgressStore(ALL_QUESTIONS, () => { try { return localStorage; } catch { return null; } },
+  Date.now, [RETIRED_PVC_PHOTO]);
 if (typeof window !== 'undefined') window.addEventListener('storage', event => {
   if (event.key === PROGRESS_KEY || event.key === null) store.refresh();
 });

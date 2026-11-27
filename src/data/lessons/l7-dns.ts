@@ -87,7 +87,8 @@ export const LESSON_L7_DNS: Lesson = {
     "l57-x02",
     "l57-x13",
     "gen-port-6",
-    "gen-transport-6"
+    "gen-transport-6",
+    "l4-07"
   ],
   "sources": [
     "RFC 1035 — Domain Names — Implementation and Specification"

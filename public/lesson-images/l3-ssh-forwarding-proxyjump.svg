@@ -1,0 +1,118 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 688" width="1100" height="688">
+  <defs>
+    <style>
+      .title { font-family: 'DejaVu Sans', Arial, sans-serif; font-size: 21px; font-weight: 700; fill: #f8fafc; }
+      .subtitle { font-family: 'DejaVu Sans', Arial, sans-serif; font-size: 12.5px; font-weight: 400; fill: #94a3b8; }
+      .sec-title { font-family: 'DejaVu Sans', Arial, sans-serif; font-size: 13.5px; font-weight: 700; fill: #e2e8f0; }
+      .label { font-family: 'DejaVu Sans', Arial, sans-serif; font-size: 12.5px; font-weight: 700; fill: #f1f5f9; }
+      .text { font-family: 'DejaVu Sans', Arial, sans-serif; font-size: 11.5px; font-weight: 400; fill: #cbd5e1; }
+      .muted { font-family: 'DejaVu Sans', Arial, sans-serif; font-size: 11px; font-weight: 400; fill: #94a3b8; }
+      .mono { font-family: 'DejaVu Sans Mono', monospace; font-size: 11.5px; font-weight: 700; fill: #e2e8f0; }
+      .mono-sm { font-family: 'DejaVu Sans Mono', monospace; font-size: 10.5px; font-weight: 400; fill: #cbd5e1; }
+      .badge { font-family: 'DejaVu Sans', Arial, sans-serif; font-size: 11px; font-weight: 700; }
+    </style>
+    <marker id="arr-cyan" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8"/>
+    </marker>
+    <marker id="arr-emerald" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#34d399"/>
+    </marker>
+    <marker id="arr-amber" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#fbbf24"/>
+    </marker>
+    <marker id="arr-rose" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#fb7185"/>
+    </marker>
+    <marker id="arr-violet" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#a78bfa"/>
+    </marker>
+  </defs>
+  <rect width="1100" height="688" rx="16" fill="#0f172a"/>
+  <text x="36" y="44" class="title">SSH-туннелирование: Local Port Forwarding (-L) и ProxyJump (-J)</text>
+  <text x="36" y="66" class="subtitle">Где реально рождается TCP-соединение и как пройти через bastion (jump), не отдавая ему приватный ключ</text>
+
+  <!-- TOP CARD: Local Port Forwarding (-L) -->
+  <rect x="36" y="92" width="1028" height="252" rx="12" fill="#1e293b" stroke="#38bdf8" stroke-width="1.5"/>
+  <text x="58" y="122" class="sec-title" fill="#38bdf8">1. Локальный проброс порта: ssh -L 127.0.0.1:15432:db.internal:5432 user@jump</text>
+  <text x="58" y="142" class="muted">База db.internal не резолвится и недоступна с ПК напрямую — но доступна с узла jump</text>
+
+  <!-- Node 1: PC -->
+  <rect x="58" y="162" width="256" height="120" rx="10" fill="#0f172a" stroke="#38bdf8"/>
+  <text x="74" y="186" class="label" fill="#7dd3fc">Рабочий ПК (SSH-клиент)</text>
+  <text x="74" y="206" class="mono-sm">App → 127.0.0.1:15432</text>
+  <text x="74" y="226" class="text">Слушает локальный loopback</text>
+  <text x="74" y="244" class="text">и пакует трафик в SSH-канал</text>
+  <text x="74" y="266" class="muted">DNS для db.internal здесь не нужен</text>
+
+  <!-- Node 2: Jump -->
+  <rect x="424" y="162" width="256" height="120" rx="10" fill="#172554" stroke="#fbbf24" stroke-width="1.5"/>
+  <text x="440" y="186" class="label" fill="#fde68a">Jump / Bastion (SSH-сервер)</text>
+  <text x="440" y="206" class="mono-sm">1. Резолвит db.internal</text>
+  <text x="440" y="226" class="mono-sm">2. Открывает TCP к :5432</text>
+  <text x="440" y="248" class="text">Исходящий TCP-сокет создаётся</text>
+  <text x="440" y="266" class="label" fill="#fde68a">именно с jump!</text>
+
+  <!-- Node 3: DB -->
+  <rect x="790" y="162" width="250" height="120" rx="10" fill="#064e3b" stroke="#34d399"/>
+  <text x="806" y="186" class="label" fill="#6ee7b7">db.internal:5432</text>
+  <text x="806" y="206" class="text">Видит подключение от IP</text>
+  <text x="806" y="224" class="text">узла jump, а не от ПК.</text>
+  <text x="806" y="248" class="muted">Внутренний firewall пускает</text>
+  <text x="806" y="266" class="muted">только jump → db:5432</text>
+
+  <!-- Arrows -->
+  <line x1="314" y1="218" x2="418" y2="218" stroke="#38bdf8" stroke-width="2.4" marker-end="url(#arr-cyan)"/>
+  <text x="366" y="206" text-anchor="middle" class="mono-sm" fill="#38bdf8">SSH-канал</text>
+  <text x="366" y="238" text-anchor="middle" class="muted">(TCP/22)</text>
+
+  <line x1="680" y1="218" x2="784" y2="218" stroke="#34d399" stroke-width="2.4" marker-end="url(#arr-emerald)"/>
+  <text x="732" y="206" text-anchor="middle" class="mono-sm" fill="#34d399">Новый TCP</text>
+  <text x="732" y="238" text-anchor="middle" class="muted">jump → db:5432</text>
+
+  <text x="58" y="324" class="text">Важно: bind-адрес 127.0.0.1 ограничивает проброс только вашим ПК; 0.0.0.0 открывает порт всей локальной сети.</text>
+
+  <!-- BOTTOM CARD: ProxyJump (-J) vs Agent Forwarding (-A) -->
+  <rect x="36" y="366" width="1028" height="294" rx="12" fill="#1e293b" stroke="#a78bfa" stroke-width="1.5"/>
+  <text x="58" y="396" class="sec-title" fill="#c4b5fd">2. ProxyJump (ssh -J user@jump user@B): сквозное шифрование A ↔ B без ключа на jump</text>
+
+  <!-- ProxyJump diagram -->
+  <rect x="58" y="416" width="236" height="106" rx="10" fill="#0f172a" stroke="#a78bfa"/>
+  <text x="74" y="440" class="label" fill="#e9d5ff">ПК A (Локальный ключ)</text>
+  <text x="74" y="460" class="mono-sm" fill="#6ee7b7">Приватный ключ на A</text>
+  <text x="74" y="480" class="text">Подписывает вход на B</text>
+  <text x="74" y="498" class="text">локально, не отдавая агент</text>
+
+  <rect x="434" y="416" width="236" height="106" rx="10" fill="#0f172a" stroke="#64748b"/>
+  <text x="450" y="440" class="label">Jump (транспортный канал)</text>
+  <text x="450" y="460" class="text">Только пробрасывает байты</text>
+  <text x="450" y="478" class="text">A ↔ B (stdio forwarding).</text>
+  <text x="450" y="500" class="mono-sm" fill="#6ee7b7">Нет ключа и нет ssh-agent!</text>
+
+  <rect x="804" y="416" width="236" height="106" rx="10" fill="#064e3b" stroke="#34d399"/>
+  <text x="820" y="440" class="label" fill="#6ee7b7">Целевой узел B</text>
+  <text x="820" y="460" class="text">Проверяет подпись ключа A</text>
+  <text x="820" y="478" class="text">внутри сквозного SSH A↔B.</text>
+  <text x="820" y="500" class="muted">Jump не видит содержимое</text>
+
+  <!-- Outer tunnel A -> Jump -->
+  <line x1="294" y1="452" x2="428" y2="452" stroke="#38bdf8" stroke-width="2" marker-end="url(#arr-cyan)"/>
+  <text x="361" y="442" text-anchor="middle" class="muted">SSH #1 (A→jump)</text>
+  <line x1="670" y1="452" x2="798" y2="452" stroke="#38bdf8" stroke-width="2" marker-end="url(#arr-cyan)"/>
+  <text x="734" y="442" text-anchor="middle" class="muted">TCP к B:22</text>
+
+  <!-- End-to-end tunnel A <-> B -->
+  <path d="M 176 522 L 176 544 L 922 544 L 922 526" fill="none" stroke="#a78bfa" stroke-width="2.4" stroke-dasharray="8 4" marker-end="url(#arr-violet)"/>
+  <rect x="424" y="532" width="252" height="24" rx="12" fill="#3b0764" stroke="#a78bfa"/>
+  <text x="550" y="548" text-anchor="middle" class="mono-sm" fill="#f5d0fe">Сквозной SSH #2 (A ↔ B)</text>
+
+  <!-- Comparison box at bottom -->
+  <rect x="58" y="570" width="482" height="72" rx="8" fill="#064e3b" stroke="#34d399"/>
+  <text x="74" y="592" class="label" fill="#6ee7b7">[OK] ProxyJump (-J) — безопасно</text>
+  <text x="74" y="612" class="text">Ключ остаётся на A, на jump не открывается сокет агента.</text>
+  <text x="74" y="629" class="muted">Даже взломанный jump не сможет подписать вход вашим ключом.</text>
+
+  <rect x="558" y="570" width="482" height="72" rx="8" fill="#4c0519" stroke="#fb7185"/>
+  <text x="574" y="592" class="label" fill="#fda4af">[NO] Agent Forwarding (-A) и копирование ключа — риск</text>
+  <text x="574" y="612" class="text">Root на jump может использовать ваш сокет SSH_AUTH_SOCK</text>
+  <text x="574" y="629" class="muted">для входа на другие серверы, пока активна сессия.</text>
+</svg>

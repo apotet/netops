@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 360" role="img" aria-labelledby="title desc">
+  <title id="title">Матрица изоляции портов</title>
+  <desc id="desc">A и B не обмениваются кадрами напрямую; оба клиента могут обратиться к G, общему порту шлюза.</desc>
+  <rect width="680" height="360" rx="22" fill="#0f172a"/>
+  <g font-family="system-ui, sans-serif">
+    <text x="32" y="48" fill="#f8fafc" font-size="27" font-weight="700">Изоляция клиентских портов</text>
+    <text x="32" y="81" fill="#cbd5e1" font-size="19">A и B — клиенты, G — общий шлюз</text>
+    <g stroke="#334155" fill="#1e293b">
+      <rect x="30" y="106" width="620" height="64" rx="12"/>
+      <rect x="30" y="181" width="620" height="64" rx="12"/>
+      <rect x="30" y="256" width="620" height="64" rx="12"/>
+    </g>
+    <g font-size="24" font-weight="650">
+      <text x="53" y="146" fill="#f8fafc">A ↔ B</text>
+      <text x="53" y="221" fill="#f8fafc">A ↔ G</text>
+      <text x="53" y="296" fill="#f8fafc">B ↔ G</text>
+      <text x="175" y="146" fill="#fecaca">Напрямую запрещено</text>
+      <text x="175" y="221" fill="#bbf7d0">Разрешено</text>
+      <text x="175" y="296" fill="#bbf7d0">Разрешено</text>
+    </g>
+  </g>
+</svg>

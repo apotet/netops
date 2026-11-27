@@ -1,3 +1,4 @@
+import { bankBeforeCopperPhotoChanges, registryBeforePvcRetirement } from './copper-photo-history-fixtures.mjs';
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
@@ -11,7 +12,7 @@ const registry = read('src/data/questionLearningLevels.json');
 const levels = { 'photo-cable-colors': 3, 'l1v2-a-contact-solid': 1, 'l1v2-b-strip-hole': 1,
   'l1v2-b-cleave-sequence': 3, 'l1v2-c-closure-service': 2 };
 const changed = fixture.originalQuestions.map(q => q.id);
-const questionsAtPhotoReview = questions.map(question => {
+const questionsAtPhotoReview = bankBeforeCopperPhotoChanges(questions).map(question => {
   if (question.id !== 'l4-08') return question;
   // This later audit assigned a family to the TCP RST ticket. Preserve the photo-era content snapshot.
   const { family, ...original } = question;
@@ -45,7 +46,7 @@ const sixReviewLevelChanges = {
     current: 'L2: ECN — сигнализация перегрузки без обязательного drop; выше начального уровня.',
   },
 };
-const registryAtPhotoReview = Object.fromEntries(Object.entries(registry)
+const registryAtPhotoReview = Object.fromEntries(Object.entries(registryBeforePvcRetirement(registry))
   .filter(([id]) => !Object.hasOwn(levels, id) && !baseline.diagnosticPack177.added.includes(id) && !baseline.monitoringPack.added.includes(id) && !baseline.wifiPack.added.includes(id) && !baseline.expertPack225.added.includes(id) && !baseline.expertPack177.added.includes(id))
   .map(([id, entry]) => {
     // Issue #257: only these four previously L1 assignments were independently moved to L2.
@@ -95,17 +96,19 @@ for (let seed = 1; seed <= 100; seed++) {
   assert.ok(selected.filter(q => q.family === byId['photo-cable-colors'].family).length <= 1,
     'sufficient photo pool does not repeat the cable family');
 }
-// Production restores an exact N4 snapshot and rejects mismatched stored keys.
+// Production previously supported this exact N4 photo. Keep its own option
+// order and key, but still reject an unrecognized change to the saved key.
 const now = 1_800_000_000_000;
 const snapshot = { ...prepareAttemptQuestions([stripBefore], () => 0.5), currentIndex: 0,
   userAnswers: {}, submittedQuestions: {}, startTime: now - 1000, isCompleted: false,
   mode: 'visual-l1', feedbackMode: 'instant', attemptId: 'pre-photo-review', progressEpoch: 'old-epoch' };
 const restored = restoreSession(JSON.stringify(snapshot), ALL_QUESTIONS, now);
-assert.deepEqual(restored?.questions, snapshot.questions, 'known N4 photo keeps the historical content and key');
-const invalid = { ...snapshot, questions: [{ ...snapshot.questions[0], correct: [1] }] };
-assert.equal(restoreSession(JSON.stringify(invalid), ALL_QUESTIONS, now), null);
+assert.ok(restored, 'known N4 snapshot is still accepted in production');
+assert.deepEqual(restored.questions, snapshot.questions, 'legacy option meanings stay exact');
+const invalidSnapshot = { ...snapshot, questions: snapshot.questions.map(q => ({ ...q, correct: [(q.correct[0] + 1) % q.answers.length] })) };
+assert.equal(restoreSession(JSON.stringify(invalidSnapshot), ALL_QUESTIONS, now), null);
 const completed = { ...snapshot, isCompleted: true };
 const review = restoreReview(serializeReview(completed), snapshot.progressEpoch);
 assert.ok(review);
 assert.deepEqual(review.questions, snapshot.questions, 'completed review keeps the historical content/key');
-console.log('PASS: five photo levels, four options/one key, unchanged photo review scope, cable family sampling, trusted N4 attempt, invalid key rejection and historical review');
+console.log('PASS: five photo levels, four options/one key, unchanged photo review scope, cable family sampling, exact N4 restore, malformed-key rejection and historical review');

@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1040 580" width="1040" height="580">
+  <title>TCP Window Scale и TCP Keepalive</title>
+  <desc>Без предложения Window Scale в SYN-ACK последующее окно 1000 остаётся 1000 байт; окно любого сегмента с SYN не масштабируется. Один пропущенный keepalive не доказывает обрыв, а ответ не означает готовность сервиса.</desc>
+  <defs>
+    <style>
+      .title { font-family: 'DejaVu Sans', Arial, sans-serif; font-size: 20px; font-weight: 700; fill: #f8fafc; }
+      .sub { font-family: 'DejaVu Sans', Arial, sans-serif; font-size: 12.5px; font-weight: 400; fill: #94a3b8; }
+      .sec { font-family: 'DejaVu Sans', Arial, sans-serif; font-size: 13.5px; font-weight: 700; fill: #e2e8f0; }
+      .lbl { font-family: 'DejaVu Sans', Arial, sans-serif; font-size: 12.5px; font-weight: 700; fill: #f1f5f9; }
+      .txt { font-family: 'DejaVu Sans', Arial, sans-serif; font-size: 11.5px; font-weight: 400; fill: #cbd5e1; }
+      .mut { font-family: 'DejaVu Sans', Arial, sans-serif; font-size: 11px; font-weight: 400; fill: #94a3b8; }
+      .mono { font-family: 'DejaVu Sans Mono', monospace; font-size: 11.5px; font-weight: 700; fill: #e2e8f0; }
+      .ms { font-family: 'DejaVu Sans Mono', monospace; font-size: 10.5px; font-weight: 400; fill: #cbd5e1; }
+    </style>
+    <marker id="ac" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8"/>
+    </marker>
+    <marker id="ae" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#34d399"/>
+    </marker>
+    <marker id="aa" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#fbbf24"/>
+    </marker>
+  </defs>
+  <rect width="1040" height="580" rx="16" fill="#0f172a"/>
+  <text x="32" y="42" class="title">TCP-опции: Window Scale (RFC 7323) и Keepalive на простаивающем соединении</text>
+  <text x="32" y="64" class="sub">Почему масштабирование окна требует согласия обеих сторон в SYN/SYN-ACK и чем TCP Keepalive отличается от HTTP</text>
+
+  <!-- TOP: Window Scale negotiation -->
+  <rect x="32" y="88" width="976" height="224" rx="12" fill="#1e293b" stroke="#38bdf8" stroke-width="1.4"/>
+  <text x="52" y="116" class="sec" fill="#38bdf8">1. Согласование Window Scale (RFC 7323): работает ТОЛЬКО при наличии в SYN и SYN-ACK</text>
+
+  <rect x="52" y="134" width="170" height="90" rx="8" fill="#0c4a6e" stroke="#38bdf8"/>
+  <text x="137" y="164" text-anchor="middle" class="lbl">Узел A</text>
+  <text x="137" y="186" text-anchor="middle" class="ms">Шлёт SYN с WS=7</text>
+  <text x="137" y="204" text-anchor="middle" class="mut">(позже Window=1000)</text>
+
+  <rect x="424" y="134" width="190" height="90" rx="8" fill="#451a03" stroke="#fbbf24"/>
+  <text x="519" y="164" text-anchor="middle" class="lbl" fill="#fde68a">Узел B</text>
+  <text x="519" y="186" text-anchor="middle" class="ms">SYN-ACK БЕЗ WS!</text>
+  <text x="519" y="204" text-anchor="middle" class="mut">Опция НЕ согласована</text>
+
+  <line x1="222" y1="158" x2="418" y2="158" stroke="#38bdf8" stroke-width="2.2" marker-end="url(#ac)"/>
+  <text x="320" y="150" text-anchor="middle" class="ms" fill="#7dd3fc">1. SYN (Window Scale=7)</text>
+  <line x1="424" y1="196" x2="228" y2="196" stroke="#fbbf24" stroke-width="2.2" marker-end="url(#aa)"/>
+  <text x="320" y="214" text-anchor="middle" class="ms" fill="#fde68a">2. SYN-ACK (без Window Scale)</text>
+
+  <rect x="640" y="134" width="348" height="156" rx="8" fill="#0f172a" stroke="#34d399"/>
+  <text x="656" y="158" class="lbl" fill="#6ee7b7">Результат для ACK с Window=1000:</text>
+  <text x="656" y="182" class="mono" fill="#fde68a">Эффективное окно = 1000 байт</text>
+  <text x="656" y="206" class="txt">• Множитель 2^7 = 128 НЕ применяется!</text>
+  <text x="656" y="226" class="txt">• Обе стороны должны прислать опцию WS</text>
+  <text x="656" y="244" class="txt">  в SYN и SYN-ACK (даже с shift=0).</text>
+  <text x="656" y="272" class="mut">128 000 Б: только после согласования.</text>
+
+  <text x="52" y="256" class="txt">Window в SYN и SYN-ACK читается без масштаба.</text>
+  <text x="52" y="274" class="txt">Без опции в SYN-ACK масштаба нет ни у A, ни у B.</text>
+
+  <!-- BOTTOM: TCP Keepalive -->
+  <rect x="32" y="330" width="976" height="222" rx="12" fill="#1e293b" stroke="#34d399" stroke-width="1.4"/>
+  <text x="52" y="358" class="sec" fill="#34d399">2. Простаивающее TCP-соединение (нет данных в полёте) и «тихий» обрыв пути</text>
+
+  <rect x="52" y="376" width="448" height="154" rx="8" fill="#064e3b" stroke="#34d399"/>
+  <text x="68" y="400" class="lbl" fill="#6ee7b7">[OK] Настроенный TCP Keepalive (RFC 9293)</text>
+  <text x="68" y="424" class="txt">• Шлёт зонды (probes) после простоя (tcp_keepalive_time).</text>
+  <text x="68" y="444" class="txt">• Один пропущенный ответ не доказывает обрыв.</text>
+  <text x="68" y="468" class="lbl" fill="#fde68a">Граница: НЕ гарантирует здоровье приложения!</text>
+  <text x="68" y="488" class="txt">Ядро ОС может отвечать ACK на keepalive, даже если</text>
+  <text x="68" y="506" class="txt">процесс завис. Проверка сервиса — отдельный запрос.</text>
+
+  <rect x="520" y="376" width="468" height="154" rx="8" fill="#4c0519" stroke="#fb7185"/>
+  <text x="536" y="400" class="lbl" fill="#fda4af">[NO] Что НЕ решает задачу на idle-соединении:</text>
+  <text x="536" y="424" class="txt">• Сокращение RTO — работает только когда есть</text>
+  <text x="536" y="442" class="txt">  неподтверждённые данные в полёте (при простое не сработает).</text>
+  <text x="536" y="466" class="txt">• HTTP Connection: keep-alive — лишь держит сокет открытым</text>
+  <text x="536" y="484" class="txt">  для повторных запросов, фоновых проверок не шлёт.</text>
+  <text x="536" y="508" class="txt">• SO_RCVTIMEO — таймаут ожидания данных, а не обрыв peer.</text>
+</svg>

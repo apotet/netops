@@ -2,7 +2,7 @@ import type { ExamDifficulty, Question, QuizModeId, QuizSession, TrialDifficulty
 import { LEARNING_LEVELS, isLearningLevel, type LearningLevel } from '../types/learningLevel';
 import { ALL_QUESTIONS, filterExamDifficulty, getExamPool, getRandomQuestions } from './questionsData';
 import { getLearningLevelMetadata, getLearningLevelStatistics } from './learningLevels';
-import { selectFamilyQuestions } from './beginnerExam';
+import { hasBasePhotoPlan, selectBaseQuestionsWithPhotoPlan, selectFamilyQuestions } from './beginnerExam';
 
 export const LEARNING_LEVEL_REVIEW_COUNT = getLearningLevelStatistics().reviewIds.length;
 
@@ -28,17 +28,22 @@ export function getLearningLevelQuestions(
   return selectFamilyQuestions(pool, count, random);
 }
 
+const BASIC_TRIAL_COUNT = 20;
+
 export const TRIAL_EXAM_OPTIONS: Record<TrialDifficulty, {
   title: string;
   description: string;
   quotas: readonly (readonly [level: LearningLevel, count: number])[];
 }> = {
-  basic: { title: 'Базовый', description: '20 вопросов на основы', quotas: [[1, 20]] },
+  basic: { title: 'Базовый', description: '20 вопросов на основы', quotas: [[1, BASIC_TRIAL_COUNT]] },
   advanced: { title: 'Продвинутый', description: '10 на понимание и 10 на применение', quotas: [[2, 10], [3, 10]] },
   mixed: { title: 'Смешанный', description: '6 на основы, 7 на понимание и 7 на применение', quotas: [[1, 6], [2, 7], [3, 7]] },
 };
 
 export function getTrialExamQuestions(difficulty: TrialDifficulty, random = Math.random): Question[] {
+  if (difficulty === 'basic') {
+    return selectBaseQuestionsWithPhotoPlan(getLearningLevelPool('mixed', 1), BASIC_TRIAL_COUNT, random);
+  }
   const questions = TRIAL_EXAM_OPTIONS[difficulty].quotas.flatMap(([level, count]) =>
     getLearningLevelQuestions('mixed', count, random, level));
   return selectFamilyQuestions(questions, questions.length, random);
@@ -65,6 +70,10 @@ export function getTestingQuestions(
   mode: QuizModeId, count: number, random: () => number, difficulty: ExamDifficulty,
   customQuestions?: readonly Question[],
 ): Question[] {
+  if (difficulty === 'beginner' && mode !== 'visual-l1' && hasBasePhotoPlan(count)) {
+    const eligible = customQuestions ? getTestingEligibleQuestions(customQuestions, difficulty) : getTestingPool(mode, difficulty);
+    return selectBaseQuestionsWithPhotoPlan(eligible, count, random);
+  }
   if (customQuestions) {
     const eligible = getTestingEligibleQuestions(customQuestions, difficulty);
     return difficulty === 'beginner' || difficulty === 'in-depth'

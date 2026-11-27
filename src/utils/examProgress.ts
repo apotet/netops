@@ -1,6 +1,7 @@
 import previousProductionQuestions from '../data/previousProductionQuestions.json';
 import { PREVIOUS_IN_DEPTH_QUESTIONS, previousInDepthSnapshot } from '../data/inDepth/previousQuestions';
 import { PREVIOUS_DIAGNOSTIC_QUESTIONS } from '../data/previousDiagnosticQuestions';
+import { hasPhotoQuestionHistory, RETIRED_PVC_PHOTO, restoreHistoricalPhotoQuestion } from './copperPhotoQuestionHistory';
 import { EXAM_DIFFICULTIES, TRIAL_DIFFICULTIES } from '../types/quiz';
 import type { QuizSession, Question, QuizModeId } from '../types/quiz';
 import { isLearningLevel } from '../types/learningLevel';
@@ -65,11 +66,13 @@ export function isPreviousProductionQuestion(question: Question): boolean {
 
 function savedProductionQuestion(
   id: string,
-  saved: { text?: unknown; answers?: unknown; correct?: unknown },
+  saved: { text?: unknown; image?: unknown; imageAlt?: unknown; answers?: unknown; correct?: unknown },
   order: unknown,
 ): Question | undefined {
   const previous = productionSnapshots[id];
-  if (!previous || saved.text !== previous.text) return undefined;
+  // Photo alt text alone can distinguish an otherwise identical N4 snapshot.
+  if (!previous || saved.text !== previous.text || saved.image !== previous.image ||
+      saved.imageAlt !== previous.imageAlt) return undefined;
   const indices = order === undefined ? previous.answers.map((_, index) => index) : order;
   if (!Array.isArray(indices) || indices.length !== previous.answers.length || new Set(indices).size !== indices.length ||
       indices.some(index => !Number.isInteger(index) || index < 0 || index >= previous.answers.length)) return undefined;
@@ -85,7 +88,8 @@ export function restoreSession(raw: string, bank: readonly Question[], now = Dat
     const saved = JSON.parse(raw);
     const modes: QuizModeId[] = ['mixed', 'l1-l2', 'l3', 'l4', 'l5-l7', 'tcpip', 'troubleshooting', 'visual-l1'];
     const object = (value: unknown) => value && typeof value === 'object' && !Array.isArray(value);
-    if (!saved || !Array.isArray(saved.questions) || !saved.questions.length || saved.questions.length > bank.length ||
+    const limit = bank.length + Number(!bank.some(q => q.id === RETIRED_PVC_PHOTO.id));
+    if (!saved || !Array.isArray(saved.questions) || !saved.questions.length || saved.questions.length > limit ||
         !Number.isInteger(saved.currentIndex) || saved.currentIndex < 0 || saved.currentIndex >= saved.questions.length ||
         !object(saved.userAnswers) || !object(saved.submittedQuestions) || typeof saved.isCompleted !== 'boolean' ||
         !modes.includes(saved.mode) || !['instant', 'exam'].includes(saved.feedbackMode) ||
@@ -99,13 +103,21 @@ export function restoreSession(raw: string, bank: readonly Question[], now = Dat
     if (saved.requestedCount !== undefined && (!Number.isSafeInteger(saved.requestedCount) || saved.requestedCount <= 0)) return null;
     if (saved.answerOrders !== undefined && !object(saved.answerOrders)) return null;
     const questions: Question[] = [];
-    for (const item of saved.questions as Array<{ id?: unknown; text?: unknown; answers?: unknown; correct?: unknown } | null>) {
-      const current = bank.find(q => q.id === item?.id);
+    for (const item of saved.questions as Array<{ id?: unknown; text?: unknown; image?: unknown; imageAlt?: unknown; answers?: unknown; correct?: unknown } | null>) {
+      const active = bank.find(q => q.id === item?.id);
+      const current = active ?? (item?.id === RETIRED_PVC_PHOTO.id ? RETIRED_PVC_PHOTO : undefined);
       if (!current) return null;
       const order = saved.answerOrders?.[current.id];
       const productionPrevious = savedProductionQuestion(current.id, item ?? {}, order);
       if (productionPrevious && (saved.answerOrders === undefined || order !== undefined)) {
         questions.push(productionPrevious);
+        continue;
+      }
+      if (hasPhotoQuestionHistory(current.id)) {
+        if (saved.answerOrders !== undefined && order === undefined) return null;
+        const snapshot = restoreHistoricalPhotoQuestion(item, order, current);
+        if (!snapshot) return null;
+        questions.push(snapshot);
         continue;
       }
       const previous = PREVIOUS_DIAGNOSTIC_QUESTIONS[current.id];

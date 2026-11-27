@@ -101,7 +101,6 @@ export const LESSON_L1_COPPER_CABLE: Lesson = {
     "l1v2-a-label-four-pairs",
     "l1v2-a-mark-cat5e",
     "l1v2-a-mark-cat6",
-    "l1v2-a-pvc-read",
     "l1v2-a-solid-view",
     "l1v2-a-screen-action"
   ],

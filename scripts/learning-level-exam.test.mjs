@@ -13,7 +13,7 @@ const originalBank = JSON.stringify(ALL_QUESTIONS);
 const originalRegistry = JSON.stringify(registry);
 // Independent acceptance oracle: read the source JSON, not the selector's derived pools.
 const sourceRegistry = JSON.parse(readFileSync(new URL('../src/data/questionLearningLevels.json', import.meta.url), 'utf8'));
-const totals = [216, 164, 376, 88, 18];
+const totals = [215, 164, 376, 88, 18];
 
 // Issue #257: content + selector + legacy-session regression for six concrete tickets.
 // Previously the photo questions displayed a technically true explanation of a DIFFERENT question.
@@ -93,8 +93,8 @@ for (const level of [1, 2, 3, 4, 5]) {
     }
   }
 }
-assert.equal(assigned.length, 862);
-assert.equal(new Set(assigned).size, 862);
+assert.equal(assigned.length, 861);
+assert.equal(new Set(assigned).size, 861);
 assert.equal(getLearningLevelQuestions('mixed', 30, seeded(1), 5).length, 18, 'no top-up of Expert');
 assert.equal(getLearningLevelQuestions('visual-l1', 10, seeded(1), 5).length, 0, 'no foreign topic/level');
 const appliedWithBeginner = getLearningLevelPool('mixed', 3).find(q => q.difficulty === 'beginner');

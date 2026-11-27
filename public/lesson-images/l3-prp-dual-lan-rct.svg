@@ -1,0 +1,144 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 660" width="1100" height="660">
+  <defs>
+    <style>
+      .title { font-family: 'DejaVu Sans', Arial, sans-serif; font-size: 21px; font-weight: 700; fill: #f8fafc; }
+      .subtitle { font-family: 'DejaVu Sans', Arial, sans-serif; font-size: 12.5px; font-weight: 400; fill: #94a3b8; }
+      .sec-title { font-family: 'DejaVu Sans', Arial, sans-serif; font-size: 13.5px; font-weight: 700; fill: #e2e8f0; }
+      .label { font-family: 'DejaVu Sans', Arial, sans-serif; font-size: 12.5px; font-weight: 700; fill: #f1f5f9; }
+      .text { font-family: 'DejaVu Sans', Arial, sans-serif; font-size: 11.5px; font-weight: 400; fill: #cbd5e1; }
+      .muted { font-family: 'DejaVu Sans', Arial, sans-serif; font-size: 11px; font-weight: 400; fill: #94a3b8; }
+      .mono { font-family: 'DejaVu Sans Mono', monospace; font-size: 11.5px; font-weight: 700; fill: #e2e8f0; }
+      .mono-sm { font-family: 'DejaVu Sans Mono', monospace; font-size: 10.5px; font-weight: 400; fill: #cbd5e1; }
+      .badge { font-family: 'DejaVu Sans', Arial, sans-serif; font-size: 11px; font-weight: 700; }
+    </style>
+    <marker id="arr-cyan" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8"/>
+    </marker>
+    <marker id="arr-emerald" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#34d399"/>
+    </marker>
+    <marker id="arr-amber" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#fbbf24"/>
+    </marker>
+    <marker id="arr-rose" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#fb7185"/>
+    </marker>
+    <marker id="arr-violet" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#a78bfa"/>
+    </marker>
+  </defs>
+  <rect width="1100" height="660" rx="16" fill="#0f172a"/>
+  <text x="36" y="44" class="title">PRP (IEC 62439-3): параллельные сети LAN A / LAN B и отбрасывание дубликатов</text>
+  <text x="36" y="66" class="subtitle">Без перестроения пути при одиночном отказе (если вторая копия доставлена по другой LAN); приёмник берёт первую</text>
+
+  <!-- Left Sender DANP -->
+  <rect x="36" y="96" width="220" height="236" rx="12" fill="#1e293b" stroke="#38bdf8" stroke-width="1.5"/>
+  <text x="54" y="124" class="sec-title" fill="#38bdf8">Отправитель (DANP)</text>
+  <text x="54" y="144" class="mono-sm">Source MAC: M</text>
+  <rect x="52" y="158" width="188" height="44" rx="8" fill="#0f172a" stroke="#334155"/>
+  <text x="64" y="176" class="label">LRE (Link Redundancy)</text>
+  <text x="64" y="193" class="muted">Добавляет RCT и шлёт копии</text>
+  <rect x="52" y="214" width="88" height="44" rx="8" fill="#0c4a6e" stroke="#38bdf8"/>
+  <text x="96" y="233" text-anchor="middle" class="label">Port A</text>
+  <text x="96" y="249" text-anchor="middle" class="mono-sm">LAN ID: A</text>
+  <rect x="152" y="214" width="88" height="44" rx="8" fill="#064e3b" stroke="#34d399"/>
+  <text x="196" y="233" text-anchor="middle" class="label">Port B</text>
+  <text x="196" y="249" text-anchor="middle" class="mono-sm">LAN ID: B</text>
+  <text x="54" y="282" class="text">Кадры: Seq 100, 101, 102</text>
+  <text x="54" y="302" class="muted">SAN подключается через RedBox</text>
+
+  <!-- LAN A (Top) -->
+  <rect x="316" y="96" width="430" height="104" rx="12" fill="#1e293b" stroke="#38bdf8" stroke-width="1.5"/>
+  <text x="336" y="122" class="sec-title" fill="#38bdf8">Независимая сеть LAN A</text>
+  <text x="336" y="142" class="muted">Собственные коммутаторы, кабели и питание — без связей с LAN B</text>
+  <rect x="336" y="154" width="110" height="32" rx="6" fill="#0c4a6e" stroke="#38bdf8"/>
+  <text x="391" y="175" text-anchor="middle" class="mono-sm">Seq 100 (OK)</text>
+  <rect x="458" y="154" width="110" height="32" rx="6" fill="#0c4a6e" stroke="#38bdf8"/>
+  <text x="513" y="175" text-anchor="middle" class="mono-sm">Seq 101 (OK)</text>
+  <rect x="580" y="154" width="146" height="32" rx="6" fill="#4c0519" stroke="#fb7185"/>
+  <text x="653" y="175" text-anchor="middle" class="mono-sm" fill="#fda4af">Seq 102 — ОБРЫВ A</text>
+
+  <!-- Isolation badge between LAN A and LAN B -->
+  <line x1="336" y1="214" x2="726" y2="214" stroke="#475569" stroke-dasharray="6 5" stroke-width="1.5"/>
+  <rect x="438" y="202" width="206" height="24" rx="12" fill="#0f172a" stroke="#64748b"/>
+  <text x="541" y="218" text-anchor="middle" class="muted">Полная изоляция L2 (нет моста)</text>
+
+  <!-- LAN B (Bottom) -->
+  <rect x="316" y="228" width="430" height="104" rx="12" fill="#1e293b" stroke="#34d399" stroke-width="1.5"/>
+  <text x="336" y="254" class="sec-title" fill="#34d399">Независимая сеть LAN B</text>
+  <text x="336" y="274" class="muted">Параллельная доставка; при обрыве A поток идёт без пауз</text>
+  <rect x="336" y="286" width="110" height="32" rx="6" fill="#064e3b" stroke="#34d399"/>
+  <text x="391" y="307" text-anchor="middle" class="mono-sm">Seq 100 (OK)</text>
+  <rect x="458" y="286" width="110" height="32" rx="6" fill="#064e3b" stroke="#34d399"/>
+  <text x="513" y="307" text-anchor="middle" class="mono-sm">Seq 101 (OK)</text>
+  <rect x="580" y="286" width="146" height="32" rx="6" fill="#064e3b" stroke="#34d399"/>
+  <text x="653" y="307" text-anchor="middle" class="mono-sm">Seq 102 (ПРИНЯТ!)</text>
+
+  <!-- Arrows Sender -> LAN A / B -->
+  <path d="M 256 150 L 312 150" stroke="#38bdf8" stroke-width="2.2" marker-end="url(#arr-cyan)"/>
+  <path d="M 256 280 L 312 280" stroke="#34d399" stroke-width="2.2" marker-end="url(#arr-emerald)"/>
+
+  <!-- Right Receiver DANP -->
+  <rect x="806" y="96" width="258" height="236" rx="12" fill="#1e293b" stroke="#a78bfa" stroke-width="1.5"/>
+  <text x="824" y="124" class="sec-title" fill="#a78bfa">Приёмник (DANP)</text>
+  <text x="824" y="144" class="muted">Окно контроля повторов (Discard)</text>
+  <rect x="822" y="156" width="226" height="92" rx="8" fill="#0f172a" stroke="#334155"/>
+  <text x="834" y="175" class="mono-sm">1. 100 с A → Приложению</text>
+  <text x="834" y="193" class="mono-sm" fill="#94a3b8">2. 100 с B → Отброшен (дубль)</text>
+  <text x="834" y="211" class="mono-sm">3. 101 с B → Приложению</text>
+  <text x="834" y="229" class="mono-sm" fill="#94a3b8">4. 101 с A → Отброшен (дубль)</text>
+  <rect x="822" y="256" width="226" height="62" rx="8" fill="#064e3b" stroke="#34d399"/>
+  <text x="834" y="276" class="label" fill="#6ee7b7">5. 102 с B → приложению</text>
+  <text x="834" y="295" class="text">Без ожидания восстановления A</text>
+  <text x="834" y="310" class="muted">Итог: 100, 101, 102 по одному разу</text>
+
+  <!-- Arrows LAN A / B -> Receiver -->
+  <path d="M 746 150 L 802 150" stroke="#38bdf8" stroke-width="2.2" marker-end="url(#arr-cyan)"/>
+  <path d="M 746 280 L 802 280" stroke="#34d399" stroke-width="2.2" marker-end="url(#arr-emerald)"/>
+
+  <!-- Bottom Card 1: RCT Frame Trailer Structure -->
+  <rect x="36" y="358" width="1028" height="132" rx="12" fill="#1e293b" stroke="#334155"/>
+  <text x="56" y="384" class="sec-title">Структура Ethernet-кадра с 6-байтным трейлером PRP — RCT (Redundancy Control Trailer)</text>
+  <rect x="56" y="400" width="140" height="48" rx="6" fill="#0f172a" stroke="#475569"/>
+  <text x="126" y="422" text-anchor="middle" class="mono-sm">Dst / Src MAC</text>
+  <text x="126" y="438" text-anchor="middle" class="muted">12 байт</text>
+
+  <rect x="202" y="400" width="112" height="48" rx="6" fill="#0f172a" stroke="#475569"/>
+  <text x="258" y="422" text-anchor="middle" class="mono-sm">EtherType</text>
+  <text x="258" y="438" text-anchor="middle" class="muted">2 байта</text>
+
+  <rect x="320" y="400" width="174" height="48" rx="6" fill="#0f172a" stroke="#475569"/>
+  <text x="407" y="422" text-anchor="middle" class="mono-sm">Payload (LSDU)</text>
+  <text x="407" y="438" text-anchor="middle" class="muted">Полезная нагрузка</text>
+
+  <!-- RCT Highlight Box -->
+  <rect x="502" y="394" width="452" height="60" rx="8" fill="#172554" stroke="#fbbf24" stroke-width="1.6"/>
+  <rect x="510" y="402" width="122" height="44" rx="5" fill="#1e3a8a" stroke="#38bdf8"/>
+  <text x="571" y="422" text-anchor="middle" class="mono-sm" fill="#f8fafc">SeqNr (16 бит)</text>
+  <text x="571" y="438" text-anchor="middle" class="muted">Ключ дублей</text>
+
+  <rect x="638" y="402" width="96" height="44" rx="5" fill="#1e293b" stroke="#64748b"/>
+  <text x="686" y="422" text-anchor="middle" class="mono-sm">LanId (4б)</text>
+  <text x="686" y="438" text-anchor="middle" class="muted">0xA / 0xB</text>
+
+  <rect x="740" y="402" width="106" height="44" rx="5" fill="#1e293b" stroke="#64748b"/>
+  <text x="793" y="422" text-anchor="middle" class="mono-sm">LSDU Size</text>
+  <text x="793" y="438" text-anchor="middle" class="muted">12 бит</text>
+
+  <rect x="852" y="402" width="94" height="44" rx="5" fill="#451a03" stroke="#fbbf24"/>
+  <text x="899" y="422" text-anchor="middle" class="mono-sm" fill="#fde68a">0x88FB</text>
+  <text x="899" y="438" text-anchor="middle" class="muted">PRP Suffix</text>
+
+  <rect x="962" y="400" width="84" height="48" rx="6" fill="#0f172a" stroke="#475569"/>
+  <text x="1004" y="422" text-anchor="middle" class="mono-sm">FCS</text>
+  <text x="1004" y="438" text-anchor="middle" class="muted">4 байта</text>
+  <text x="56" y="476" class="text">RCT добавляется в конец полезной нагрузки до FCS → стандартные коммутаторы LAN A и LAN B пересылают кадр прозрачно (без поддержки PRP).</text>
+
+  <!-- Bottom Card 2: Deduplication Key Example -->
+  <rect x="36" y="510" width="1028" height="122" rx="12" fill="#1e293b" stroke="#fbbf24" stroke-width="1.3"/>
+  <text x="56" y="538" class="sec-title" fill="#fde68a">Ключ отбрасывания дубликатов: Source MAC + Sequence Number (из RCT)</text>
+  <text x="56" y="562" class="mono-sm">A = M / Seq 42 / LAN A / 128B   →  Принят и передан приложению (первый кадр с ключом M + 42)</text>
+  <text x="56" y="582" class="mono-sm" fill="#fda4af">B = M / Seq 42 / LAN B / 128B   →  ОТБРОШЕН: тот же Source MAC (M) и тот же SeqNr (42), LAN ID не входит в ключ!</text>
+  <text x="56" y="602" class="mono-sm" fill="#6ee7b7">C = N / Seq 42 / LAN B / 128B   →  ПРИНЯТ: другой отправитель (Source MAC = N), независимый счётчик</text>
+  <text x="56" y="620" class="mono-sm" fill="#6ee7b7">D = M / Seq 43 / LAN A / 128B   →  ПРИНЯТ: следующий порядковый номер (SeqNr = 43) того же отправителя M</text>
+</svg>

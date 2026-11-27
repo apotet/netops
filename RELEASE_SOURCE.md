@@ -1,3 +1,13 @@
+# NetOps production — синхронизация с зеркалом
+
+- Зафиксированное зеркало: [54af4f9](https://github.com/apotet/my-gemini-mirror-site/commit/54af4f9b4742e7041f0364ef2bb8c9ea2aec0a48).
+- Проверки PR зеркала: [#491](https://github.com/apotet/my-gemini-mirror-site/pull/491), [Fast PR gate](https://github.com/apotet/my-gemini-mirror-site/actions/runs/45928551025). Публикация этого дерева: [Pages](https://github.com/apotet/my-gemini-mirror-site/actions/runs/45928631654).
+- Область: рабочая CLI Lab 2.0 со схемой V2, учебный контент и маршруты, банк вопросов, фото и состав новых тестов. Тестовые макеты и сервисы агентной разработки не входят в выпуск.
+- Production сохраняет свой базовый путь, записи попыток, статистику и историю. Точные хеши импортированных и адаптированных файлов: [манифест](release/source-files.json).
+- Точка отката: [37bd44d](https://github.com/apotet/netops/commit/37bd44d20a0f9971c42fc73b6980361fae4ab0b4). При необходимости восстановить этот снимок отдельным PR по [регламенту](RELEASING.md), без force-push.
+
+---
+
 # NetOps production — кандидат N5
 
 Состав, исходный staging SHA и сведения об откате в [release/N5_RELEASE.md](release/N5_RELEASE.md).

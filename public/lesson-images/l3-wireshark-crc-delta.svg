@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 460 530" width="460" height="530" role="img" aria-labelledby="title">
+  <title id="title">Готовый захват и счётчики CRC</title>
+  <rect width="460" height="530" rx="16" fill="#0f172a"/>
+  <text x="20" y="38" fill="#f8fafc" font-family="system-ui,sans-serif" font-weight="700" font-size="19">Готовый захват и счётчики CRC</text>
+  <rect x="20" y="58" width="420" height="136" rx="12" fill="#1e293b" stroke="#7dd3fc"/>
+  <text x="37" y="87" fill="#7dd3fc" font-family="system-ui,sans-serif" font-weight="700" font-size="17">1. Метка анализатора TCP</text>
+  <text x="37" y="113" fill="#e2e8f0" font-family="monospace" font-size="15">tcp.analysis.retransmission</text>
+  <text x="37" y="134" fill="#e2e8f0" font-family="system-ui,sans-serif" font-size="15">Фильтр отображения в готовом захвате.</text>
+  <text x="37" y="155" fill="#e2e8f0" font-family="system-ui,sans-serif" font-size="15">Метка не определяет причину или участок.</text>
+  <text x="37" y="176" fill="#e2e8f0" font-family="system-ui,sans-serif" font-size="15">Сверь последовательность, ACK и пропуски.</text>
+  <rect x="20" y="211" width="420" height="136" rx="12" fill="#1e293b" stroke="#6ee7b7"/>
+  <text x="37" y="240" fill="#6ee7b7" font-family="system-ui,sans-serif" font-weight="700" font-size="17">2. Адрес IPv4 в обе стороны</text>
+  <text x="37" y="266" fill="#e2e8f0" font-family="monospace" font-size="15">ip.addr == 10.1.1.10</text>
+  <text x="37" y="287" fill="#e2e8f0" font-family="system-ui,sans-serif" font-size="15">Адрес может быть источником или целью.</text>
+  <text x="37" y="308" fill="#e2e8f0" font-family="system-ui,sans-serif" font-size="15">ip.src — только источник; ip.dst — цель.</text>
+  <text x="37" y="329" fill="#e2e8f0" font-family="system-ui,sans-serif" font-size="15">Содержимое файла не изменяется.</text>
+  <rect x="20" y="364" width="420" height="136" rx="12" fill="#1e293b" stroke="#fde68a"/>
+  <text x="37" y="393" fill="#fde68a" font-family="system-ui,sans-serif" font-weight="700" font-size="17">3. CRC: два снимка одного счётчика</text>
+  <text x="37" y="419" fill="#e2e8f0" font-family="monospace" font-size="15">14 820 → 14 824 за минуту</text>
+  <text x="37" y="440" fill="#e2e8f0" font-family="system-ui,sans-serif" font-size="15">ΔCRC = 4 ошибки; это не недельный итог.</text>
+  <text x="37" y="461" fill="#e2e8f0" font-family="system-ui,sans-serif" font-size="15">При сбросе или перезапуске сравнение</text>
+  <text x="37" y="482" fill="#e2e8f0" font-family="system-ui,sans-serif" font-size="15">недействительно. Нужна новая пара.</text>
+</svg>
